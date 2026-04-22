@@ -31,3 +31,13 @@ export const MAX_PER_STAT = 32;
 export function totalPoints(statPoints) {
   return STAT_KEYS.reduce((sum, k) => sum + (statPoints[k] || 0), 0);
 }
+
+// Standard Pokemon stat stage multiplier: +1=1.5×, +2=2×, ... +6=4×
+export function getBoostMultiplier(stage) {
+  if (!stage) return 1;
+  return (2 + Math.abs(stage)) / 2;
+}
+
+export function applyBoost(stat, stage) {
+  return Math.floor(stat * getBoostMultiplier(stage));
+}

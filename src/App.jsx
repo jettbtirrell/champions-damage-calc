@@ -17,6 +17,7 @@ function makeAttacker() {
     item: null,
     ability: null,
     burned: false,
+    boosts: { atk: 0, spa: 0 },
   };
 }
 

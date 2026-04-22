@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { NATURES, natureLabel } from '../utils/natures';
-import { calcAllStats } from '../utils/statCalc';
+import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { getEffectiveMove } from '../data/abilities';
 import { TYPE_COLORS } from '../data/typeChart';
@@ -21,6 +21,9 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
       .filter(a => a.pokemon)
       .map(attacker => {
         const atkStats = calcAllStats(attacker.pokemon, attacker.statPoints, attacker.nature);
+        const atkBoosts = attacker.boosts || {};
+        const boostedAtk = applyBoost(atkStats.atk, atkBoosts.atk || 0);
+        const boostedSpa = applyBoost(atkStats.spa, atkBoosts.spa || 0);
         const rows = attacker.moves.map(move => {
           const isPhysical = move.category === 'physical';
           const isSpecial = move.category === 'special';
@@ -28,7 +31,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
           if (!isPhysical && !isSpecial) {
             return { move, effMove, result: { minDmg: 0, maxDmg: 0, noEffect: true } };
           }
-          const atk = isPhysical ? atkStats.atk : atkStats.spa;
+          const atk = isPhysical ? boostedAtk : boostedSpa;
           const def = isPhysical ? defStats.def : defStats.spd;
           const result = calcDamage({
             bp: move.power,

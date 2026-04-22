@@ -1,7 +1,7 @@
 import { NATURES } from '../utils/natures';
-import { calcAllStats, STAT_KEYS, STAT_LABELS, TOTAL_STAT_POINTS, MAX_PER_STAT, totalPoints } from '../utils/statCalc';
+import { calcAllStats, STAT_KEYS, STAT_LABELS, TOTAL_STAT_POINTS, MAX_PER_STAT, totalPoints, applyBoost } from '../utils/statCalc';
 
-export default function StatEditor({ pokemon, statPoints, nature, onChange }) {
+export default function StatEditor({ pokemon, statPoints, nature, onChange, boosts = {} }) {
   const natureDef = NATURES[nature] || NATURES.hardy;
   const used = totalPoints(statPoints);
   const computed = calcAllStats(pokemon, statPoints, nature);
@@ -19,7 +19,8 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange }) {
         const isPlus = natureDef.plus === stat;
         const isMinus = natureDef.minus === stat;
         const labelColor = isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-400';
-        const remaining = TOTAL_STAT_POINTS - used + (statPoints[stat] || 0);
+        const boost = boosts[stat] || 0;
+        const boostedVal = boost > 0 ? applyBoost(computed[stat], boost) : null;
 
         return (
           <div key={stat} className="flex items-center gap-1.5">
@@ -44,8 +45,12 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange }) {
               onChange={e => set(stat, e.target.value)}
               className="w-10 bg-gray-700 border border-gray-600 rounded text-center text-xs text-white py-0.5 focus:outline-none focus:border-blue-500"
             />
-            <span className={`text-xs w-9 text-right shrink-0 font-mono ${isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-300'}`}>
+            <span className={`text-xs shrink-0 font-mono text-right ${isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-300'}`}
+              style={{ minWidth: boostedVal ? '5.5rem' : '2.25rem' }}>
               {computed[stat]}
+              {boostedVal && (
+                <span className="text-blue-400 ml-1">({boostedVal})</span>
+              )}
             </span>
           </div>
         );
