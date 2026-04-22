@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-gray-950 text-gray-100 min-h-screen;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  input[type='range'] {
+    accent-color: #3b82f6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
