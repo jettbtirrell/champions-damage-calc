@@ -1,6 +1,7 @@
 import { NATURES, natureLabel } from '../utils/natures';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
+import { ABILITY_LABELS } from '../data/abilities';
 import PokemonSearch from './PokemonSearch';
 import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
@@ -100,7 +101,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
             />
           </div>
 
-          {/* Item + Ability (stubbed) */}
+          {/* Item + Ability */}
           <div className="flex gap-2">
             <div className="flex-1">
               <label className="text-xs text-gray-500 block mb-1">Item <span className="text-gray-600">(phase 2)</span></label>
@@ -110,10 +111,16 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
               </select>
             </div>
             <div className="flex-1">
-              <label className="text-xs text-gray-500 block mb-1">Ability <span className="text-gray-600">(phase 2)</span></label>
-              <select disabled
-                className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-gray-600 cursor-not-allowed">
-                <option>None</option>
+              <label className="text-xs text-gray-400 block mb-1">Ability</label>
+              <select
+                value={attacker.ability || ''}
+                onChange={e => update({ ability: e.target.value || null })}
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="">None</option>
+                {Object.entries(ABILITY_LABELS).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
               </select>
             </div>
           </div>
