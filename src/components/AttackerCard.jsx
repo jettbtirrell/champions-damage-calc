@@ -1,7 +1,7 @@
 import { NATURES, natureLabel } from '../utils/natures';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
-import { ABILITY_LABELS } from '../data/abilities';
+import { ABILITY_LABELS, getEffectiveMove } from '../data/abilities';
 import PokemonSearch from './PokemonSearch';
 import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
@@ -75,24 +75,32 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
           <div>
             <div className="text-xs text-gray-500 mb-1.5">Moves</div>
             <div className="space-y-1 mb-1.5">
-              {moves.map((move, i) => (
+              {moves.map((move, i) => {
+                const eff = getEffectiveMove(move, attacker.ability);
+                const typeChanged = eff.type !== move.type;
+                const powerChanged = eff.power !== move.power;
+                return (
                 <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-1">
                   <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
                   <span className="text-xs px-1 py-0.5 rounded text-white"
-                    style={{ backgroundColor: TYPE_COLORS[move.type] || '#888', fontSize: 9 }}>
-                    {move.type}
+                    style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
+                    {typeChanged && <span className="opacity-60 line-through mr-0.5">{move.type}</span>}
+                    {eff.type}
                   </span>
                   <span className="text-xs px-1 py-0.5 rounded text-white"
                     style={{ backgroundColor: CAT_COLORS[move.category] || '#888', fontSize: 9 }}>
                     {move.category}
                   </span>
-                  <span className="text-gray-500 text-xs w-6 text-right">{move.power || '—'}</span>
+                  <span className={`text-xs w-8 text-right ${powerChanged ? 'text-yellow-400' : 'text-gray-500'}`}>
+                    {eff.power || '—'}{powerChanged && <span className="opacity-50 line-through ml-1 text-gray-500">{move.power}</span>}
+                  </span>
                   <button
                     onClick={() => update({ moves: moves.filter((_, j) => j !== i) })}
                     className="text-gray-600 hover:text-red-400 text-sm ml-1 leading-none"
                   >×</button>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <MoveSearch
               movesData={movesData}

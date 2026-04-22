@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { NATURES, natureLabel } from '../utils/natures';
 import { calcAllStats } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
+import { getEffectiveMove } from '../data/abilities';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import PokemonSearch from './PokemonSearch';
@@ -23,8 +24,9 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
         const rows = attacker.moves.map(move => {
           const isPhysical = move.category === 'physical';
           const isSpecial = move.category === 'special';
+          const effMove = getEffectiveMove(move, attacker.ability);
           if (!isPhysical && !isSpecial) {
-            return { move, result: { minDmg: 0, maxDmg: 0, noEffect: true } };
+            return { move, effMove, result: { minDmg: 0, maxDmg: 0, noEffect: true } };
           }
           const atk = isPhysical ? atkStats.atk : atkStats.spa;
           const def = isPhysical ? defStats.def : defStats.spd;
@@ -42,7 +44,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             item: attacker.item,
             ability: attacker.ability,
           });
-          return { move, result };
+          return { move, effMove, result };
         });
         return { attacker, atkStats, rows };
       });
@@ -125,14 +127,20 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                     <div className="text-xs text-gray-600 pl-6 italic">No moves</div>
                   )}
                   <div className="space-y-1 pl-6">
-                    {rows.map(({ move, result }) => (
+                    {rows.map(({ move, result, effMove }) => (
                       <div key={move.id} className="space-y-0.5">
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-gray-400">{toDisplayName(move.name)}</span>
                           <span className="text-xs px-1 rounded text-white"
-                            style={{ backgroundColor: TYPE_COLORS[move.type] || '#888', fontSize: 9 }}>
-                            {move.type}
+                            style={{ backgroundColor: TYPE_COLORS[effMove.type] || '#888', fontSize: 9 }}>
+                            {effMove.type !== move.type && (
+                              <span className="opacity-50 line-through mr-0.5">{move.type}</span>
+                            )}
+                            {effMove.type}
                           </span>
+                          {effMove.power !== move.power && (
+                            <span className="text-yellow-400 text-xs">{effMove.power} BP</span>
+                          )}
                         </div>
                         <DamageBar
                           minDmg={result.minDmg}
