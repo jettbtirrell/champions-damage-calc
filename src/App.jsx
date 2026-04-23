@@ -5,6 +5,7 @@ import AttackerCard from './components/AttackerCard';
 import DefenderCard from './components/DefenderCard';
 import ImportExportModal from './components/ImportExportModal';
 import TypeChartTab from './components/TypeChartTab';
+import CoverageTab from './components/CoverageTab';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
 const WEATHER_LABELS  = { none: '—', sun: '☀ Sun', rain: '🌧 Rain', sand: '🌪 Sand', snow: '❄ Snow' };
@@ -66,7 +67,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">⚔ Champions Damage Calc</span>
           <div className="flex gap-1">
-            {[['calc', 'Calculator'], ['types', 'Type Charts']].map(([key, label]) => (
+            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
@@ -97,6 +98,9 @@ export default function App() {
 
       {tab === 'types' && (
         <TypeChartTab attackers={attackers} defenders={defenders} />
+      )}
+      {tab === 'coverage' && (
+        <CoverageTab attackers={attackers} pokemonData={pokemonData} />
       )}
 
       {/* Main panels */}
