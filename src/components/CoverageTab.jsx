@@ -86,9 +86,12 @@ export default function CoverageTab({ attackers, pokemonData }) {
                       : 'bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700'
                   }`}
                 >
-                  {a.pokemon.sprite && (
-                    <img src={a.pokemon.sprite} alt="" className="w-6 h-6 object-contain"
-                      style={{ imageRendering: 'pixelated' }} />
+                  {(a.pokemon.artwork || a.pokemon.sprite) && (
+                    <img
+                      src={a.pokemon.artwork || a.pokemon.sprite}
+                      onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
+                      alt="" className="w-6 h-6 object-contain"
+                    />
                   )}
                   {toDisplayName(a.pokemon.name)}
                 </button>

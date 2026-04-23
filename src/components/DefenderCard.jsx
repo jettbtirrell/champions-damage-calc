@@ -138,9 +138,12 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               {damageRows.map(({ attacker, rows }) => (
                 <div key={attacker.id}>
                   <div className="flex items-center gap-1.5 mb-1">
-                    {attacker.pokemon.sprite && (
-                      <img src={attacker.pokemon.sprite} alt="" className="w-5 h-5 object-contain"
-                        style={{ imageRendering: 'pixelated' }} />
+                    {(attacker.pokemon.artwork || attacker.pokemon.sprite) && (
+                      <img
+                        src={attacker.pokemon.artwork || attacker.pokemon.sprite}
+                        onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
+                        alt="" className="w-7 h-7 object-contain"
+                      />
                     )}
                     <span className="text-xs font-medium text-gray-300">{toDisplayName(attacker.pokemon.name)}</span>
                   </div>
