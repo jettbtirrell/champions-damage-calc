@@ -53,6 +53,10 @@ export default function ImportExportModal({ team, onApply, onClose, pokemonData,
             className="px-4 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm text-gray-200 transition-colors">
             {copied ? 'Copied!' : 'Copy'}
           </button>
+          <button onClick={() => { setText(''); setError(''); }}
+            className="px-4 py-1.5 rounded bg-gray-700 hover:bg-red-800 text-sm text-gray-200 transition-colors">
+            Clear
+          </button>
           <div className="flex gap-2">
           <button onClick={onClose}
             className="px-4 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm text-gray-200 transition-colors">
