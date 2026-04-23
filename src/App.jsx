@@ -4,8 +4,17 @@ import movesData from './data/moves.json';
 import AttackerCard from './components/AttackerCard';
 import DefenderCard from './components/DefenderCard';
 import ImportExportModal from './components/ImportExportModal';
+import TypeChartTab from './components/TypeChartTab';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
+const WEATHER_LABELS  = { none: '—', sun: '☀ Sun', rain: '🌧 Rain', sand: '🌪 Sand', snow: '❄ Snow' };
+const WEATHER_ACTIVE  = {
+  none: 'bg-gray-600 text-white',
+  sun:  'bg-orange-600 text-white',
+  rain: 'bg-blue-600 text-white',
+  sand: 'bg-yellow-700 text-white',
+  snow: 'bg-cyan-700 text-white',
+};
 
 function makeAttacker() {
   return {
@@ -36,6 +45,7 @@ export default function App() {
   const [weather, setWeather] = useState('none');
   const [atkModal, setAtkModal] = useState(false);
   const [defModal, setDefModal] = useState(false);
+  const [tab, setTab] = useState('calc');
 
   function updateAttacker(id, patch) {
     setAttackers(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
@@ -53,29 +63,44 @@ export default function App() {
     <div className="min-h-screen bg-gray-950 flex flex-col">
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">⚔ Champions Damage Calc</span>
-          <span className="text-xs bg-gray-700 text-gray-400 px-2 py-0.5 rounded">Phase 1</span>
+          <div className="flex gap-1">
+            {[['calc', 'Calculator'], ['types', 'Type Charts']].map(([key, label]) => (
+              <button key={key} onClick={() => setTab(key)}
+                className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
-        {/* Weather (stubbed phase 2) */}
+        {/* Weather */}
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs text-gray-600">Weather (phase 2):</span>
+          <span className="text-xs text-gray-500">Weather:</span>
           <div className="flex gap-1">
             {WEATHER_OPTIONS.map(w => (
               <button
                 key={w}
-                disabled
-                className="px-2 py-0.5 rounded text-xs font-medium cursor-not-allowed opacity-30 bg-gray-700 text-gray-400"
+                onClick={() => setWeather(w)}
+                className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
+                  weather === w
+                    ? WEATHER_ACTIVE[w]
+                    : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                }`}
               >
-                {w === 'none' ? '—' : w.charAt(0).toUpperCase() + w.slice(1)}
+                {WEATHER_LABELS[w]}
               </button>
             ))}
           </div>
         </div>
       </header>
 
+      {tab === 'types' && (
+        <TypeChartTab attackers={attackers} defenders={defenders} />
+      )}
+
       {/* Main panels */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 57px)' }}>
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 57px)', display: tab === 'calc' ? undefined : 'none' }}>
         {/* Attackers panel */}
         <section className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
           <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900 border-b border-gray-800 shrink-0">

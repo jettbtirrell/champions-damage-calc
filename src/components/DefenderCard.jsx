@@ -13,6 +13,16 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
   const { pokemon, nature, statPoints } = defender;
   const defStats = calcAllStats(pokemon, statPoints, nature);
 
+  const weatherDef = useMemo(() => {
+    if (!pokemon) return defStats;
+    const types = pokemon.types;
+    const boostedSpd = (weather === 'sand' && types.includes('rock'))
+      ? Math.floor(defStats.spd * 1.5) : defStats.spd;
+    const boostedDef = (weather === 'snow' && types.includes('ice'))
+      ? Math.floor(defStats.def * 1.5) : defStats.def;
+    return { ...defStats, def: boostedDef, spd: boostedSpd };
+  }, [pokemon, defStats, weather]);
+
   function update(patch) { onChange({ ...defender, ...patch }); }
 
   const damageRows = useMemo(() => {
@@ -32,7 +42,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             return { move, effMove, result: { minDmg: 0, maxDmg: 0, noEffect: true } };
           }
           const atk = isPhysical ? boostedAtk : boostedSpa;
-          const def = isPhysical ? defStats.def : defStats.spd;
+          const def = isPhysical ? weatherDef.def : weatherDef.spd;
           const result = calcDamage({
             bp: move.power,
             atk,
@@ -51,7 +61,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
         });
         return { attacker, atkStats, rows };
       });
-  }, [pokemon, attackers, defStats, weather]);
+  }, [pokemon, attackers, weatherDef, weather]);
 
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-3">
@@ -112,9 +122,14 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             />
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5">
-            <span className="text-gray-500">HP:</span>
-            <span className="font-mono font-semibold text-white">{defStats.hp}</span>
+          <div className="flex items-center gap-3 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5 flex-wrap">
+            <span><span className="text-gray-500">HP:</span> <span className="font-mono font-semibold text-white">{defStats.hp}</span></span>
+            {weatherDef.def !== defStats.def && (
+              <span><span className="text-gray-500">Def:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.def}</span><span className="font-mono font-semibold text-cyan-400">{weatherDef.def}</span></span>
+            )}
+            {weatherDef.spd !== defStats.spd && (
+              <span><span className="text-gray-500">SpD:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.spd}</span><span className="font-mono font-semibold text-yellow-400">{weatherDef.spd}</span></span>
+            )}
           </div>
 
           {/* Damage breakdown per attacker */}

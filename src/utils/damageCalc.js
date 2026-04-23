@@ -66,9 +66,15 @@ export function calcDamage({ bp, atk, def, moveName, attackerTypes, moveType, mo
   // TODO phase 2: burn → 0.5× on physical if burned
   // if (burned && moveCategory === 'physical') modifiers.push(0.5);
 
-  // TODO phase 2: weather
-  // if (weather === 'sun') { if (effectiveMoveType === 'fire') modifiers.push(1.5); if (effectiveMoveType === 'water') modifiers.push(0.5); }
-  // if (weather === 'rain') { if (effectiveMoveType === 'water') modifiers.push(1.5); if (effectiveMoveType === 'fire') modifiers.push(0.5); }
+  // Weather
+  if (weather === 'sun') {
+    if (effectiveMoveType === 'fire')  modifiers.push(1.5);
+    if (effectiveMoveType === 'water') modifiers.push(0.5);
+  } else if (weather === 'rain') {
+    if (effectiveMoveType === 'water') modifiers.push(1.5);
+    if (effectiveMoveType === 'fire')  modifiers.push(0.5);
+  }
+  // Sand and Snow have no direct damage multipliers (chip damage / SpD boost not modelled yet)
 
   // TODO phase 2: held items
   // if (item === 'life-orb') modifiers.push(1.3);
