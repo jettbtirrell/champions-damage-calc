@@ -36,20 +36,20 @@ const GOALS = [
     secondary: r => `${r.total2xPlus} total at 2x+`,
   },
   {
+    key: 'minimize-walls',
+    label: 'Minimize ≤½x',
+    description: 'Minimize Pokémon still at ½x or below after adding this type',
+    sort: (a, b) => a.wallsAfter - b.wallsAfter || b.gained2xPlus - a.gained2xPlus,
+    primary: r => `${r.wallsAfter} still walled`,
+    secondary: r => `+${r.gained2xPlus} at 2x+`,
+  },
+  {
     key: 'plug-immune',
     label: 'Plug immunities',
     description: 'Maximize Pokémon currently immune to all your moves that this type can reach',
     sort: (a, b) => b.pluggedImmune - a.pluggedImmune || b.gained2xPlus - a.gained2xPlus,
     primary: r => `+${r.pluggedImmune} immunities hit`,
     secondary: r => r.gained2xPlus > 0 ? `+${r.gained2xPlus} at 2x+` : null,
-  },
-  {
-    key: 'minimize-walls',
-    label: 'Fewest walls',
-    description: 'Minimize Pokémon still at ½x or below after adding this type',
-    sort: (a, b) => a.wallsAfter - b.wallsAfter || b.gained2xPlus - a.gained2xPlus,
-    primary: r => `${r.wallsAfter} still walled`,
-    secondary: r => `+${r.gained2xPlus} at 2x+`,
   },
 ];
 
@@ -145,7 +145,10 @@ export default function CoverageTab({ attackers, pokemonData }) {
     return { groups: g, moveTypes: types, recommendations: recs };
   }, [selectedIds, attackers, pokemonData]);
 
-  const currentGoal = GOALS.find(g => g.key === goal);
+  const hasImmunities = groups ? (groups[0]?.length ?? 0) > 0 : false;
+  const activeGoalKey = (!hasImmunities && goal === 'plug-immune') ? 'super-effective' : goal;
+  const visibleGoals = GOALS.filter(g => g.key !== 'plug-immune' || hasImmunities);
+  const currentGoal = GOALS.find(g => g.key === activeGoalKey);
   const sortedRecs = recommendations
     ? [...recommendations].sort(currentGoal.sort)
     : null;
@@ -210,13 +213,13 @@ export default function CoverageTab({ attackers, pokemonData }) {
             <div className="text-xs font-semibold text-gray-300 mb-2">Recommend a move type to add</div>
             {/* Goal toggles */}
             <div className="flex flex-wrap gap-1.5">
-              {GOALS.map(g => (
+              {visibleGoals.map(g => (
                 <button
                   key={g.key}
                   onClick={() => setGoal(g.key)}
                   title={g.description}
                   className={`text-xs px-2.5 py-1 rounded transition-colors ${
-                    goal === g.key
+                    activeGoalKey === g.key
                       ? 'bg-emerald-700 text-white'
                       : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
                   }`}

@@ -6,6 +6,7 @@ import DefenderCard from './components/DefenderCard';
 import ImportExportModal from './components/ImportExportModal';
 import TypeChartTab from './components/TypeChartTab';
 import CoverageTab from './components/CoverageTab';
+import SpeedTab from './components/SpeedTab';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
@@ -74,7 +75,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">⚔ Champions Damage Calc</span>
           <div className="flex gap-1">
-            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage']].map(([key, label]) => (
+            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
@@ -125,6 +126,9 @@ export default function App() {
       )}
       {tab === 'coverage' && (
         <CoverageTab attackers={attackers} pokemonData={filteredPokemon} />
+      )}
+      {tab === 'speed' && (
+        <SpeedTab attackers={attackers} pokemonData={filteredPokemon} />
       )}
 
       {/* Main panels */}
