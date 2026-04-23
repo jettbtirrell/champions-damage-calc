@@ -28,14 +28,6 @@ const GOALS = [
     secondary: r => r.gained4x > 0 ? `(+${r.gained4x} at 4x)` : null,
   },
   {
-    key: 'quad',
-    label: 'Most 4x hits',
-    description: 'Maximize Pokémon you can hit for 4x — raw OHKO potential',
-    sort: (a, b) => b.total4x - a.total4x || b.total2xPlus - a.total2xPlus,
-    primary: r => `${r.total4x} total at 4x`,
-    secondary: r => `${r.total2xPlus} total at 2x+`,
-  },
-  {
     key: 'minimize-walls',
     label: 'Minimize ≤½x',
     description: 'Minimize Pokémon still at ½x or below after adding this type',
@@ -146,8 +138,14 @@ export default function CoverageTab({ attackers, pokemonData }) {
   }, [selectedIds, attackers, pokemonData]);
 
   const hasImmunities = groups ? (groups[0]?.length ?? 0) > 0 : false;
-  const activeGoalKey = (!hasImmunities && goal === 'plug-immune') ? 'super-effective' : goal;
-  const visibleGoals = GOALS.filter(g => g.key !== 'plug-immune' || hasImmunities);
+  const hasWalls = groups ? ((groups[0]?.length ?? 0) + (groups[0.25]?.length ?? 0) + (groups[0.5]?.length ?? 0)) > 0 : false;
+  const activeGoalKey =
+    (!hasImmunities && goal === 'plug-immune') ? 'super-effective' :
+    (!hasWalls && goal === 'minimize-walls') ? 'super-effective' : goal;
+  const visibleGoals = GOALS.filter(g =>
+    (g.key !== 'plug-immune' || hasImmunities) &&
+    (g.key !== 'minimize-walls' || hasWalls)
+  );
   const currentGoal = GOALS.find(g => g.key === activeGoalKey);
   const sortedRecs = recommendations
     ? [...recommendations].sort(currentGoal.sort)
