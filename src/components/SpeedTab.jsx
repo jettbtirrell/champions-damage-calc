@@ -127,19 +127,16 @@ function AttackerSection({ section, visibleGroups }) {
   );
 }
 
-// ─── Number Line ────────────────────────────────────────────────────────────
+// ─── Speed Chart (vertical) ─────────────────────────────────────────────────
 
-const NL_PPUNIT     = 12;   // pixels per speed unit
-const NL_PAD_X      = 56;   // horizontal padding each side
-const NL_AXIS_Y     = 90;   // y-coordinate of the axis line
-const NL_FORMAT_Y   = NL_AXIS_Y + 18; // y-start of format pokemon columns
-const NL_SPRITE     = 20;   // format pokemon sprite size
-const NL_TOTAL_H    = 308;  // total canvas height
-const NL_MAX_STACK  = Math.floor((NL_TOTAL_H - NL_FORMAT_Y) / (NL_SPRITE + 2));
+const ART = 28; // artwork size px
 
 function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
-  const computed = useMemo(() => {
-    const eligible = sections.filter(s => s.attacker.pokemon);
+  const { sortedSpeeds, formatBySpeed, attackersBySpeed } = useMemo(() => {
+    const attackerEntries = sections
+      .filter(s => s.attacker.pokemon)
+      .map(s => ({ attacker: s.attacker, spe: s.attackerSpe }));
+
     const formatEntries = pokemonData.map(p => ({
       pokemon: p,
       spe: comparisonMode === 'base'
@@ -147,160 +144,108 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
         : Math.floor(1.1 * (p.stats.spe + 52)),
     }));
 
-    const allSpeeds = [
-      ...eligible.map(s => s.attackerSpe),
+    const allSpeeds = new Set([
+      ...attackerEntries.map(a => a.spe),
       ...formatEntries.map(f => f.spe),
-    ];
-    if (allSpeeds.length === 0) return null;
+    ]);
 
-    const minSpe = Math.min(...allSpeeds);
-    const maxSpe = Math.max(...allSpeeds);
+    const fmtBySpeed = {};
+    for (const f of formatEntries) (fmtBySpeed[f.spe] ??= []).push(f.pokemon);
 
-    const bySpeed = {};
-    for (const f of formatEntries) {
-      (bySpeed[f.spe] ??= []).push(f.pokemon);
-    }
+    const atkBySpeed = {};
+    for (const a of attackerEntries) (atkBySpeed[a.spe] ??= []).push(a.attacker);
 
-    const ticks = [];
-    for (let t = Math.ceil(minSpe / 10) * 10; t <= maxSpe; t += 10) ticks.push(t);
-
-    const totalWidth = (maxSpe - minSpe) * NL_PPUNIT + NL_PAD_X * 2;
-    return { eligible, bySpeed, minSpe, maxSpe, ticks, totalWidth };
+    return {
+      sortedSpeeds: [...allSpeeds].sort((a, b) => b - a), // fastest first
+      formatBySpeed: fmtBySpeed,
+      attackersBySpeed: atkBySpeed,
+    };
   }, [sections, pokemonData, comparisonMode]);
 
-  if (!computed) return null;
-  const { eligible, bySpeed, minSpe, maxSpe, ticks, totalWidth } = computed;
-
-  function xOf(spe) {
-    return NL_PAD_X + (spe - minSpe) * NL_PPUNIT;
-  }
+  if (sortedSpeeds.length === 0) return null;
 
   return (
     <div className="border border-gray-700 rounded-lg bg-gray-950 overflow-hidden mt-4">
-      <div className="px-3 py-2 border-b border-gray-800 flex items-center justify-between">
-        <span className="text-xs font-semibold text-gray-400">Speed Number Line</span>
-        <span className="text-xs text-gray-600 font-mono">{minSpe} – {maxSpe}</span>
+      <div className="px-3 py-2 border-b border-gray-800 flex items-center gap-3">
+        <span className="text-xs font-semibold text-gray-400">Speed Chart</span>
+        <span className="text-xs text-gray-600">fastest → slowest, top to bottom</span>
       </div>
-      <div className="overflow-x-auto">
-        <div style={{ position: 'relative', width: totalWidth, height: NL_TOTAL_H }}>
 
-          {/* Axis line */}
-          <div style={{
-            position: 'absolute',
-            left: NL_PAD_X - 16,
-            width: (maxSpe - minSpe) * NL_PPUNIT + 32,
-            top: NL_AXIS_Y,
-            height: 2,
-            backgroundColor: '#374151',
-          }} />
+      {/* Column headers */}
+      <div className="flex border-b border-gray-700 bg-gray-900">
+        <div className="text-right pr-2 shrink-0 text-xs text-gray-500 py-1.5 border-r border-gray-700"
+          style={{ width: 188 }}>
+          Attackers
+        </div>
+        <div className="text-center shrink-0 text-xs text-gray-500 py-1.5 border-r border-gray-700"
+          style={{ width: 44 }}>
+          Spe
+        </div>
+        <div className="pl-2 text-xs text-gray-500 py-1.5">
+          Format Pokémon
+        </div>
+      </div>
 
-          {/* Tick marks + speed labels */}
-          {ticks.map(t => (
-            <div key={t} style={{ position: 'absolute', left: xOf(t), top: 0, pointerEvents: 'none' }}>
-              <div style={{
-                position: 'absolute',
-                top: NL_AXIS_Y - 4,
-                width: 1,
-                height: 9,
-                backgroundColor: '#4b5563',
-                transform: 'translateX(-50%)',
-              }} />
-              <div style={{
-                position: 'absolute',
-                top: NL_AXIS_Y + 6,
-                fontSize: 8,
-                color: '#6b7280',
-                fontFamily: 'monospace',
-                transform: 'translateX(-50%)',
-                whiteSpace: 'nowrap',
-              }}>
-                {t}
-              </div>
-            </div>
-          ))}
+      {/* Speed rows — one per distinct speed value */}
+      <div>
+        {sortedSpeeds.map(spe => {
+          const atkList = attackersBySpeed[spe] || [];
+          const fmtList = formatBySpeed[spe] || [];
+          const isAtkRow = atkList.length > 0;
 
-          {/* Attacker Pokemon above axis */}
-          {eligible.map(section => {
-            const { attacker, attackerSpe } = section;
-            return (
+          return (
+            <div
+              key={spe}
+              className={`flex items-center border-b border-gray-800/40 ${isAtkRow ? 'bg-blue-950/25' : ''}`}
+            >
+              {/* Left: attacker artwork + name, right-aligned */}
               <div
-                key={attacker.id}
-                title={`${toDisplayName(attacker.pokemon.name)}: ${attackerSpe}`}
-                style={{
-                  position: 'absolute',
-                  left: xOf(attackerSpe),
-                  top: 0,
-                  height: NL_AXIS_Y,
-                  transform: 'translateX(-50%)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  zIndex: 10,
-                }}
+                className="flex items-center justify-end gap-1.5 pr-2 shrink-0 border-r border-gray-700 py-0.5"
+                style={{ width: 188, minHeight: ART + 4 }}
               >
-                <img
-                  src={attacker.pokemon.artwork || attacker.pokemon.sprite}
-                  onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
-                  alt={toDisplayName(attacker.pokemon.name)}
-                  style={{
-                    width: 32, height: 32,
-                    objectFit: 'contain',
-                    marginTop: 8,
-                    filter: 'drop-shadow(0 0 5px rgba(59,130,246,0.75))',
-                  }}
-                />
-                <span style={{
-                  fontSize: 8, color: '#93c5fd',
-                  fontFamily: 'monospace',
-                  marginTop: 2,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {attackerSpe}
-                </span>
-                {/* Drop line to axis */}
-                <div style={{ flex: 1, width: 1, backgroundColor: '#3b82f6', opacity: 0.4 }} />
+                {atkList.map(a => (
+                  <div key={a.id} className="flex items-center gap-1">
+                    <span className="text-xs text-blue-200 truncate text-right leading-tight"
+                      style={{ maxWidth: 100 }}>
+                      {toDisplayName(a.pokemon.name)}
+                    </span>
+                    <img
+                      src={a.pokemon.artwork || a.pokemon.sprite}
+                      onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
+                      alt=""
+                      style={{
+                        width: ART, height: ART, objectFit: 'contain',
+                        filter: 'drop-shadow(0 0 4px rgba(59,130,246,0.7))',
+                      }}
+                    />
+                  </div>
+                ))}
               </div>
-            );
-          })}
 
-          {/* Format Pokemon columns below axis */}
-          {Object.entries(bySpeed).map(([speStr, pokemon]) => {
-            const spe = Number(speStr);
-            const shown = pokemon.slice(0, NL_MAX_STACK);
-            const extra = pokemon.length - NL_MAX_STACK;
-            return (
-              <div key={speStr} style={{
-                position: 'absolute',
-                left: xOf(spe),
-                top: NL_FORMAT_Y,
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 2,
-              }}>
-                {shown.map(p => (
+              {/* Center: speed value */}
+              <div className="flex items-center justify-center shrink-0 border-r border-gray-700 self-stretch"
+                style={{ width: 44 }}>
+                <span className={`text-xs font-mono ${isAtkRow ? 'text-blue-300 font-bold' : 'text-gray-600'}`}>
+                  {spe}
+                </span>
+              </div>
+
+              {/* Right: format Pokemon artworks, wrapping */}
+              <div className="flex items-center flex-wrap gap-0.5 px-2 py-0.5">
+                {fmtList.map(p => (
                   <img
                     key={p.id}
-                    src={p.sprite || p.artwork}
-                    onError={e => { if (p.artwork) e.target.src = p.artwork; }}
+                    src={p.artwork || p.sprite}
+                    onError={e => { if (p.sprite) e.target.src = p.sprite; }}
                     alt=""
-                    title={`${toDisplayName(p.name)} (${speStr})`}
-                    style={{
-                      width: NL_SPRITE, height: NL_SPRITE,
-                      objectFit: 'contain',
-                      imageRendering: 'pixelated',
-                    }}
+                    title={toDisplayName(p.name)}
+                    style={{ width: ART, height: ART, objectFit: 'contain' }}
                   />
                 ))}
-                {extra > 0 && (
-                  <span style={{ fontSize: 7, color: '#6b7280', lineHeight: '11px' }}>+{extra}</span>
-                )}
               </div>
-            );
-          })}
-
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
