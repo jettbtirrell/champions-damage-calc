@@ -127,6 +127,187 @@ function AttackerSection({ section, visibleGroups }) {
   );
 }
 
+// ─── Number Line ────────────────────────────────────────────────────────────
+
+const NL_PPUNIT     = 12;   // pixels per speed unit
+const NL_PAD_X      = 56;   // horizontal padding each side
+const NL_AXIS_Y     = 90;   // y-coordinate of the axis line
+const NL_FORMAT_Y   = NL_AXIS_Y + 18; // y-start of format pokemon columns
+const NL_SPRITE     = 20;   // format pokemon sprite size
+const NL_TOTAL_H    = 308;  // total canvas height
+const NL_MAX_STACK  = Math.floor((NL_TOTAL_H - NL_FORMAT_Y) / (NL_SPRITE + 2));
+
+function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
+  const computed = useMemo(() => {
+    const eligible = sections.filter(s => s.attacker.pokemon);
+    const formatEntries = pokemonData.map(p => ({
+      pokemon: p,
+      spe: comparisonMode === 'base'
+        ? p.stats.spe + 20
+        : Math.floor(1.1 * (p.stats.spe + 52)),
+    }));
+
+    const allSpeeds = [
+      ...eligible.map(s => s.attackerSpe),
+      ...formatEntries.map(f => f.spe),
+    ];
+    if (allSpeeds.length === 0) return null;
+
+    const minSpe = Math.min(...allSpeeds);
+    const maxSpe = Math.max(...allSpeeds);
+
+    const bySpeed = {};
+    for (const f of formatEntries) {
+      (bySpeed[f.spe] ??= []).push(f.pokemon);
+    }
+
+    const ticks = [];
+    for (let t = Math.ceil(minSpe / 10) * 10; t <= maxSpe; t += 10) ticks.push(t);
+
+    const totalWidth = (maxSpe - minSpe) * NL_PPUNIT + NL_PAD_X * 2;
+    return { eligible, bySpeed, minSpe, maxSpe, ticks, totalWidth };
+  }, [sections, pokemonData, comparisonMode]);
+
+  if (!computed) return null;
+  const { eligible, bySpeed, minSpe, maxSpe, ticks, totalWidth } = computed;
+
+  function xOf(spe) {
+    return NL_PAD_X + (spe - minSpe) * NL_PPUNIT;
+  }
+
+  return (
+    <div className="border border-gray-700 rounded-lg bg-gray-950 overflow-hidden mt-4">
+      <div className="px-3 py-2 border-b border-gray-800 flex items-center justify-between">
+        <span className="text-xs font-semibold text-gray-400">Speed Number Line</span>
+        <span className="text-xs text-gray-600 font-mono">{minSpe} – {maxSpe}</span>
+      </div>
+      <div className="overflow-x-auto">
+        <div style={{ position: 'relative', width: totalWidth, height: NL_TOTAL_H }}>
+
+          {/* Axis line */}
+          <div style={{
+            position: 'absolute',
+            left: NL_PAD_X - 16,
+            width: (maxSpe - minSpe) * NL_PPUNIT + 32,
+            top: NL_AXIS_Y,
+            height: 2,
+            backgroundColor: '#374151',
+          }} />
+
+          {/* Tick marks + speed labels */}
+          {ticks.map(t => (
+            <div key={t} style={{ position: 'absolute', left: xOf(t), top: 0, pointerEvents: 'none' }}>
+              <div style={{
+                position: 'absolute',
+                top: NL_AXIS_Y - 4,
+                width: 1,
+                height: 9,
+                backgroundColor: '#4b5563',
+                transform: 'translateX(-50%)',
+              }} />
+              <div style={{
+                position: 'absolute',
+                top: NL_AXIS_Y + 6,
+                fontSize: 8,
+                color: '#6b7280',
+                fontFamily: 'monospace',
+                transform: 'translateX(-50%)',
+                whiteSpace: 'nowrap',
+              }}>
+                {t}
+              </div>
+            </div>
+          ))}
+
+          {/* Attacker Pokemon above axis */}
+          {eligible.map(section => {
+            const { attacker, attackerSpe } = section;
+            return (
+              <div
+                key={attacker.id}
+                title={`${toDisplayName(attacker.pokemon.name)}: ${attackerSpe}`}
+                style={{
+                  position: 'absolute',
+                  left: xOf(attackerSpe),
+                  top: 0,
+                  height: NL_AXIS_Y,
+                  transform: 'translateX(-50%)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  zIndex: 10,
+                }}
+              >
+                <img
+                  src={attacker.pokemon.artwork || attacker.pokemon.sprite}
+                  onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
+                  alt={toDisplayName(attacker.pokemon.name)}
+                  style={{
+                    width: 32, height: 32,
+                    objectFit: 'contain',
+                    marginTop: 8,
+                    filter: 'drop-shadow(0 0 5px rgba(59,130,246,0.75))',
+                  }}
+                />
+                <span style={{
+                  fontSize: 8, color: '#93c5fd',
+                  fontFamily: 'monospace',
+                  marginTop: 2,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {attackerSpe}
+                </span>
+                {/* Drop line to axis */}
+                <div style={{ flex: 1, width: 1, backgroundColor: '#3b82f6', opacity: 0.4 }} />
+              </div>
+            );
+          })}
+
+          {/* Format Pokemon columns below axis */}
+          {Object.entries(bySpeed).map(([speStr, pokemon]) => {
+            const spe = Number(speStr);
+            const shown = pokemon.slice(0, NL_MAX_STACK);
+            const extra = pokemon.length - NL_MAX_STACK;
+            return (
+              <div key={speStr} style={{
+                position: 'absolute',
+                left: xOf(spe),
+                top: NL_FORMAT_Y,
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+              }}>
+                {shown.map(p => (
+                  <img
+                    key={p.id}
+                    src={p.sprite || p.artwork}
+                    onError={e => { if (p.artwork) e.target.src = p.artwork; }}
+                    alt=""
+                    title={`${toDisplayName(p.name)} (${speStr})`}
+                    style={{
+                      width: NL_SPRITE, height: NL_SPRITE,
+                      objectFit: 'contain',
+                      imageRendering: 'pixelated',
+                    }}
+                  />
+                ))}
+                {extra > 0 && (
+                  <span style={{ fontSize: 7, color: '#6b7280', lineHeight: '11px' }}>+{extra}</span>
+                )}
+              </div>
+            );
+          })}
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Tab ───────────────────────────────────────────────────────────────
+
 export default function SpeedTab({ attackers, pokemonData }) {
   const [comparisonMode, setComparisonMode] = useState('base');
   const [visibleGroups, setVisibleGroups] = useState(() => new Set(['faster', 'tied', 'slower']));
@@ -214,6 +395,13 @@ export default function SpeedTab({ attackers, pokemonData }) {
             visibleGroups={visibleGroups}
           />
         ))}
+
+        {/* Number line visualization */}
+        <SpeedNumberLine
+          sections={sections}
+          pokemonData={pokemonData}
+          comparisonMode={comparisonMode}
+        />
       </div>
     </div>
   );
