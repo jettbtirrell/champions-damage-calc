@@ -57,9 +57,12 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2">
-        {pokemon?.sprite && (
-          <img src={pokemon.sprite} alt={pokemon.name} className="w-12 h-12 object-contain shrink-0"
-            style={{ imageRendering: 'pixelated' }} />
+        {(pokemon?.artwork || pokemon?.sprite) && (
+          <img
+            src={pokemon.artwork || pokemon.sprite}
+            onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
+            alt={pokemon.name} className="w-14 h-14 object-contain shrink-0"
+          />
         )}
         <div className="flex-1 min-w-0">
           <PokemonSearch

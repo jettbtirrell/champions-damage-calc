@@ -47,7 +47,11 @@ export default function PokemonSearch({ value, onChange, pokemonData }) {
               className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left hover:bg-gray-700 transition-colors"
               onMouseDown={() => select(p)}
             >
-              <img src={p.sprite} alt="" className="w-8 h-8 object-contain" style={{ imageRendering: 'pixelated' }} />
+              <img
+                src={p.artwork || p.sprite}
+                onError={e => { if (p.sprite) e.target.src = p.sprite; }}
+                alt="" className="w-10 h-10 object-contain"
+              />
               <span className="text-gray-100 flex-1">{toDisplayName(p.name)}</span>
               <span className="flex gap-1">
                 {p.types.map(t => (
