@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import pokemonData from './data/pokemon.json';
 import movesData from './data/moves.json';
 import AttackerCard from './components/AttackerCard';
@@ -6,6 +6,7 @@ import DefenderCard from './components/DefenderCard';
 import ImportExportModal from './components/ImportExportModal';
 import TypeChartTab from './components/TypeChartTab';
 import CoverageTab from './components/CoverageTab';
+import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
 const WEATHER_LABELS  = { none: '—', sun: '☀ Sun', rain: '🌧 Rain', sand: '🌪 Sand', snow: '❄ Snow' };
@@ -44,9 +45,15 @@ export default function App() {
   const [attackers, setAttackers] = useState([makeAttacker()]);
   const [defenders, setDefenders] = useState([makeDefender()]);
   const [weather, setWeather] = useState('none');
+  const [format, setFormat] = useState('all');
   const [atkModal, setAtkModal] = useState(false);
   const [defModal, setDefModal] = useState(false);
   const [tab, setTab] = useState('calc');
+
+  const filteredPokemon = useMemo(
+    () => pokemonData.filter(FORMATS[format].filter),
+    [format]
+  );
 
   function updateAttacker(id, patch) {
     setAttackers(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
@@ -75,8 +82,25 @@ export default function App() {
             ))}
           </div>
         </div>
-        {/* Weather */}
+        {/* Format */}
         <div className="flex items-center gap-2 ml-auto">
+          <span className="text-xs text-gray-500">Format:</span>
+          <div className="flex gap-1">
+            {FORMAT_OPTIONS.map(f => (
+              <button
+                key={f}
+                onClick={() => setFormat(f)}
+                className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
+                  format === f ? 'bg-purple-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                }`}
+              >
+                {FORMATS[f].label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {/* Weather */}
+        <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500">Weather:</span>
           <div className="flex gap-1">
             {WEATHER_OPTIONS.map(w => (
@@ -100,7 +124,7 @@ export default function App() {
         <TypeChartTab attackers={attackers} defenders={defenders} />
       )}
       {tab === 'coverage' && (
-        <CoverageTab attackers={attackers} pokemonData={pokemonData} />
+        <CoverageTab attackers={attackers} pokemonData={filteredPokemon} />
       )}
 
       {/* Main panels */}
@@ -136,7 +160,7 @@ export default function App() {
                 key={a.id}
                 attacker={a}
                 index={i}
-                pokemonData={pokemonData}
+                pokemonData={filteredPokemon}
                 movesData={movesData}
                 onChange={patch => updateAttacker(a.id, patch)}
                 onRemove={() => removeAttacker(a.id)}
@@ -174,7 +198,7 @@ export default function App() {
               <DefenderCard
                 key={d.id}
                 defender={d}
-                pokemonData={pokemonData}
+                pokemonData={filteredPokemon}
                 attackers={attackers}
                 weather={weather}
                 onChange={patch => updateDefender(d.id, patch)}
@@ -190,7 +214,7 @@ export default function App() {
         <ImportExportModal
           team={attackers}
           maxSize={20}
-          pokemonData={pokemonData}
+          pokemonData={filteredPokemon}
           movesData={movesData}
           onApply={team => { setAttackers(team); setAtkModal(false); }}
           onClose={() => setAtkModal(false)}
@@ -199,7 +223,7 @@ export default function App() {
       {defModal && (
         <ImportExportModal
           team={defenders}
-          pokemonData={pokemonData}
+          pokemonData={filteredPokemon}
           movesData={movesData}
           onApply={team => { setDefenders(team); setDefModal(false); }}
           onClose={() => setDefModal(false)}
