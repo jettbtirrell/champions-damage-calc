@@ -3,6 +3,7 @@ import { NATURES, natureLabel } from '../utils/natures';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { getEffectiveMove } from '../data/abilities';
+import { ITEMS } from '../data/items';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import PokemonSearch from './PokemonSearch';
@@ -151,7 +152,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                     <div className="text-xs text-gray-600 pl-6 italic">No moves</div>
                   )}
                   <div className="space-y-1 pl-6">
-                    {rows.map(({ move, result, effMove }) => (
+                    {rows.filter(({ result }) => !result.noEffect).map(({ move, result, effMove }) => (
                       <div key={move.id} className="space-y-0.5">
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-gray-400">{toDisplayName(move.name)}</span>
@@ -165,6 +166,12 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                           {effMove.power !== move.power && (
                             <span className="text-yellow-400 text-xs">{effMove.power} BP</span>
                           )}
+                          {(() => {
+                            const itemDef = attacker.item ? ITEMS[attacker.item] : null;
+                            return itemDef?.effect === 'type-boost' && itemDef.type === effMove.type
+                              ? <span className="text-xs text-amber-400 opacity-80">{itemDef.label}</span>
+                              : null;
+                          })()}
                         </div>
                         <DamageBar
                           minDmg={result.minDmg}

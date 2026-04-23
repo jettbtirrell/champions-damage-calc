@@ -1,5 +1,6 @@
 import { getTypeEffectiveness } from '../data/typeChart';
 import { ABILITIES, PUNCH_MOVES, PULSE_MOVES, BITE_MOVES, RECOIL_MOVES } from '../data/abilities';
+import { ITEMS } from '../data/items';
 
 // TODO phase 2: items, weather modifiers
 
@@ -51,6 +52,12 @@ export function calcDamage({ bp, atk, def, moveName, attackerTypes, moveType, mo
   const { moveType: effectiveMoveType, bp: effectiveBp, atk: effectiveAtk, stabMultiplier } =
     applyAbility(ability, moveName, moveType, moveCategory, bp, atk, attackerTypes);
 
+  // Type-boosting item: ×1.2 when item type matches effective move type
+  const itemDef = item ? ITEMS[item] : null;
+  const finalBp = (itemDef?.effect === 'type-boost' && itemDef.type === effectiveMoveType)
+    ? Math.floor(effectiveBp * 1.2)
+    : effectiveBp;
+
   const typeEff = getTypeEffectiveness(effectiveMoveType, defenderTypes);
   if (typeEff === 0) return { minDmg: 0, maxDmg: 0, immune: true, noEffect: false };
 
@@ -82,7 +89,7 @@ export function calcDamage({ bp, atk, def, moveName, attackerTypes, moveType, mo
   // if (item === 'choice-specs' && moveCategory === 'special') modifiers.push(1.5);
 
   const totalMod = modifiers.reduce((acc, m) => acc * m, 1);
-  const rawDmg = Math.floor(Math.floor(effectiveBp * effectiveAtk * 22 / def) / 50) + 2;
+  const rawDmg = Math.floor(Math.floor(finalBp * effectiveAtk * 22 / def) / 50) + 2;
   const baseDmg = Math.floor(rawDmg * totalMod);
   const minDmg = Math.floor(baseDmg * 86 / 100);
   const maxDmg = baseDmg;

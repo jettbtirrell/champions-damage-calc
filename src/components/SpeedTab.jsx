@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { calcAllStats } from '../utils/statCalc';
 import { NATURES } from '../utils/natures';
+import { ITEMS } from '../data/items';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 
@@ -80,7 +81,7 @@ function SpeedGroup({ group, entries, defaultOpen }) {
 
 function AttackerSection({ section, visibleGroups }) {
   const [open, setOpen] = useState(true);
-  const { attacker, attackerSpe, faster, tied, slower } = section;
+  const { attacker, attackerSpe, scarfed, faster, tied, slower } = section;
   const badge = natureSpeBadge(attacker.nature);
 
   return (
@@ -97,6 +98,9 @@ function AttackerSection({ section, visibleGroups }) {
         />
         <span className="text-sm font-medium text-gray-200">{toDisplayName(attacker.pokemon.name)}</span>
         <span className="font-mono text-blue-300 text-sm">{attackerSpe}</span>
+        {scarfed && (
+          <span className="text-xs font-semibold text-yellow-400">Scarf</span>
+        )}
         {badge && (
           <span className={`text-xs font-semibold ${badge.color}`}>{badge.label}</span>
         )}
@@ -135,7 +139,7 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
   const { sortedSpeeds, formatBySpeed, attackersBySpeed } = useMemo(() => {
     const attackerEntries = sections
       .filter(s => s.attacker.pokemon)
-      .map(s => ({ attacker: s.attacker, spe: s.attackerSpe }));
+      .map(s => ({ attacker: s.attacker, spe: s.attackerSpe, scarfed: s.scarfed }));
 
     const formatEntries = pokemonData.map(p => ({
       pokemon: p,
@@ -153,7 +157,7 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
     for (const f of formatEntries) (fmtBySpeed[f.spe] ??= []).push(f.pokemon);
 
     const atkBySpeed = {};
-    for (const a of attackerEntries) (atkBySpeed[a.spe] ??= []).push(a.attacker);
+    for (const a of attackerEntries) (atkBySpeed[a.spe] ??= []).push({ attacker: a.attacker, scarfed: a.scarfed });
 
     return {
       sortedSpeeds: [...allSpeeds].sort((a, b) => b - a), // fastest first
@@ -204,14 +208,17 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
                 style={{ width: 188, minHeight: ART + 4 }}
               >
                 {atkList.map(a => (
-                  <div key={a.id} className="flex items-center gap-1">
+                  <div key={a.attacker.id} className="flex items-center gap-1">
+                    {a.scarfed && (
+                      <span className="text-yellow-400 font-bold shrink-0" style={{ fontSize: 9 }}>Scarf</span>
+                    )}
                     <span className="text-xs text-blue-200 truncate text-right leading-tight"
-                      style={{ maxWidth: 100 }}>
-                      {toDisplayName(a.pokemon.name)}
+                      style={{ maxWidth: 90 }}>
+                      {toDisplayName(a.attacker.pokemon.name)}
                     </span>
                     <img
-                      src={a.pokemon.artwork || a.pokemon.sprite}
-                      onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
+                      src={a.attacker.pokemon.artwork || a.attacker.pokemon.sprite}
+                      onError={e => { if (a.attacker.pokemon.sprite) e.target.src = a.attacker.pokemon.sprite; }}
                       alt=""
                       style={{
                         width: ART, height: ART, objectFit: 'contain',
@@ -268,7 +275,9 @@ export default function SpeedTab({ attackers, pokemonData }) {
   const sections = useMemo(() => {
     const eligible = attackers.filter(a => a.pokemon);
     return eligible.map(a => {
-      const attackerSpe = calcAllStats(a.pokemon, a.statPoints, a.nature).spe;
+      const baseSpe = calcAllStats(a.pokemon, a.statPoints, a.nature).spe;
+      const scarfed = a.item === 'choice-scarf';
+      const attackerSpe = scarfed ? Math.floor(baseSpe * 1.5) : baseSpe;
       const faster = [], tied = [], slower = [];
       for (const p of pokemonData) {
         const compSpe = comparisonMode === 'base'
@@ -283,7 +292,7 @@ export default function SpeedTab({ attackers, pokemonData }) {
       faster.sort((a, b) => a.delta - b.delta);
       slower.sort((a, b) => b.delta - a.delta);
       tied.sort((a, b) => a.pokemon.name.localeCompare(b.pokemon.name));
-      return { attacker: a, attackerSpe, faster, tied, slower };
+      return { attacker: a, attackerSpe, scarfed, faster, tied, slower };
     });
   }, [attackers, pokemonData, comparisonMode]);
 
