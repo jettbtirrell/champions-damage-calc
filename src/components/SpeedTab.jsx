@@ -135,18 +135,18 @@ function AttackerSection({ section, visibleGroups }) {
 
 const ART = 28; // artwork size px
 
-function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
+function SpeedNumberLine({ sections, pokemonData, comparisonMode, enemyMods }) {
   const { sortedSpeeds, formatBySpeed, attackersBySpeed } = useMemo(() => {
     const attackerEntries = sections
       .filter(s => s.attacker.pokemon)
       .map(s => ({ attacker: s.attacker, spe: s.attackerSpe, scarfed: s.scarfed }));
 
-    const formatEntries = pokemonData.map(p => ({
-      pokemon: p,
-      spe: comparisonMode === 'base'
+    const formatEntries = pokemonData.map(p => {
+      const rawSpe = comparisonMode === 'base'
         ? p.stats.spe + 20
-        : Math.floor(1.1 * (p.stats.spe + 52)),
-    }));
+        : Math.floor(1.1 * (p.stats.spe + 52));
+      return { pokemon: p, spe: applyEnemyMods(rawSpe, enemyMods) };
+    });
 
     const allSpeeds = new Set([
       ...attackerEntries.map(a => a.spe),
@@ -164,7 +164,7 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
       formatBySpeed: fmtBySpeed,
       attackersBySpeed: atkBySpeed,
     };
-  }, [sections, pokemonData, comparisonMode]);
+  }, [sections, pokemonData, comparisonMode, enemyMods]);
 
   if (sortedSpeeds.length === 0) return null;
 
@@ -260,9 +260,22 @@ function SpeedNumberLine({ sections, pokemonData, comparisonMode }) {
 
 // ─── Main Tab ───────────────────────────────────────────────────────────────
 
+function applyEnemyMods(spe, mods) {
+  let s = spe;
+  if (mods.tailwind)  s = Math.floor(s * 2);
+  if (mods.scarf)     s = Math.floor(s * 1.5);
+  if (mods.paralyzed) s = Math.floor(s * 0.5);
+  return s;
+}
+
 export default function SpeedTab({ attackers, pokemonData }) {
   const [comparisonMode, setComparisonMode] = useState('base');
   const [visibleGroups, setVisibleGroups] = useState(() => new Set(['faster', 'tied', 'slower']));
+  const [enemyMods, setEnemyMods] = useState({ paralyzed: false, tailwind: false, scarf: false });
+
+  function toggleMod(key) {
+    setEnemyMods(prev => ({ ...prev, [key]: !prev[key] }));
+  }
 
   function toggleGroup(g) {
     setVisibleGroups(prev => {
@@ -280,9 +293,10 @@ export default function SpeedTab({ attackers, pokemonData }) {
       const attackerSpe = scarfed ? Math.floor(baseSpe * 1.5) : baseSpe;
       const faster = [], tied = [], slower = [];
       for (const p of pokemonData) {
-        const compSpe = comparisonMode === 'base'
+        const rawSpe = comparisonMode === 'base'
           ? p.stats.spe + 20
           : Math.floor(1.1 * (p.stats.spe + 52));
+        const compSpe = applyEnemyMods(rawSpe, enemyMods);
         const delta = compSpe - attackerSpe;
         const entry = { pokemon: p, compSpe, delta };
         if (delta > 0) faster.push(entry);
@@ -294,7 +308,7 @@ export default function SpeedTab({ attackers, pokemonData }) {
       tied.sort((a, b) => a.pokemon.name.localeCompare(b.pokemon.name));
       return { attacker: a, attackerSpe, scarfed, faster, tied, slower };
     });
-  }, [attackers, pokemonData, comparisonMode]);
+  }, [attackers, pokemonData, comparisonMode, enemyMods]);
 
   if (sections.length === 0) {
     return (
@@ -319,6 +333,21 @@ export default function SpeedTab({ attackers, pokemonData }) {
               className={`text-xs px-2.5 py-1 rounded transition-colors ${
                 comparisonMode === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
               }`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Enemy modifiers */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-gray-500">Enemies:</span>
+          {[
+            { key: 'tailwind',  label: 'Tailwind',  on: 'bg-sky-700 text-sky-200' },
+            { key: 'scarf',     label: 'Scarf',     on: 'bg-yellow-700 text-yellow-200' },
+            { key: 'paralyzed', label: 'Paralyzed', on: 'bg-purple-800 text-purple-200' },
+          ].map(({ key, label, on }) => (
+            <button key={key} onClick={() => toggleMod(key)}
+              className={`text-xs px-2.5 py-1 rounded transition-colors ${enemyMods[key] ? on : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
               {label}
             </button>
           ))}
@@ -355,6 +384,7 @@ export default function SpeedTab({ attackers, pokemonData }) {
           sections={sections}
           pokemonData={pokemonData}
           comparisonMode={comparisonMode}
+          enemyMods={enemyMods}
         />
       </div>
     </div>
