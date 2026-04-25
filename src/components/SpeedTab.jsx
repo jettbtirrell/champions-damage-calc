@@ -79,7 +79,7 @@ function SpeedGroup({ group, entries, defaultOpen }) {
   );
 }
 
-function AttackerSection({ section, visibleGroups }) {
+function AttackerSection({ section }) {
   const [open, setOpen] = useState(true);
   const { attacker, attackerSpe, scarfed, faster, tied, slower } = section;
   const badge = natureSpeBadge(attacker.nature);
@@ -117,7 +117,7 @@ function AttackerSection({ section, visibleGroups }) {
       {/* Speed groups */}
       {open && (
         <div className="px-3 pb-3 space-y-2 border-t border-gray-800 pt-2">
-          {['faster', 'tied', 'slower'].filter(g => visibleGroups.has(g)).map(g => (
+          {['faster', 'tied', 'slower'].map(g => (
             <SpeedGroup
               key={g}
               group={g}
@@ -270,19 +270,10 @@ function applyEnemyMods(spe, mods) {
 
 export default function SpeedTab({ attackers, pokemonData }) {
   const [comparisonMode, setComparisonMode] = useState('base');
-  const [visibleGroups, setVisibleGroups] = useState(() => new Set(['faster', 'tied', 'slower']));
   const [enemyMods, setEnemyMods] = useState({ paralyzed: false, tailwind: false, scarf: false });
 
   function toggleMod(key) {
     setEnemyMods(prev => ({ ...prev, [key]: !prev[key] }));
-  }
-
-  function toggleGroup(g) {
-    setVisibleGroups(prev => {
-      const next = new Set(prev);
-      next.has(g) ? next.delete(g) : next.add(g);
-      return next;
-    });
   }
 
   const sections = useMemo(() => {
@@ -353,32 +344,9 @@ export default function SpeedTab({ attackers, pokemonData }) {
           ))}
         </div>
 
-        {/* Group visibility */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">Show:</span>
-          {[
-            { key: 'faster', label: 'Faster', on: 'bg-red-800 text-red-200',    off: 'bg-gray-700 text-gray-400' },
-            { key: 'tied',   label: 'Tied',   on: 'bg-yellow-800 text-yellow-200', off: 'bg-gray-700 text-gray-400' },
-            { key: 'slower', label: 'Slower', on: 'bg-green-900 text-green-200', off: 'bg-gray-700 text-gray-400' },
-          ].map(({ key, label, on, off }) => (
-            <button key={key} onClick={() => toggleGroup(key)}
-              className={`text-xs px-2.5 py-1 rounded transition-colors ${visibleGroups.has(key) ? on : off}`}>
-              {label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Attacker sections */}
       <div className="p-4">
-        {sections.map(section => (
-          <AttackerSection
-            key={section.attacker.id}
-            section={section}
-            visibleGroups={visibleGroups}
-          />
-        ))}
-
         {/* Number line visualization */}
         <SpeedNumberLine
           sections={sections}
@@ -386,6 +354,16 @@ export default function SpeedTab({ attackers, pokemonData }) {
           comparisonMode={comparisonMode}
           enemyMods={enemyMods}
         />
+
+        {/* Attacker sections */}
+        <div className="mt-4">
+          {sections.map(section => (
+            <AttackerSection
+              key={section.attacker.id}
+              section={section}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

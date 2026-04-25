@@ -46,7 +46,7 @@ export default function App() {
   const [attackers, setAttackers] = useState([makeAttacker()]);
   const [defenders, setDefenders] = useState([makeDefender()]);
   const [weather, setWeather] = useState('none');
-  const [format, setFormat] = useState('all');
+  const [format, setFormat] = useState('reg-ma');
   const [atkModal, setAtkModal] = useState(false);
   const [defModal, setDefModal] = useState(false);
   const [tab, setTab] = useState('calc');
@@ -73,7 +73,7 @@ export default function App() {
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-white">⚔ Champions Damage Calc</span>
+          <span className="text-lg font-bold text-white">Pokémin-max</span>
           <div className="flex gap-1">
             {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
