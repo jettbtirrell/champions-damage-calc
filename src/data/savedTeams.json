@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "c592b210-dcae-4d1e-a934-c846e835da4c",
+    "name": "Jett's Rain Team",
+    "text": "Dragonite-Mega @ Dragoninite  \nAbility: Inner Focus  \nEVs: 2 HP / 32 SpA / 32 Spe  \nTimid Nature  \n- Dragon Pulse  \n- Hurricane  \n- Thunder  \n- Protect  \n\nPelipper @ Focus Sash  \nAbility: Drizzle  \nEVs: 2 HP / 32 SpA / 32 Spe  \nTimid Nature  \n- Hurricane  \n- Weather Ball  \n- Tailwind  \n- Wide Guard  \n\nPolitoed @ Sitrus Berry  \nAbility: Drizzle  \nLevel: 50  \nEVs: 32 HP / 32 SpA / 2 Spe  \nModest Nature  \n- Weather Ball  \n- Ice Beam  \n- Rain Dance  \n- Muddy Water  \n\nArchaludon @ Leftovers  \nAbility: Stamina  \nLevel: 50  \nEVs: 32 HP / 2 Def / 32 SpD  \nCalm Nature  \n- Flash Cannon  \n- Aura Sphere  \n- Electro Shot  \n- Protect  \n\nSinistcha @ Occa Berry  \nAbility: Hospitality  \nLevel: 50  \nEVs: 32 HP / 10 Def / 14 SpD / 10 Spe  \nModest Nature  \n- Life Dew  \n- Matcha Gotcha  \n- Rage Powder  \n- Shadow Ball  \n\nBasculegion (M) @ Choice Scarf  \nAbility: Adaptability  \nLevel: 50  \nEVs: 2 HP / 32 Atk / 32 Spe  \nAdamant Nature  \n- Last Respects  \n- Wave Crash  \n- Flip Turn  \n- Aqua Jet  \n"
+  },
+  {
+    "id": "328e1a9e-dbeb-4537-8934-1514a1dbb69f",
+    "name": "Parrobot7's Grand Challenge Festival Team",
+    "text": "Lopunny @ Lopunnite\nAbility: Limber\nLevel: 50\nEVs: 6 HP / 24 Atk / 8 Def / 28 Spe\nJolly Nature\n- Fake Out\n- Close Combat\n- Triple Axel\n- Protect\n\nRotom Wash @ Choice Scarf\nAbility: Levitate\nLevel: 50\nEVs: 3 HP / 32 SpA / 31 Spe\nModest Nature\n- Hydro Pump\n- Thunderbolt\n- Volt Switch\n- Electroweb\n\nVenusaur @ Focus Sash\nAbility: Chlorophyll\nLevel: 50\nEVs: 4 HP / 30 SpA / 32 Spe\nModest Nature\n- Sludge Bomb\n- Energy Ball\n- Earth Power\n- Protect\n\nCharizard @ Charizardite Y\nAbility: Blaze\nLevel: 50\nEVs: 20 HP / 6 Def / 20 SpA / 20 Spe\nTimid Nature\n- Heat Wave\n- Weather Ball\n- Air Slash\n- Protect\n\nGarchomp @ Sitrus Berry\nAbility: Rough Skin\nLevel: 50\nEVs: 32 HP / 15 Atk / 19 Spe\nAdamant Nature\n- Protect\n- Earthquake\n- Rock Slide\n- Dragon Claw\n\nKingambit @ Chople Berry\nAbility: Defiant\nLevel: 50\nEVs: 26 HP / 22 Atk / 18 Def\nAdamant Nature\n- Sucker Punch\n- Kowtow Cleave\n- Iron Head\n- Protect"
+  }
+]

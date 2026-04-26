@@ -47,4 +47,9 @@ function teamsApiPlugin() {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), teamsApiPlugin()],
+  server: {
+    watch: {
+      ignored: ['**/src/data/savedTeams.json'],
+    },
+  },
 })
