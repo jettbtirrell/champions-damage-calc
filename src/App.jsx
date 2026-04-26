@@ -61,7 +61,7 @@ export default function App() {
   function removeAttacker(id) { setAttackers(prev => prev.filter(a => a.id !== id)); }
   function addAttackerWithPokemon(p) {
     if (attackers.length >= 20) return;
-    setAttackers(prev => [...prev, { ...makeAttacker(), pokemon: p }]);
+    setAttackers(prev => [{ ...makeAttacker(), pokemon: p }, ...prev]);
     setAtkSearchKey(k => k + 1);
   }
 
@@ -70,7 +70,7 @@ export default function App() {
   }
   function removeDefender(id) { setDefenders(prev => prev.filter(d => d.id !== id)); }
   function addDefenderWithPokemon(p) {
-    setDefenders(prev => [...prev, { ...makeDefender(), pokemon: p }]);
+    setDefenders(prev => [{ ...makeDefender(), pokemon: p }, ...prev]);
     setDefSearchKey(k => k + 1);
   }
 
@@ -142,7 +142,7 @@ export default function App() {
         <SpeedTab attackers={attackers} pokemonData={filteredPokemon} />
       )}
       {tab === 'meta' && (
-        <MetaTab pokemonData={filteredPokemon} onAddDefender={p => { setDefenders(prev => [...prev, { ...makeDefender(), pokemon: p }]); setTab('calc'); }} />
+        <MetaTab pokemonData={filteredPokemon} onAddDefender={p => { setDefenders(prev => [{ ...makeDefender(), pokemon: p }, ...prev]); setTab('calc'); }} />
       )}
 
       {/* Main panels */}
