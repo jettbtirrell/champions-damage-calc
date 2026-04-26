@@ -139,7 +139,7 @@ export default function App() {
         <CoverageTab attackers={attackers} pokemonData={filteredPokemon} />
       )}
       {tab === 'speed' && (
-        <SpeedTab attackers={attackers} pokemonData={filteredPokemon} />
+        <SpeedTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
       )}
       {tab === 'meta' && (
         <MetaTab pokemonData={filteredPokemon} onAddDefender={p => { setDefenders(prev => [{ ...makeDefender(), pokemon: p }, ...prev]); setTab('calc'); }} />
