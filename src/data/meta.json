@@ -1,0 +1,1621 @@
+{
+  "sneasler": {
+    "usage": 37.7,
+    "moves": {
+      "close-combat": 36.4,
+      "fake-out": 29.9,
+      "dire-claw": 29.9,
+      "protect": 18.2,
+      "coaching": 3.9,
+      "rock-slide": 2.6,
+      "rock-tomb": 1.3,
+      "u-turn": 1.3
+    },
+    "items": {
+      "white-herb": 35.1
+    },
+    "abilities": {}
+  },
+  "incineroar": {
+    "usage": 26.5,
+    "moves": {
+      "fake-out": 33.3,
+      "parting-shot": 31.5,
+      "flare-blitz": 25.9,
+      "darkest-lariat": 13,
+      "protect": 5.6,
+      "will-o-wisp": 3.7,
+      "close-combat": 3.7,
+      "throat-chop": 1.9
+    },
+    "items": {
+      "sitrus-berry": 16.7,
+      "shuca-berry": 1.9,
+      "chople-berry": 1.9
+    },
+    "abilities": {
+      "intimidate": 51.9
+    }
+  },
+  "kingambit": {
+    "usage": 24.5,
+    "moves": {
+      "sucker-punch": 38,
+      "kowtow-cleave": 26,
+      "protect": 24,
+      "low-kick": 10,
+      "iron-head": 10,
+      "swords-dance": 8
+    },
+    "items": {
+      "chople-berry": 8,
+      "sitrus-berry": 2
+    },
+    "abilities": {
+      "defiant": 10
+    }
+  },
+  "garchomp": {
+    "usage": 22.1,
+    "moves": {
+      "earthquake": 31.1,
+      "rock-slide": 28.9,
+      "dragon-claw": 13.3,
+      "protect": 8.9,
+      "stomping-tantrum": 4.4,
+      "swords-dance": 4.4,
+      "psychic": 2.2
+    },
+    "items": {
+      "sitrus-berry": 6.7,
+      "yache-berry": 2.2,
+      "white-herb": 2.2
+    },
+    "abilities": {}
+  },
+  "basculegion-male": {
+    "usage": 20.6,
+    "moves": {
+      "wave-crash": 23.8,
+      "flip-turn": 23.8,
+      "last-respects": 9.5,
+      "aqua-jet": 7.1,
+      "protect": 4.8,
+      "phantom-force": 2.4,
+      "icy-wind": 2.4,
+      "waterfall": 2.4
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "aerodactyl": {
+    "usage": 20.6,
+    "moves": {
+      "tailwind": 38.1,
+      "rock-slide": 33.3,
+      "dual-wingbeat": 23.8,
+      "protect": 16.7,
+      "wide-guard": 4.8,
+      "rock-tomb": 2.4,
+      "sunny-day": 2.4
+    },
+    "items": {
+      "focus-sash": 9.5,
+      "mental-herb": 2.4
+    },
+    "abilities": {
+      "unnerve": 47.6,
+      "pressure": 2.4
+    }
+  },
+  "sinistcha": {
+    "usage": 19.6,
+    "moves": {
+      "matcha-gotcha": 35,
+      "rage-powder": 22.5,
+      "protect": 15,
+      "trick-room": 15,
+      "life-dew": 15,
+      "shadow-ball": 5,
+      "strength-sap": 2.5
+    },
+    "items": {
+      "sitrus-berry": 20,
+      "focus-sash": 2.5,
+      "leftovers": 2.5
+    },
+    "abilities": {}
+  },
+  "farigiraf": {
+    "usage": 18.1,
+    "moves": {
+      "psychic": 37.8,
+      "hyper-voice": 27,
+      "trick-room": 24.3,
+      "helping-hand": 10.8,
+      "twin-beam": 10.8,
+      "protect": 10.8,
+      "foul-play": 5.4,
+      "imprison": 5.4,
+      "psyshock": 2.7,
+      "rain-dance": 2.7,
+      "expanding-force": 2.7,
+      "thunderbolt": 2.7,
+      "sunny-day": 2.7
+    },
+    "items": {
+      "sitrus-berry": 8.1,
+      "colbur-berry": 2.7,
+      "mental-herb": 2.7
+    },
+    "abilities": {}
+  },
+  "charizard": {
+    "usage": 16.2,
+    "moves": {
+      "protect": 42.4,
+      "heat-wave": 27.3,
+      "dragon-dance": 9.1,
+      "solar-beam": 6.1,
+      "dragon-claw": 6.1,
+      "dragon-pulse": 3,
+      "weather-ball": 3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "pelipper": {
+    "usage": 15.7,
+    "moves": {
+      "tailwind": 34.4,
+      "hurricane": 31.3,
+      "protect": 31.3,
+      "weather-ball": 18.8,
+      "wide-guard": 15.6,
+      "u-turn": 9.4,
+      "surf": 3.1,
+      "hydro-pump": 3.1
+    },
+    "items": {
+      "focus-sash": 12.5,
+      "sitrus-berry": 6.3,
+      "mental-herb": 3.1
+    },
+    "abilities": {}
+  },
+  "rotom-wash": {
+    "usage": 14.7,
+    "moves": {
+      "thunderbolt": 23.3,
+      "hydro-pump": 20,
+      "will-o-wisp": 13.3,
+      "electroweb": 13.3,
+      "protect": 10,
+      "volt-switch": 10,
+      "dark-pulse": 3.3,
+      "trick": 3.3
+    },
+    "items": {
+      "sitrus-berry": 6.7
+    },
+    "abilities": {}
+  },
+  "archaludon": {
+    "usage": 13.7,
+    "moves": {
+      "electro-shot": 60.7,
+      "protect": 35.7,
+      "dragon-pulse": 10.7,
+      "draco-meteor": 10.7,
+      "flash-cannon": 10.7,
+      "steel-beam": 7.1,
+      "calm-mind": 3.6,
+      "shadow-ball": 3.6,
+      "struggle": 3.6
+    },
+    "items": {
+      "sitrus-berry": 7.1,
+      "metal-coat": 3.6
+    },
+    "abilities": {
+      "stamina": 42.9
+    }
+  },
+  "milotic": {
+    "usage": 12.3,
+    "moves": {
+      "scald": 44,
+      "icy-wind": 32,
+      "protect": 20,
+      "hypnosis": 16,
+      "coil": 12,
+      "recover": 12,
+      "muddy-water": 8,
+      "life-dew": 8,
+      "ice-beam": 8,
+      "alluring-voice": 4
+    },
+    "items": {
+      "sitrus-berry": 8,
+      "choice-scarf": 4
+    },
+    "abilities": {
+      "competitive": 24
+    }
+  },
+  "whimsicott": {
+    "usage": 12.3,
+    "moves": {
+      "tailwind": 60,
+      "moonblast": 44,
+      "encore": 40,
+      "protect": 20,
+      "energy-ball": 12,
+      "taunt": 8,
+      "beat-up": 4,
+      "trick-room": 4,
+      "giga-drain": 4,
+      "fake-tears": 4
+    },
+    "items": {
+      "focus-sash": 16
+    },
+    "abilities": {}
+  },
+  "venusaur": {
+    "usage": 10.8,
+    "moves": {
+      "protect": 45.5,
+      "leech-seed": 22.7,
+      "giga-drain": 13.6,
+      "sludge-bomb": 13.6,
+      "sleep-powder": 13.6,
+      "earth-power": 9.1,
+      "energy-ball": 4.5,
+      "leaf-storm": 4.5
+    },
+    "items": {
+      "focus-sash": 13.6,
+      "white-herb": 4.5
+    },
+    "abilities": {}
+  },
+  "meganium": {
+    "usage": 10.3,
+    "moves": {
+      "protect": 28.6,
+      "weather-ball": 23.8,
+      "solar-beam": 9.5,
+      "earth-power": 4.8,
+      "ancient-power": 4.8,
+      "dazzling-gleam": 4.8
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "tyranitar": {
+    "usage": 9.3,
+    "moves": {
+      "protect": 31.6,
+      "rock-slide": 26.3,
+      "knock-off": 15.8,
+      "ice-punch": 10.5,
+      "dragon-dance": 5.3,
+      "earthquake": 5.3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "floette-eternal": {
+    "usage": 8.8,
+    "moves": {
+      "protect": 55.6,
+      "dazzling-gleam": 50,
+      "moonblast": 38.9,
+      "calm-mind": 22.2,
+      "light-of-ruin": 11.1
+    },
+    "items": {},
+    "abilities": {
+      "fairy-aura": 72.2
+    }
+  },
+  "delphox": {
+    "usage": 8.8,
+    "moves": {
+      "protect": 44.4,
+      "heat-wave": 22.2,
+      "expanding-force": 22.2,
+      "psychic": 11.1,
+      "substitute": 5.6,
+      "flamethrower": 5.6,
+      "encore": 5.6
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "froslass": {
+    "usage": 8.3,
+    "moves": {
+      "blizzard": 41.2,
+      "aurora-veil": 29.4,
+      "shadow-ball": 23.5,
+      "protect": 11.8,
+      "thunderbolt": 5.9,
+      "nasty-plot": 5.9,
+      "thunder": 5.9
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "aegislash": {
+    "usage": 7.8,
+    "moves": {
+      "iron-head": 25,
+      "kings-shield": 25,
+      "shadow-sneak": 25,
+      "poltergeist": 12.5,
+      "close-combat": 12.5,
+      "sacred-sword": 6.3
+    },
+    "items": {
+      "kasib-berry": 6.3
+    },
+    "abilities": {}
+  },
+  "corviknight": {
+    "usage": 7.8,
+    "moves": {
+      "body-press": 31.3,
+      "roost": 31.3,
+      "iron-defense": 25,
+      "tailwind": 18.8,
+      "brave-bird": 12.5,
+      "iron-head": 12.5,
+      "protect": 12.5,
+      "taunt": 6.3,
+      "bulk-up": 6.3
+    },
+    "items": {
+      "occa-berry": 6.3,
+      "sitrus-berry": 6.3
+    },
+    "abilities": {
+      "pressure": 12.5,
+      "mirror-armor": 6.3
+    }
+  },
+  "alakazam": {
+    "usage": 6.9,
+    "moves": {
+      "light-screen": 21.4,
+      "encore": 21.4,
+      "disable": 21.4,
+      "psychic-terrain": 7.1,
+      "reflect": 7.1,
+      "protect": 7.1
+    },
+    "items": {
+      "focus-sash": 7.1,
+      "bright-powder": 7.1
+    },
+    "abilities": {
+      "levitate": 7.1
+    }
+  },
+  "gengar": {
+    "usage": 6.9,
+    "moves": {
+      "protect": 35.7,
+      "shadow-ball": 21.4,
+      "perish-song": 14.3,
+      "sludge-wave": 7.1,
+      "disable": 7.1,
+      "sludge-bomb": 7.1,
+      "destiny-bond": 7.1
+    },
+    "items": {
+      "focus-sash": 7.1
+    },
+    "abilities": {}
+  },
+  "empoleon": {
+    "usage": 5.9,
+    "moves": {
+      "knock-off": 41.7,
+      "roost": 33.3,
+      "aqua-jet": 25,
+      "stealth-rock": 16.7
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "sinistcha-masterpiece": {
+    "usage": 5.9,
+    "moves": {
+      "protect": 50,
+      "matcha-gotcha": 50,
+      "scald": 8.3,
+      "rage-powder": 8.3,
+      "shadow-ball": 8.3,
+      "strength-sap": 8.3
+    },
+    "items": {
+      "sitrus-berry": 8.3
+    },
+    "abilities": {}
+  },
+  "scovillain": {
+    "usage": 5.9,
+    "moves": {
+      "leech-seed": 33.3,
+      "protect": 33.3,
+      "rage-powder": 25,
+      "overheat": 16.7,
+      "flamethrower": 8.3,
+      "bitter-malice": 8.3,
+      "giga-drain": 8.3,
+      "hyper-voice": 8.3
+    },
+    "items": {
+      "focus-sash": 8.3
+    },
+    "abilities": {
+      "moody": 16.7
+    }
+  },
+  "ninetales-alola": {
+    "usage": 5.9,
+    "moves": {
+      "aurora-veil": 50,
+      "blizzard": 50,
+      "ice-shard": 8.3,
+      "protect": 8.3,
+      "icy-wind": 8.3
+    },
+    "items": {
+      "babiri-berry": 8.3
+    },
+    "abilities": {}
+  },
+  "kangaskhan": {
+    "usage": 5.9,
+    "moves": {
+      "fake-out": 75,
+      "sucker-punch": 41.7,
+      "drain-punch": 33.3,
+      "body-slam": 25,
+      "last-resort": 8.3,
+      "protect": 8.3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "sableye": {
+    "usage": 5.9,
+    "moves": {
+      "foul-play": 33.3,
+      "light-screen": 33.3,
+      "fake-out": 25,
+      "gravity": 25,
+      "reflect": 25,
+      "will-o-wisp": 25,
+      "thunder-wave": 8.3,
+      "encore": 8.3,
+      "sucker-punch": 8.3
+    },
+    "items": {
+      "roseli-berry": 8.3
+    },
+    "abilities": {}
+  },
+  "dragapult": {
+    "usage": 5.9,
+    "moves": {
+      "will-o-wisp": 33.3,
+      "dragon-darts": 33.3,
+      "psychic-fangs": 8.3,
+      "phantom-force": 8.3,
+      "protect": 8.3
+    },
+    "items": {
+      "focus-sash": 8.3
+    },
+    "abilities": {}
+  },
+  "rhyperior": {
+    "usage": 5.4,
+    "moves": {
+      "earthquake": 36.4,
+      "counter": 18.2,
+      "ice-punch": 18.2,
+      "protect": 9.1
+    },
+    "items": {},
+    "abilities": {
+      "lightning-rod": 9.1
+    }
+  },
+  "dragonite": {
+    "usage": 5.4,
+    "moves": {
+      "hurricane": 36.4,
+      "fire-blast": 18.2,
+      "thunder": 18.2,
+      "protect": 18.2,
+      "blizzard": 9.1,
+      "air-slash": 9.1,
+      "tailwind": 9.1
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "politoed": {
+    "usage": 5.4,
+    "moves": {
+      "weather-ball": 54.5,
+      "protect": 45.5,
+      "perish-song": 18.2,
+      "ice-beam": 18.2,
+      "encore": 9.1,
+      "surf": 9.1,
+      "icy-wind": 9.1,
+      "muddy-water": 9.1
+    },
+    "items": {
+      "sitrus-berry": 9.1
+    },
+    "abilities": {}
+  },
+  "rotom-heat": {
+    "usage": 5.4,
+    "moves": {
+      "volt-switch": 18.2,
+      "overheat": 18.2,
+      "electroweb": 9.1,
+      "thunderbolt": 9.1,
+      "will-o-wisp": 9.1
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "ceruledge": {
+    "usage": 4.9,
+    "moves": {
+      "bulk-up": 50,
+      "shadow-sneak": 50,
+      "bitter-blade": 50,
+      "close-combat": 10
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "starmie": {
+    "usage": 4.9,
+    "moves": {
+      "liquidation": 20,
+      "flip-turn": 20,
+      "waterfall": 20,
+      "protect": 10,
+      "ice-beam": 10,
+      "ice-spinner": 10,
+      "aqua-jet": 10
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "glimmora": {
+    "usage": 4.9,
+    "moves": {
+      "spiky-shield": 50,
+      "mortal-spin": 30,
+      "sludge-wave": 10,
+      "earth-power": 10,
+      "power-gem": 10,
+      "sludge-bomb": 10
+    },
+    "items": {
+      "focus-sash": 20
+    },
+    "abilities": {}
+  },
+  "palafin": {
+    "usage": 4.4,
+    "moves": {
+      "flip-turn": 66.7,
+      "protect": 33.3,
+      "wave-crash": 11.1
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "orthworm": {
+    "usage": 4.4,
+    "moves": {
+      "shed-tail": 22.2,
+      "iron-defense": 22.2,
+      "body-press": 11.1,
+      "heavy-slam": 11.1
+    },
+    "items": {
+      "sitrus-berry": 11.1
+    },
+    "abilities": {}
+  },
+  "lucario": {
+    "usage": 4.4,
+    "moves": {
+      "bullet-punch": 11.1,
+      "calm-mind": 11.1,
+      "aura-sphere": 11.1,
+      "extreme-speed": 11.1
+    },
+    "items": {},
+    "abilities": {
+      "justified": 11.1
+    }
+  },
+  "torkoal": {
+    "usage": 4.4,
+    "moves": {
+      "eruption": 55.6,
+      "protect": 33.3,
+      "heat-wave": 11.1,
+      "yawn": 11.1,
+      "weather-ball": 11.1
+    },
+    "items": {
+      "charcoal": 11.1
+    },
+    "abilities": {}
+  },
+  "hydreigon": {
+    "usage": 3.9,
+    "moves": {
+      "protect": 37.5,
+      "dark-pulse": 37.5,
+      "snarl": 25,
+      "tailwind": 12.5,
+      "taunt": 12.5
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "talonflame": {
+    "usage": 3.9,
+    "moves": {
+      "tailwind": 62.5,
+      "brave-bird": 12.5,
+      "flare-blitz": 12.5,
+      "protect": 12.5,
+      "acrobatics": 12.5,
+      "sunny-day": 12.5
+    },
+    "items": {
+      "focus-sash": 12.5
+    },
+    "abilities": {}
+  },
+  "clefable": {
+    "usage": 3.9,
+    "moves": {
+      "follow-me": 37.5,
+      "moonblast": 25,
+      "helping-hand": 12.5,
+      "protect": 12.5
+    },
+    "items": {
+      "sitrus-berry": 25
+    },
+    "abilities": {}
+  },
+  "maushold-four": {
+    "usage": 3.9,
+    "moves": {
+      "follow-me": 25,
+      "beat-up": 12.5,
+      "super-fang": 12.5,
+      "helping-hand": 12.5,
+      "protect": 12.5,
+      "encore": 12.5
+    },
+    "items": {
+      "focus-sash": 12.5
+    },
+    "abilities": {}
+  },
+  "primarina": {
+    "usage": 3.4,
+    "moves": {
+      "moonblast": 28.6,
+      "hyper-voice": 28.6,
+      "protect": 28.6
+    },
+    "items": {
+      "sitrus-berry": 14.3
+    },
+    "abilities": {}
+  },
+  "meowstic-male": {
+    "usage": 3.4,
+    "moves": {
+      "psychic-terrain": 57.1,
+      "gravity": 42.9,
+      "fake-out": 28.6,
+      "protect": 14.3,
+      "light-screen": 14.3,
+      "psychic-noise": 14.3,
+      "trick-room": 14.3
+    },
+    "items": {
+      "focus-sash": 14.3
+    },
+    "abilities": {}
+  },
+  "toxapex": {
+    "usage": 3.4,
+    "moves": {
+      "toxic": 28.6,
+      "baneful-bunker": 28.6,
+      "wide-guard": 28.6,
+      "infestation": 28.6
+    },
+    "items": {
+      "sitrus-berry": 14.3
+    },
+    "abilities": {}
+  },
+  "araquanid": {
+    "usage": 2.9,
+    "moves": {
+      "leech-life": 50,
+      "liquidation": 50,
+      "wide-guard": 33.3,
+      "sticky-web": 16.7,
+      "protect": 16.7
+    },
+    "items": {
+      "sitrus-berry": 33.3
+    },
+    "abilities": {}
+  },
+  "lopunny": {
+    "usage": 2.9,
+    "moves": {
+      "drain-punch": 33.3,
+      "fake-out": 16.7,
+      "u-turn": 16.7,
+      "high-jump-kick": 16.7,
+      "cotton-guard": 16.7,
+      "swords-dance": 16.7
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "excadrill": {
+    "usage": 2.9,
+    "moves": {
+      "earthquake": 33.3,
+      "rock-slide": 33.3,
+      "protect": 16.7,
+      "iron-head": 16.7
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "gallade": {
+    "usage": 2.9,
+    "moves": {
+      "psycho-cut": 50,
+      "x-scissor": 16.7,
+      "protect": 16.7
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "conkeldurr": {
+    "usage": 2.5,
+    "moves": {
+      "protect": 20,
+      "ice-punch": 20,
+      "drain-punch": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "mimikyu": {
+    "usage": 2.5,
+    "moves": {
+      "play-rough": 60,
+      "shadow-sneak": 40,
+      "shadow-claw": 40,
+      "trick-room": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "greninja": {
+    "usage": 2.5,
+    "moves": {
+      "u-turn": 40,
+      "extrasensory": 20,
+      "water-shuriken": 20,
+      "dark-pulse": 20,
+      "protect": 20,
+      "blizzard": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "maushold": {
+    "usage": 2.5,
+    "moves": {
+      "protect": 40,
+      "follow-me": 20,
+      "helping-hand": 20
+    },
+    "items": {
+      "sitrus-berry": 40
+    },
+    "abilities": {}
+  },
+  "gardevoir": {
+    "usage": 2.5,
+    "moves": {
+      "hyper-voice": 60,
+      "protect": 20,
+      "aura-sphere": 20,
+      "calm-mind": 20
+    },
+    "items": {},
+    "abilities": {
+      "lightning-rod": 20,
+      "clear-body": 20,
+      "flash-fire": 20
+    }
+  },
+  "tsareena": {
+    "usage": 2.5,
+    "moves": {
+      "triple-axel": 40,
+      "helping-hand": 20,
+      "trop-kick": 20,
+      "protect": 20
+    },
+    "items": {
+      "sitrus-berry": 40
+    },
+    "abilities": {}
+  },
+  "snorlax": {
+    "usage": 2.5,
+    "moves": {
+      "body-slam": 20,
+      "curse": 20,
+      "rest": 20,
+      "sleep-talk": 20,
+      "rock-tomb": 20,
+      "rock-slide": 20,
+      "high-horsepower": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "mamoswine": {
+    "usage": 2.5,
+    "moves": {
+      "icicle-crash": 40,
+      "high-horsepower": 40,
+      "curse": 20,
+      "protect": 20,
+      "ice-shard": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "manectric": {
+    "usage": 2.5,
+    "moves": {
+      "protect": 40,
+      "volt-switch": 40,
+      "flamethrower": 20,
+      "thunderbolt": 20
+    },
+    "items": {},
+    "abilities": {
+      "intimidate": 60
+    }
+  },
+  "blastoise": {
+    "usage": 2.5,
+    "moves": {
+      "water-spout": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "meowscarada": {
+    "usage": 2.5,
+    "moves": {
+      "protect": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "slowking-galar": {
+    "usage": 2.5,
+    "moves": {
+      "trick-room": 60,
+      "sludge-bomb": 60,
+      "grass-knot": 40,
+      "swagger": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "gyarados": {
+    "usage": 2.5,
+    "moves": {
+      "waterfall": 40,
+      "earthquake": 20,
+      "crunch": 20,
+      "protect": 20,
+      "helping-hand": 20,
+      "taunt": 20
+    },
+    "items": {
+      "gyaradosite": 20
+    },
+    "abilities": {
+      "intimidate": 60
+    }
+  },
+  "scizor": {
+    "usage": 2.5,
+    "moves": {
+      "bullet-punch": 40,
+      "swords-dance": 40,
+      "protect": 40,
+      "bug-bite": 20
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "oranguru": {
+    "usage": 2,
+    "moves": {
+      "trick-room": 50,
+      "instruct": 50,
+      "protect": 25,
+      "encore": 25,
+      "psychic": 25
+    },
+    "items": {
+      "colbur-berry": 25
+    },
+    "abilities": {}
+  },
+  "kommo-o": {
+    "usage": 2,
+    "moves": {
+      "protect": 25,
+      "clangorous-soul": 25,
+      "aura-sphere": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "drampa": {
+    "usage": 2,
+    "moves": {
+      "hyper-voice": 50,
+      "protect": 50,
+      "calm-mind": 25
+    },
+    "items": {
+      "sitrus-berry": 25
+    },
+    "abilities": {
+      "cloud-nine": 25
+    }
+  },
+  "aggron": {
+    "usage": 2,
+    "moves": {
+      "body-press": 50,
+      "iron-defense": 50,
+      "heavy-slam": 25,
+      "protect": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "hatterene": {
+    "usage": 2,
+    "moves": {
+      "trick-room": 50,
+      "psychic": 25,
+      "protect": 25,
+      "mystical-fire": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "tinkaton": {
+    "usage": 2,
+    "moves": {
+      "fake-out": 50,
+      "gigaton-hammer": 50,
+      "protect": 25,
+      "encore": 25
+    },
+    "items": {
+      "metal-coat": 25
+    },
+    "abilities": {
+      "mold-breaker": 25
+    }
+  },
+  "salazzle": {
+    "usage": 2,
+    "moves": {
+      "toxic": 50,
+      "fake-out": 25,
+      "dragon-cheer": 25,
+      "flamethrower": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "heliolisk": {
+    "usage": 2,
+    "moves": {
+      "electroweb": 25,
+      "weather-ball": 25,
+      "volt-switch": 25,
+      "protect": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "goodra-hisui": {
+    "usage": 2,
+    "moves": {
+      "heavy-slam": 50,
+      "life-dew": 50,
+      "shelter": 25,
+      "body-press": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "arcanine-hisui": {
+    "usage": 2,
+    "moves": {
+      "rock-slide": 25,
+      "protect": 25,
+      "flare-blitz": 25
+    },
+    "items": {
+      "passho-berry": 25
+    },
+    "abilities": {
+      "intimidate": 25
+    }
+  },
+  "chesnaught": {
+    "usage": 2,
+    "moves": {
+      "knock-off": 25,
+      "body-press": 25,
+      "wood-hammer": 25,
+      "spiky-shield": 25,
+      "drain-punch": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "azumarill": {
+    "usage": 2,
+    "moves": {
+      "play-rough": 50,
+      "aqua-jet": 25,
+      "ice-spinner": 25,
+      "protect": 25
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "chandelure": {
+    "usage": 2,
+    "moves": {
+      "shadow-ball": 75
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "armarouge": {
+    "usage": 1.5,
+    "moves": {
+      "trick-room": 66.7,
+      "armor-cannon": 66.7,
+      "will-o-wisp": 33.3,
+      "protect": 33.3
+    },
+    "items": {
+      "charcoal": 33.3,
+      "white-herb": 33.3
+    },
+    "abilities": {
+      "weak-armor": 33.3
+    }
+  },
+  "volcarona": {
+    "usage": 1.5,
+    "moves": {
+      "quiver-dance": 33.3,
+      "fiery-dance": 33.3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "zoroark-hisui": {
+    "usage": 1.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "lycanroc-dusk": {
+    "usage": 1.5,
+    "moves": {
+      "drill-run": 33.3,
+      "crunch": 33.3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "wyrdeer": {
+    "usage": 1.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "absol": {
+    "usage": 1.5,
+    "moves": {
+      "protect": 66.7,
+      "close-combat": 66.7,
+      "sucker-punch": 66.7,
+      "knock-off": 66.7,
+      "night-slash": 33.3
+    },
+    "items": {},
+    "abilities": {
+      "justified": 33.3
+    }
+  },
+  "gliscor": {
+    "usage": 1.5,
+    "moves": {
+      "mud-slap": 33.3,
+      "toxic": 33.3,
+      "tailwind": 33.3,
+      "dual-wingbeat": 33.3
+    },
+    "items": {
+      "bright-powder": 33.3,
+      "yache-berry": 33.3
+    },
+    "abilities": {}
+  },
+  "rotom-mow": {
+    "usage": 1.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "reuniclus": {
+    "usage": 1.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "golurk": {
+    "usage": 1.5,
+    "moves": {
+      "poltergeist": 66.7,
+      "protect": 66.7
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "meowstic-female": {
+    "usage": 1.5,
+    "moves": {
+      "expanding-force": 33.3,
+      "dark-pulse": 33.3,
+      "protect": 33.3
+    },
+    "items": {},
+    "abilities": {
+      "unnerve": 33.3
+    }
+  },
+  "klefki": {
+    "usage": 1.5,
+    "moves": {
+      "rain-dance": 33.3,
+      "calm-mind": 33.3
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "rotom-frost": {
+    "usage": 1,
+    "moves": {
+      "volt-switch": 100,
+      "electroweb": 50,
+      "protect": 50,
+      "thunderbolt": 50,
+      "blizzard": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "crabominable": {
+    "usage": 1,
+    "moves": {
+      "close-combat": 100,
+      "thunder-punch": 50,
+      "protect": 50,
+      "rock-slide": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "chimecho": {
+    "usage": 1,
+    "moves": {
+      "cosmic-power": 50,
+      "dazzling-gleam": 50,
+      "stored-power": 50,
+      "recover": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "luxray": {
+    "usage": 1,
+    "moves": {},
+    "items": {
+      "focus-sash": 50
+    },
+    "abilities": {
+      "intimidate": 50
+    }
+  },
+  "vaporeon": {
+    "usage": 1,
+    "moves": {
+      "scald": 100,
+      "wish": 100,
+      "protect": 100,
+      "yawn": 50,
+      "roar": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "basculegion-female": {
+    "usage": 1,
+    "moves": {
+      "icy-wind": 50,
+      "hydro-pump": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "machamp": {
+    "usage": 1,
+    "moves": {
+      "cross-chop": 50,
+      "stone-edge": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "slowbro": {
+    "usage": 1,
+    "moves": {
+      "scald": 50,
+      "trick-room": 50,
+      "slack-off": 50,
+      "psychic": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "krookodile": {
+    "usage": 1,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "sylveon": {
+    "usage": 1,
+    "moves": {
+      "hyper-voice": 100,
+      "substitute": 50,
+      "detect": 50,
+      "protect": 50,
+      "mystical-fire": 50,
+      "round": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "banette": {
+    "usage": 1,
+    "moves": {
+      "knock-off": 100,
+      "encore": 50,
+      "destiny-bond": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "mudsdale": {
+    "usage": 1,
+    "moves": {
+      "high-horsepower": 50,
+      "protect": 50,
+      "rock-slide": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "typhlosion-hisui": {
+    "usage": 1,
+    "moves": {
+      "eruption": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "sharpedo": {
+    "usage": 1,
+    "moves": {
+      "liquidation": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "arcanine": {
+    "usage": 1,
+    "moves": {
+      "will-o-wisp": 50,
+      "flamethrower": 50
+    },
+    "items": {
+      "passho-berry": 50
+    },
+    "abilities": {
+      "intimidate": 50
+    }
+  },
+  "pikachu": {
+    "usage": 1,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "vanilluxe": {
+    "usage": 1,
+    "moves": {
+      "aurora-veil": 50,
+      "freeze-dry": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "infernape": {
+    "usage": 1,
+    "moves": {
+      "focus-energy": 50,
+      "drain-punch": 50,
+      "protect": 50
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "beedrill": {
+    "usage": 0.5,
+    "moves": {
+      "swords-dance": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "noivern": {
+    "usage": 0.5,
+    "moves": {
+      "tailwind": 100,
+      "super-fang": 100,
+      "protect": 100,
+      "taunt": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "slowking": {
+    "usage": 0.5,
+    "moves": {
+      "chilly-reception": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "camerupt": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "dedenne": {
+    "usage": 0.5,
+    "moves": {
+      "protect": 100,
+      "electroweb": 100
+    },
+    "items": {
+      "focus-sash": 100
+    },
+    "abilities": {}
+  },
+  "glaceon": {
+    "usage": 0.5,
+    "moves": {
+      "chilling-water": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "decidueye": {
+    "usage": 0.5,
+    "moves": {
+      "leaf-blade": 100,
+      "poltergeist": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "aromatisse": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "spiritomb": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "abomasnow": {
+    "usage": 0.5,
+    "moves": {
+      "blizzard": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "castform": {
+    "usage": 0.5,
+    "moves": {
+      "weather-ball": 100,
+      "protect": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "hydrapple": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "espathra": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "skeledirge": {
+    "usage": 0.5,
+    "moves": {
+      "torch-song": 100,
+      "protect": 100,
+      "slack-off": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "toucannon": {
+    "usage": 0.5,
+    "moves": {
+      "rock-blast": 100,
+      "bullet-seed": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "flapple": {
+    "usage": 0.5,
+    "moves": {
+      "grav-apple": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "beartic": {
+    "usage": 0.5,
+    "moves": {
+      "rock-slide": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "toxicroak": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "rotom-fan": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "skarmory": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "pinsir": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  },
+  "weavile": {
+    "usage": 0.5,
+    "moves": {
+      "fake-out": 100,
+      "triple-axel": 100,
+      "psycho-cut": 100
+    },
+    "items": {
+      "focus-sash": 100
+    },
+    "abilities": {}
+  },
+  "liepard": {
+    "usage": 0.5,
+    "moves": {
+      "fake-out": 100,
+      "rain-dance": 100,
+      "yawn": 100,
+      "foul-play": 100
+    },
+    "items": {},
+    "abilities": {}
+  },
+  "decidueye-hisui": {
+    "usage": 0.5,
+    "moves": {},
+    "items": {},
+    "abilities": {}
+  }
+}

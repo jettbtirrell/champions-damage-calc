@@ -4,6 +4,8 @@ import { NATURES } from './natures';
 export function toApiName(displayName) {
   return displayName
     .toLowerCase()
+    .replace(/\s*\(m\)\s*$/i, '-male')
+    .replace(/\s*\(f\)\s*$/i, '-female')
     .replace(/['.]/g, '')
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
@@ -12,6 +14,8 @@ export function toApiName(displayName) {
 // Convert PokeAPI name "giga-drain" → display "Giga Drain"
 export function toDisplayName(apiName) {
   return apiName
+    .replace(/-male$/, ' (M)')
+    .replace(/-female$/, ' (F)')
     .split('-')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
