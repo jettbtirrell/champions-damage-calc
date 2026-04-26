@@ -38,7 +38,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
         const rows = attacker.moves.map(move => {
           const isPhysical = move.category === 'physical';
           const isSpecial = move.category === 'special';
-          const effMove = getEffectiveMove(move, attacker.ability);
+          const effMove = getEffectiveMove(move, attacker.ability, weather);
           if (!isPhysical && !isSpecial) {
             return { move, effMove, result: { minDmg: 0, maxDmg: 0, noEffect: true } };
           }

@@ -11,7 +11,7 @@ const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' 
 const BOOST_STATS = [{ key: 'atk', label: 'Atk' }, { key: 'spa', label: 'SpA' }];
 const BOOST_STAGES = [0, 1, 2, 3, 4, 5, 6];
 
-export default function AttackerCard({ attacker, onChange, onRemove, pokemonData, movesData, index }) {
+export default function AttackerCard({ attacker, onChange, onRemove, pokemonData, movesData, index, weather }) {
   const { pokemon, nature, statPoints, moves, burned, boosts = {} } = attacker;
 
   function update(patch) { onChange({ ...attacker, ...patch }); }
@@ -110,7 +110,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
             <div className="text-xs text-gray-500 mb-1.5">Moves</div>
             <div className="space-y-1 mb-1.5">
               {moves.map((move, i) => {
-                const eff = getEffectiveMove(move, attacker.ability);
+                const eff = getEffectiveMove(move, attacker.ability, weather);
                 const typeChanged = eff.type !== move.type;
                 const powerChanged = eff.power !== move.power;
                 return (

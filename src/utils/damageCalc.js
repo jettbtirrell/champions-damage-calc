@@ -46,11 +46,21 @@ function applyAbility(ability, moveName, moveType, moveCategory, bp, atk, attack
   return { moveType: effectiveMoveType, bp: effectiveBp, atk: effectiveAtk, stabMultiplier };
 }
 
+const WEATHER_BALL_TYPE = { sun: 'fire', rain: 'water', sand: 'rock', snow: 'ice' };
+
 export function calcDamage({ bp, atk, def, moveName, attackerTypes, moveType, moveCategory, defenderTypes, ability, burned, weather, item }) {
   if (!bp || bp === 0) return { minDmg: 0, maxDmg: 0, immune: false, noEffect: true };
 
+  // Weather Ball transforms type and doubles BP under active weather
+  let effectiveMoveType0 = moveType;
+  let effectiveBp0 = bp;
+  if (moveName === 'weather-ball' && weather && weather !== 'none') {
+    effectiveMoveType0 = WEATHER_BALL_TYPE[weather] ?? moveType;
+    effectiveBp0 = 100;
+  }
+
   const { moveType: effectiveMoveType, bp: effectiveBp, atk: effectiveAtk, stabMultiplier } =
-    applyAbility(ability, moveName, moveType, moveCategory, bp, atk, attackerTypes);
+    applyAbility(ability, moveName, effectiveMoveType0, moveCategory, effectiveBp0, atk, attackerTypes);
 
   // Type-boosting item: ×1.2 when item type matches effective move type
   const itemDef = item ? ITEMS[item] : null;

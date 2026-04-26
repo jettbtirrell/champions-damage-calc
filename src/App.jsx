@@ -187,6 +187,7 @@ export default function App() {
                 index={i}
                 pokemonData={filteredPokemon}
                 movesData={movesData}
+                weather={weather}
                 onChange={patch => updateAttacker(a.id, patch)}
                 onRemove={() => removeAttacker(a.id)}
               />

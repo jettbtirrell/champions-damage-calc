@@ -52,15 +52,26 @@ export const RECOIL_MOVES = new Set([
   'wild-charge','wood-hammer','chloroblast','supercell-slam',
 ]);
 
-// Returns { type, power } after applying ability type-change effects for display purposes.
-export function getEffectiveMove(move, ability) {
-  const def = ABILITIES[ability];
-  if (!def?.ate) return { type: move.type, power: move.power };
-  const { to, boost, allMoves } = def.ate;
-  if (allMoves || move.type === 'normal') {
-    return { type: to, power: boost !== 1 ? Math.floor(move.power * boost) : move.power };
+const WEATHER_BALL_TYPE = { sun: 'fire', rain: 'water', sand: 'rock', snow: 'ice' };
+
+// Returns { type, power } after applying weather-ball and ability type-change effects for display purposes.
+export function getEffectiveMove(move, ability, weather = 'none') {
+  let type = move.type;
+  let power = move.power;
+
+  // Weather Ball: type and power depend on active weather
+  if (move.name === 'weather-ball' && weather && weather !== 'none') {
+    type = WEATHER_BALL_TYPE[weather] ?? type;
+    power = 100;
   }
-  return { type: move.type, power: move.power };
+
+  const def = ABILITIES[ability];
+  if (!def?.ate) return { type, power };
+  const { to, boost, allMoves } = def.ate;
+  if (allMoves || type === 'normal') {
+    return { type: to, power: boost !== 1 ? Math.floor(power * boost) : power };
+  }
+  return { type, power };
 }
 
 // Human-readable labels for the ability selector
