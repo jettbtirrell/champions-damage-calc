@@ -9,6 +9,8 @@ import PokemonSearch from './components/PokemonSearch';
 import CoverageTab from './components/CoverageTab';
 import SpeedTab from './components/SpeedTab';
 import MetaTab from './components/MetaTab';
+import RolesTab from './components/RolesTab';
+import TestCasesTab from './components/TestCasesTab';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
@@ -86,7 +88,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">Pokémin-max</span>
           <div className="flex gap-1">
-            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['meta', 'Meta']].map(([key, label]) => (
+            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
@@ -140,6 +142,12 @@ export default function App() {
       )}
       {tab === 'speed' && (
         <SpeedTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
+      )}
+      {tab === 'roles' && (
+        <RolesTab attackers={attackers} defenders={defenders} />
+      )}
+      {tab === 'tests' && (
+        <TestCasesTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
       )}
       {tab === 'meta' && (
         <MetaTab pokemonData={filteredPokemon} onAddDefender={p => { setDefenders(prev => [{ ...makeDefender(), pokemon: p }, ...prev]); setTab('calc'); }} />
