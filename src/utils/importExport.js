@@ -1,4 +1,5 @@
 import { NATURES } from './natures';
+import { ITEMS } from '../data/items';
 
 // Convert display name like "Giga Drain" → PokeAPI name "giga-drain"
 export function toApiName(displayName) {
@@ -32,7 +33,7 @@ export function parseSingleSet(text, pokemonData, movesData) {
   const [namePart, itemPart] = lines[0].split('@');
   const rawName = namePart.trim();
   const apiName = toApiName(rawName);
-  const item = itemPart?.trim() || null;
+  const item = itemPart ? toApiName(itemPart.trim()) : null;
 
   const pokemon = pokemonData.find(p => p.name === apiName) || null;
 
@@ -44,7 +45,7 @@ export function parseSingleSet(text, pokemonData, movesData) {
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     if (line.startsWith('Ability:')) {
-      ability = line.slice(8).trim();
+      ability = toApiName(line.slice(8).trim());
     } else if (line.startsWith('EVs:') || line.startsWith('IVs:')) {
       const parts = line.slice(4).split('/');
       for (const part of parts) {
@@ -89,8 +90,9 @@ export function exportSingleSet(mon) {
   if (!pokemon) return '';
 
   const displayName = toDisplayName(pokemon.name);
-  const lines = [item ? `${displayName} @ ${item}` : displayName];
-  if (ability) lines.push(`Ability: ${ability}`);
+  const itemLabel = item ? (ITEMS[item]?.label ?? toDisplayName(item)) : null;
+  const lines = [itemLabel ? `${displayName} @ ${itemLabel}` : displayName];
+  if (ability) lines.push(`Ability: ${toDisplayName(ability)}`);
   lines.push('Level: 50');
 
   const evParts = Object.entries(statPoints)

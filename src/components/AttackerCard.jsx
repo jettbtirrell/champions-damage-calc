@@ -2,7 +2,7 @@ import { NATURES, natureLabel } from '../utils/natures';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import { ABILITY_LABELS, getEffectiveMove } from '../data/abilities';
-import { ITEMS, TYPE_BOOST_ITEMS } from '../data/items';
+import { ITEMS, ITEM_GROUPS } from '../data/items';
 import PokemonSearch from './PokemonSearch';
 import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
@@ -153,14 +153,13 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
                 className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
-                <optgroup label="Type Boosters (×1.2)">
-                  {TYPE_BOOST_ITEMS.map(k => (
-                    <option key={k} value={k}>{ITEMS[k].label}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="Choice Items">
-                  <option value="choice-scarf">Choice Scarf</option>
-                </optgroup>
+                {ITEM_GROUPS.map(group => (
+                  <optgroup key={group.label} label={group.label}>
+                    {group.keys.map(k => (
+                      <option key={k} value={k}>{ITEMS[k].label}</option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
             </div>
             <div className="flex-1">

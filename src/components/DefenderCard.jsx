@@ -3,7 +3,8 @@ import { NATURES, natureLabel } from '../utils/natures';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { getEffectiveMove } from '../data/abilities';
-import { ITEMS } from '../data/items';
+import { ITEMS, ITEM_GROUPS } from '../data/items';
+import { ABILITY_LABELS } from '../data/abilities';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import PokemonSearch from './PokemonSearch';
@@ -121,6 +122,40 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               nature={nature}
               onChange={sp => update({ statPoints: sp })}
             />
+          </div>
+
+          {/* Item + Ability */}
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label className="text-xs text-gray-400 block mb-1">Item</label>
+              <select
+                value={defender.item || ''}
+                onChange={e => update({ item: e.target.value || null })}
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="">None</option>
+                {ITEM_GROUPS.map(group => (
+                  <optgroup key={group.label} label={group.label}>
+                    {group.keys.map(k => (
+                      <option key={k} value={k}>{ITEMS[k].label}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1">
+              <label className="text-xs text-gray-400 block mb-1">Ability</label>
+              <select
+                value={defender.ability || ''}
+                onChange={e => update({ ability: e.target.value || null })}
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="">None</option>
+                {Object.entries(ABILITY_LABELS).map(([key, label]) => (
+                  <option key={key} value={key}>{label}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5 flex-wrap">
