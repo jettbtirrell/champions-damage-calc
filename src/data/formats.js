@@ -59,22 +59,22 @@ const MA_NAMES = new Set([
   'palafin-zero','palafin-hero',
   'maushold-family-of-three','maushold-family-of-four',
 
-  // Mega Evolutions of legal base species
+  // Mega Evolutions — only those with a stone available in Champions
   'venusaur-mega','charizard-mega-x','charizard-mega-y','blastoise-mega',
   'beedrill-mega','pidgeot-mega','alakazam-mega','slowbro-mega','gengar-mega',
   'kangaskhan-mega','pinsir-mega','gyarados-mega','aerodactyl-mega',
   'meganium-mega','feraligatr-mega','ampharos-mega','steelix-mega','scizor-mega',
   'heracross-mega','houndoom-mega','tyranitar-mega','gardevoir-mega',
   'sableye-mega','aggron-mega','medicham-mega','manectric-mega','sharpedo-mega',
-  'camerupt-mega','altaria-mega','banette-mega','absol-mega','absol-mega-z',
-  'glalie-mega','garchomp-mega','garchomp-mega-z','lucario-mega','lucario-mega-z',
+  'camerupt-mega','altaria-mega','banette-mega','absol-mega',
+  'glalie-mega','garchomp-mega','lucario-mega',
   'abomasnow-mega','lopunny-mega','gallade-mega','audino-mega','excadrill-mega',
-  'chandelure-mega','golurk-mega','hydreigon-mega','volcarona-mega',
+  'chandelure-mega','golurk-mega',
   'chesnaught-mega','delphox-mega','greninja-mega','clefable-mega',
-  'victreebel-mega','chimecho-mega','goodra-mega','trevenant-mega','noivern-mega',
+  'victreebel-mega','chimecho-mega',
   'dragonite-mega','drampa-mega','scovillain-mega','glimmora-mega',
   'emboar-mega','froslass-mega','skarmory-mega','starmie-mega',
-  'hawlucha-mega','crabominable-mega','raichu-mega-x','raichu-mega-y',
+  'hawlucha-mega','crabominable-mega',
   'meowstic-mega','floette-mega',
 ]);
 
