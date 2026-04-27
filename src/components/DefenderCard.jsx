@@ -5,6 +5,7 @@ import { calcDamage } from '../utils/damageCalc';
 import { getEffectiveMove } from '../data/abilities';
 import { ITEMS, ITEM_GROUPS } from '../data/items';
 import { ABILITY_LABELS } from '../data/abilities';
+import pokemonAbilities from '../data/pokemonAbilities.json';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import PokemonSearch from './PokemonSearch';
@@ -151,9 +152,20 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                 className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
-                {Object.entries(ABILITY_LABELS).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
-                ))}
+                {(() => {
+                  const ownKeys = pokemon ? (pokemonAbilities[pokemon.name] || []) : [];
+                  const otherKeys = Object.keys(ABILITY_LABELS).filter(k => !ownKeys.includes(k));
+                  return (<>
+                    {ownKeys.length > 0 && (
+                      <optgroup label={`${pokemon.name.charAt(0).toUpperCase()+pokemon.name.slice(1)} abilities`}>
+                        {ownKeys.map(k => <option key={k} value={k}>{ABILITY_LABELS[k] ?? k}</option>)}
+                      </optgroup>
+                    )}
+                    <optgroup label="All abilities">
+                      {otherKeys.map(k => <option key={k} value={k}>{ABILITY_LABELS[k]}</option>)}
+                    </optgroup>
+                  </>);
+                })()}
               </select>
             </div>
           </div>
