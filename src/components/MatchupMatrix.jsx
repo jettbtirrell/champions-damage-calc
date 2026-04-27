@@ -18,7 +18,13 @@ function bestResult(attacker, defender, weather) {
   const boostedSpa = applyBoost(atkStats.spa, atkBoosts.spa || 0);
 
   const defStats = calcAllStats(defender.pokemon, defender.statPoints, defender.nature);
+  const defBoosts = defender.boosts || {};
   const wDef = applyWeatherDef(defStats, defender.pokemon.types, weather);
+  const boostedWDef = {
+    ...wDef,
+    def: applyBoost(wDef.def, defBoosts.def || 0),
+    spd: applyBoost(wDef.spd, defBoosts.spd || 0),
+  };
 
   let best = null;
   let anyImmune = false;
@@ -27,7 +33,7 @@ function bestResult(attacker, defender, weather) {
     if (move.category === 'status' || !move.power) continue;
     const isPhysical = move.category === 'physical';
     const atk = isPhysical ? boostedAtk : boostedSpa;
-    const def = isPhysical ? wDef.def : wDef.spd;
+    const def = isPhysical ? boostedWDef.def : boostedWDef.spd;
 
     const result = calcDamage({
       bp: move.power,

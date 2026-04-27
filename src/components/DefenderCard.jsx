@@ -16,6 +16,8 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
   const { pokemon, nature, statPoints } = defender;
   const defStats = calcAllStats(pokemon, statPoints, nature);
 
+  const defBoosts = defender.boosts || {};
+
   const weatherDef = useMemo(() => {
     if (!pokemon) return defStats;
     const types = pokemon.types;
@@ -23,8 +25,13 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
       ? Math.floor(defStats.spd * 1.5) : defStats.spd;
     const boostedDef = (weather === 'snow' && types.includes('ice'))
       ? Math.floor(defStats.def * 1.5) : defStats.def;
-    return { ...defStats, def: boostedDef, spd: boostedSpd };
-  }, [pokemon, defStats, weather]);
+    const withBoosts = {
+      ...defStats,
+      def: applyBoost(boostedDef, defBoosts.def || 0),
+      spd: applyBoost(boostedSpd, defBoosts.spd || 0),
+    };
+    return withBoosts;
+  }, [pokemon, defStats, weather, defBoosts]);
 
   function update(patch) { onChange({ ...defender, ...patch }); }
 
@@ -123,6 +130,33 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               nature={nature}
               onChange={sp => update({ statPoints: sp })}
             />
+          </div>
+
+          {/* Stat boosts */}
+          <div>
+            <div className="text-xs text-gray-500 mb-1.5">Boosts</div>
+            <div className="space-y-1">
+              {[{ key: 'def', label: 'Def' }, { key: 'spd', label: 'SpD' }].map(({ key, label }) => (
+                <div key={key} className="flex items-center gap-1.5">
+                  <span className="text-xs text-gray-400 w-8 shrink-0">{label}</span>
+                  <div className="flex gap-0.5">
+                    {[0, 1, 2, 3, 4, 5, 6].map(stage => (
+                      <button
+                        key={stage}
+                        onClick={() => update({ boosts: { ...defBoosts, [key]: stage } })}
+                        className={`w-7 py-0.5 text-xs rounded transition-colors ${
+                          (defBoosts[key] || 0) === stage
+                            ? 'bg-blue-600 text-white font-medium'
+                            : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                        }`}
+                      >
+                        {stage === 0 ? '—' : `+${stage}`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Item + Ability */}
