@@ -11,6 +11,7 @@ import SpeedTab from './components/SpeedTab';
 import MetaTab from './components/MetaTab';
 import RolesTab from './components/RolesTab';
 import TestCasesTab from './components/TestCasesTab';
+import MatchupMatrix from './components/MatchupMatrix';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
@@ -88,7 +89,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">Pokémin-max</span>
           <div className="flex gap-1">
-            {[['calc', 'Calculator'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
+            {[['calc', 'Calculator'], ['matrix', 'Matrix'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
@@ -134,6 +135,9 @@ export default function App() {
         </div>
       </header>
 
+      {tab === 'matrix' && (
+        <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
+      )}
       {tab === 'types' && (
         <TypeChartTab attackers={attackers} defenders={defenders} />
       )}
@@ -154,7 +158,7 @@ export default function App() {
       )}
 
       {/* Main panels */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 57px)', display: tab === 'calc' ? undefined : 'none' }}>
+      <main className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 57px)', display: (tab === 'calc') ? undefined : 'none' }}>
         {/* Attackers panel */}
         <section className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
           <div className="bg-gray-900 border-b border-gray-800 shrink-0">
