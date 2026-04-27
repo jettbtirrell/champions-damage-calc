@@ -130,10 +130,7 @@ function TypeGrid({ team, label }) {
 export default function TypeChartTab({ attackers, defenders }) {
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      <p className="text-xs text-gray-600 mb-5">
-        Defensive type matchups — how much damage each attacking type deals to each Pokémon. Neutral (1×) cells are hidden.
-      </p>
-      <TypeGrid team={attackers} label="Attackers" />
+<TypeGrid team={attackers} label="Attackers" />
       <TypeGrid team={defenders} label="Defenders" />
     </div>
   );

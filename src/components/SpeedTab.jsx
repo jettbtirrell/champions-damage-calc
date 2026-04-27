@@ -188,7 +188,6 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
     <div className="border border-gray-700 rounded-lg bg-gray-950 overflow-hidden mt-4">
       <div className="px-3 py-2 border-b border-gray-800 flex items-center gap-3">
         <span className="text-xs font-semibold text-gray-400">Speed Chart</span>
-        <span className="text-xs text-gray-600">fastest → slowest, top to bottom</span>
       </div>
 
       {/* Column headers */}

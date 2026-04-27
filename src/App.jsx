@@ -14,7 +14,7 @@ import TestCasesTab from './components/TestCasesTab';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
-const WEATHER_LABELS  = { none: '—', sun: '☀ Sun', rain: '🌧 Rain', sand: '🌪 Sand', snow: '❄ Snow' };
+const WEATHER_LABELS  = { none: '—', sun: 'Sun', rain: 'Rain', sand: 'Sand', snow: 'Snow' };
 const WEATHER_ACTIVE  = {
   none: 'bg-gray-600 text-white',
   sun:  'bg-orange-600 text-white',
