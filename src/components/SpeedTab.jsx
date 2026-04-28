@@ -6,9 +6,9 @@ import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 
 const GROUP_CONFIG = {
-  faster: { label: 'Faster',  bg: '#450a0a', text: '#fca5a5' },
-  tied:   { label: 'Tied',    bg: '#3d3200', text: '#fde68a' },
-  slower: { label: 'Slower',  bg: '#052e16', text: '#86efac' },
+  faster: { label: 'Faster',  bg: 'var(--acc-red-bg)',   text: 'var(--acc-red-text)'   },
+  tied:   { label: 'Tied',    bg: 'var(--acc-amber-bg)', text: 'var(--acc-amber-text)' },
+  slower: { label: 'Slower',  bg: 'var(--acc-green-bg)', text: 'var(--acc-green-text)' },
 };
 
 function applyEnemyMods(spe, mods) {

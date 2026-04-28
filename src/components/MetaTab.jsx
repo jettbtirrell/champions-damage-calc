@@ -1,12 +1,27 @@
+import { useState, useCallback } from 'react';
 import metaData from '../data/meta.json';
 import { toDisplayName } from '../utils/importExport';
 import { TYPE_COLORS } from '../data/typeChart';
 
 const TOP_N = 20;
 const TOP_MOVES = 4;
+const ADDED_MS = 1200;
 
-export default function MetaTab({ pokemonData, onAddDefender }) {
+export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
+  const [addedSet, setAddedSet] = useState(new Set());
   const topMon = Object.entries(metaData).slice(0, TOP_N);
+
+  const handleAdd = useCallback((pokemon, metaMoves) => {
+    if (addedSet.has(pokemon.name)) return;
+    const moves = metaMoves
+      .map(name => movesData.find(m => m.name === name))
+      .filter(Boolean);
+    onAddDefender(pokemon, moves);
+    setAddedSet(prev => new Set([...prev, pokemon.name]));
+    setTimeout(() => {
+      setAddedSet(prev => { const next = new Set(prev); next.delete(pokemon.name); return next; });
+    }, ADDED_MS);
+  }, [addedSet, onAddDefender]);
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
@@ -56,14 +71,22 @@ export default function MetaTab({ pokemonData, onAddDefender }) {
                 </div>
               </div>
 
-              {pokemon && (
-                <button
-                  onClick={() => onAddDefender(pokemon)}
-                  className="mt-2 w-full text-xs py-1 rounded bg-gray-800 hover:bg-blue-700 text-gray-400 hover:text-white transition-colors"
-                >
-                  + Add as Defender
-                </button>
-              )}
+              {pokemon && (() => {
+                const added = addedSet.has(pokemon.name);
+                return (
+                  <button
+                    onClick={() => handleAdd(pokemon, Object.keys(data.moves).slice(0, TOP_MOVES))}
+                    disabled={added}
+                    className={`mt-2 w-full text-xs py-1 rounded transition-colors ${
+                      added
+                        ? 'bg-green-800 text-green-300 cursor-default'
+                        : 'bg-gray-800 hover:bg-blue-700 text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {added ? '✓ Added' : '+ Add as Defender'}
+                  </button>
+                );
+              })()}
 
               {/* Move bars */}
               {topMoves.length > 0 && (

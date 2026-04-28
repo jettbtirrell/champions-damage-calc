@@ -47,6 +47,7 @@ export default function App() {
   const [defenders, setDefenders] = useState([]);
   const [weather, setWeather] = useState('none');
   const [format, setFormat] = useState('reg-ma');
+  const [theme, setTheme] = useState('dark');
   const [atkModal, setAtkModal] = useState(false);
   const [defModal, setDefModal] = useState(false);
   const [tab, setTab] = useState('calc');
@@ -83,7 +84,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className={`min-h-screen bg-gray-950 flex flex-col${theme === 'light' ? ' light' : ''}`}>
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-3">
@@ -133,6 +134,13 @@ export default function App() {
             ))}
           </div>
         </div>
+        {/* Theme toggle */}
+        <button
+          onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+          className="text-xs px-2.5 py-1 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-200 transition-colors"
+        >
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
       </header>
 
       {tab === 'matrix' && (
@@ -154,7 +162,7 @@ export default function App() {
         <TestCasesTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
       )}
       {tab === 'meta' && (
-        <MetaTab pokemonData={filteredPokemon} onAddDefender={p => { setDefenders(prev => [{ ...makeDefender(), pokemon: p }, ...prev]); setTab('calc'); }} />
+        <MetaTab pokemonData={filteredPokemon} movesData={movesData} onAddDefender={(p, moves = []) => { setDefenders(prev => [{ ...makeDefender(), pokemon: p, statPoints: { hp: 32, atk: 0, def: 17, spa: 0, spd: 17, spe: 0 }, moves }, ...prev]); }} />
       )}
 
       {/* Main panels */}

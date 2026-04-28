@@ -127,7 +127,7 @@ function MatrixCell({ attacker, defender, weather }) {
     return (
       <td className="p-0.5">
         <div className="flex items-center justify-center border rounded text-xs text-gray-700"
-          style={{ width: CELL_W, height: CELL_H, backgroundColor: '#111', borderColor: '#1f2937' }}>
+          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-empty-bg)', borderColor: 'var(--matrix-empty-border)' }}>
           —
         </div>
       </td>
@@ -138,7 +138,7 @@ function MatrixCell({ attacker, defender, weather }) {
     return (
       <td className="p-0.5">
         <div className="flex items-center justify-center border rounded text-xs text-gray-600"
-          style={{ width: CELL_W, height: CELL_H, backgroundColor: '#1a1a1a', borderColor: '#374151' }}>
+          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-immune-bg)', borderColor: 'var(--matrix-immune-border)' }}>
           Immune
         </div>
       </td>
@@ -183,7 +183,7 @@ export default function MatchupMatrix({ attackers, defenders, weather }) {
     );
   }
 
-  const HEADER_BG = '#111827';
+  const HEADER_BG = 'var(--matrix-header-bg)';
   const VERT_W = 20;
 
   return (

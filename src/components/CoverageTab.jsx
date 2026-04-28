@@ -10,12 +10,12 @@ const ALL_TYPES = [
 ];
 
 const EFF_GROUPS = [
-  { key: 4,    label: '4×',           bg: '#450a0a', text: '#fca5a5', defaultOpen: true  },
-  { key: 2,    label: '2×',           bg: '#7c2d12', text: '#fdba74', defaultOpen: true  },
-  { key: 1,    label: 'Neutral (1×)', bg: '#1f2937', text: '#9ca3af', defaultOpen: false },
-  { key: 0.5,  label: '½×',           bg: '#1e3a8a', text: '#bfdbfe', defaultOpen: false },
-  { key: 0.25, label: '¼×',           bg: '#172554', text: '#93c5fd', defaultOpen: false },
-  { key: 0,    label: 'Immune (0×)',   bg: '#111827', text: '#4b5563', defaultOpen: false },
+  { key: 4,    label: '4×',           bg: 'var(--acc-red-bg)',     text: 'var(--acc-red-text)',     defaultOpen: true  },
+  { key: 2,    label: '2×',           bg: 'var(--acc-orange-bg)',  text: 'var(--acc-orange-text)',  defaultOpen: true  },
+  { key: 1,    label: 'Neutral (1×)', bg: 'var(--acc-neutral-bg)', text: 'var(--acc-neutral-text)', defaultOpen: false },
+  { key: 0.5,  label: '½×',           bg: 'var(--acc-dkblue-bg)', text: 'var(--acc-dkblue-text)',  defaultOpen: false },
+  { key: 0.25, label: '¼×',           bg: 'var(--acc-navy-bg)',    text: 'var(--acc-navy-text)',    defaultOpen: false },
+  { key: 0,    label: 'Immune (0×)',   bg: 'var(--acc-void-bg)',    text: 'var(--acc-void-text)',    defaultOpen: false },
 ];
 
 const GOALS = [
@@ -239,7 +239,7 @@ export default function CoverageTab({ attackers, pokemonData }) {
                   className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded ${
                     i === 0 && !r.alreadyHave ? 'bg-gray-800 ring-1 ring-emerald-700' : 'bg-gray-850 hover:bg-gray-800'
                   }`}
-                  style={i !== 0 || r.alreadyHave ? { backgroundColor: '#111827' } : {}}
+                  style={i !== 0 || r.alreadyHave ? { backgroundColor: 'var(--acc-void-bg)' } : {}}
                 >
                   {/* Rank */}
                   <span className="text-xs text-gray-600 w-4 text-right shrink-0">{i + 1}</span>

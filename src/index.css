@@ -1,5 +1,56 @@
 @import "tailwindcss";
 
+/* ── Accent colour tokens (inline-style targets) ───────────────────────── */
+:root {
+  --acc-red-bg:     #450a0a; --acc-red-text:     #fca5a5;
+  --acc-orange-bg:  #7c2d12; --acc-orange-text:  #fdba74;
+  --acc-amber-bg:   #3d3200; --acc-amber-text:   #fde68a;
+  --acc-green-bg:   #052e16; --acc-green-text:   #86efac;
+  --acc-blue-bg:    #1d4ed8; --acc-blue-text:    #bfdbfe;
+  --acc-dkblue-bg:  #1e3a8a; --acc-dkblue-text:  #bfdbfe;
+  --acc-navy-bg:    #172554; --acc-navy-text:    #93c5fd;
+  --acc-neutral-bg: #1f2937; --acc-neutral-text: #9ca3af;
+  --acc-void-bg:    #111827; --acc-void-text:    #4b5563;
+  --acc-zero-bg:    #374151; --acc-zero-text:    #d1d5db;
+
+  --matrix-empty-bg:     #111111; --matrix-empty-border:   #1f2937;
+  --matrix-immune-bg:    #1a1a1a; --matrix-immune-border:  #374151;
+  --matrix-header-bg:    #111827;
+}
+
+/* ── Light theme overrides ──────────────────────────────────────────────── */
+.light {
+  /* Flip the Tailwind gray palette */
+  --color-gray-950: #f9fafb;
+  --color-gray-900: #f3f4f6;
+  --color-gray-800: #e5e7eb;
+  --color-gray-700: #d1d5db;
+  --color-gray-600: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #4b5563;
+  --color-gray-300: #374151;
+  --color-gray-200: #1f2937;
+  --color-gray-100: #111827;
+  /* Map white → near-black so text-white on gray inputs/labels reads correctly */
+  --color-white:    #111827;
+
+  /* Accent colours → light equivalents */
+  --acc-red-bg:     #fef2f2; --acc-red-text:     #991b1b;
+  --acc-orange-bg:  #fff7ed; --acc-orange-text:  #9a3412;
+  --acc-amber-bg:   #fffbeb; --acc-amber-text:   #78350f;
+  --acc-green-bg:   #f0fdf4; --acc-green-text:   #166534;
+  --acc-blue-bg:    #dbeafe; --acc-blue-text:    #1d4ed8;
+  --acc-dkblue-bg:  #dbeafe; --acc-dkblue-text:  #1e40af;
+  --acc-navy-bg:    #eff6ff; --acc-navy-text:    #1e3a8a;
+  --acc-neutral-bg: #f1f5f9; --acc-neutral-text: #475569;
+  --acc-void-bg:    #f8fafc; --acc-void-text:    #94a3b8;
+  --acc-zero-bg:    #f3f4f6; --acc-zero-text:    #374151;
+
+  --matrix-empty-bg:    #f3f4f6; --matrix-empty-border:  #e5e7eb;
+  --matrix-immune-bg:   #f9fafb; --matrix-immune-border: #d1d5db;
+  --matrix-header-bg:   #f3f4f6;
+}
+
 @layer base {
   body {
     @apply bg-gray-950 text-gray-100 min-h-screen;

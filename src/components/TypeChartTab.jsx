@@ -15,12 +15,12 @@ const TYPE_ABBR = {
 };
 
 const MULT_STYLE = {
-  0:    { label: '0×',  bg: '#374151', text: '#d1d5db' },
-  0.25: { label: '¼×',  bg: '#1e3a8a', text: '#93c5fd' },
-  0.5:  { label: '½×',  bg: '#1d4ed8', text: '#bfdbfe' },
-  1:    { label: null,  bg: null,      text: null       },
-  2:    { label: '2×',  bg: '#7c2d12', text: '#fdba74' },
-  4:    { label: '4×',  bg: '#450a0a', text: '#fca5a5' },
+  0:    { label: '0×',  bg: 'var(--acc-zero-bg)',    text: 'var(--acc-zero-text)'    },
+  0.25: { label: '¼×',  bg: 'var(--acc-dkblue-bg)', text: 'var(--acc-dkblue-text)'  },
+  0.5:  { label: '½×',  bg: 'var(--acc-blue-bg)',    text: 'var(--acc-blue-text)'    },
+  1:    { label: null,  bg: null,                    text: null                       },
+  2:    { label: '2×',  bg: 'var(--acc-orange-bg)',  text: 'var(--acc-orange-text)'  },
+  4:    { label: '4×',  bg: 'var(--acc-red-bg)',     text: 'var(--acc-red-text)'     },
 };
 
 function TypeGrid({ team, label }) {
