@@ -156,7 +156,7 @@ export default function App() {
     setDefShowAdd(atkShowAdd);
   }
 
-  const showSharedHeader = tab === 'setup' || tab === 'damage';
+  const showSharedHeader = true;
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">

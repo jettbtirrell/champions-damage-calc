@@ -53,7 +53,7 @@ function TypeGrid({ team, label }) {
 
   if (rows.length === 0) {
     return (
-      <div className="mb-8">
+      <div className="mb-3">
         <h2 className="text-sm font-semibold text-gray-400 mb-2">{label}</h2>
         <p className="text-gray-600 text-xs italic">No Pokémon selected.</p>
       </div>
@@ -61,21 +61,21 @@ function TypeGrid({ team, label }) {
   }
 
   return (
-    <div className="mb-8">
+    <div className="mb-3">
       <h2 className="text-sm font-semibold text-gray-300 mb-2">{label} <span className="text-gray-600 font-normal">({rows.length})</span></h2>
       <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="border-collapse text-xs w-full" style={{ minWidth: 720 }}>
+        <table className="border-collapse text-xs w-full" style={{ minWidth: 720, tableLayout: 'fixed' }}>
           <thead>
             <tr className="bg-gray-900">
               {/* Pokemon name column */}
-              <th className="sticky left-0 z-10 bg-gray-900 text-left px-3 py-2 text-gray-500 font-medium border-r border-gray-800 whitespace-nowrap" style={{ minWidth: 130 }}>
+              <th className="sticky left-0 z-10 bg-gray-900 text-left px-3 py-2 text-gray-500 font-medium border-r border-gray-800 whitespace-nowrap" style={{ width: 130 }}>
                 Pokémon
               </th>
               {ALL_TYPES.map(t => {
                 const tint = colTints[t];
                 return (
                   <th key={t} className="py-2 px-0.5 font-medium text-center" style={{
-                    minWidth: 36,
+                    width: 36,
                     backgroundColor: tint === 'red' ? 'rgba(180,30,30,0.18)' : tint === 'blue' ? 'rgba(30,80,200,0.18)' : undefined,
                   }}>
                     <div

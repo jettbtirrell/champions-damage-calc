@@ -61,56 +61,10 @@ function bestResult(attacker, defender, weather) {
   return null;
 }
 
-const DMG_STOPS = [
-  { t: 0,    r: 255, g: 0,   b: 0   },
-  { t: 1/3,  r: 255, g: 147, b: 0   },
-  { t: 2/3,  r: 251, g: 255, b: 0   },
-  { t: 1,    r: 73,  g: 255, b: 0   },
-];
-
-function interpDmgColor(t) {
-  t = Math.max(0, Math.min(1, t));
-  let lo = DMG_STOPS[0], hi = DMG_STOPS[DMG_STOPS.length - 1];
-  for (let i = 0; i < DMG_STOPS.length - 1; i++) {
-    if (t <= DMG_STOPS[i + 1].t) { lo = DMG_STOPS[i]; hi = DMG_STOPS[i + 1]; break; }
-  }
-  const f = hi.t === lo.t ? 0 : (t - lo.t) / (hi.t - lo.t);
-  return {
-    r: Math.round(lo.r + f * (hi.r - lo.r)),
-    g: Math.round(lo.g + f * (hi.g - lo.g)),
-    b: Math.round(lo.b + f * (hi.b - lo.b)),
-  };
-}
-
-function blend(channel, toward, f) { return Math.round(channel + (toward - channel) * f); }
-
-function cellColors(minPct, maxPct) {
-  if (minPct >= 100) {
-    return {
-      bg:     'rgb(99, 255, 232)',
-      border: 'rgb(0, 210, 180)',
-      text:   'rgb(0, 75, 62)',
-    };
-  }
-  const t = Math.min(maxPct, 100) / 100;
-  const { r, g, b } = interpDmgColor(t);
-
-  const bgR = blend(r, 255, 0.38);
-  const bgG = blend(g, 255, 0.38);
-  const bgB = blend(b, 255, 0.38);
-
-  const brR = blend(r, 255, 0.05);
-  const brG = blend(g, 255, 0.05);
-  const brB = blend(b, 255, 0.05);
-
-  const lum = 0.299 * bgR + 0.587 * bgG + 0.114 * bgB;
-  const text = lum > 155 ? 'rgb(25, 25, 25)' : 'rgb(240, 240, 240)';
-
-  return {
-    bg:     `rgb(${bgR}, ${bgG}, ${bgB})`,
-    border: `rgb(${brR}, ${brG}, ${brB})`,
-    text,
-  };
+function cellColors(minDmg, hp) {
+  if (minDmg >= hp)      return { bg: '#86efac', border: '#15803d', text: '#052e16' }; // green: guaranteed OHKO
+  if (minDmg / hp > 0.5) return { bg: '#fcd34d', border: '#b45309', text: '#451a03' }; // yellow: guaranteed >50%
+  return                        { bg: '#fca5a5', border: '#b91c1c', text: '#450a0a' }; // red: not guaranteed >50%
 }
 
 const CELL_W = 96;
@@ -148,7 +102,7 @@ function MatrixCell({ attacker, defender, weather }) {
   const { result, move, hp } = data;
   const minPct = Math.round(result.minDmg / hp * 100);
   const maxPct = Math.round(result.maxDmg / hp * 100);
-  const { bg, border, text } = cellColors(minPct, maxPct);
+  const { bg, border, text } = cellColors(result.minDmg, hp);
 
   return (
     <td className="p-0.5">
@@ -157,12 +111,6 @@ function MatrixCell({ attacker, defender, weather }) {
         <span className="font-mono font-semibold text-sm leading-tight">
           {minPct}–{maxPct}%
         </span>
-        {minPct >= 100 && (
-          <span className="font-bold leading-tight" style={{ fontSize: 8 }}>Guaranteed OHKO</span>
-        )}
-        {minPct < 100 && maxPct >= 100 && (
-          <span className="font-bold leading-tight" style={{ fontSize: 10 }}>Potential KO</span>
-        )}
         <span className="opacity-70 truncate leading-tight" style={{ fontSize: 9, maxWidth: CELL_W - 8 }}>
           {toDisplayName(move.name)}
         </span>
@@ -188,6 +136,7 @@ export default function MatchupMatrix({ attackers, defenders, weather }) {
 
   return (
     <div className="flex-1 overflow-auto p-4">
+      <div className="w-fit">
       <table style={{ minWidth: 'max-content', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
@@ -257,6 +206,22 @@ export default function MatchupMatrix({ attackers, defenders, weather }) {
           ))}
         </tbody>
       </table>
+      <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
+        <span className="font-medium text-gray-400"></span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#86efac' }} />
+          Guaranteed OHKO
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#fcd34d' }} />
+          Guaranteed 2HKO
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#fca5a5' }} />
+          Not guaranteed 2HKO
+        </span>
+      </div>
+      </div>
     </div>
   );
 }
