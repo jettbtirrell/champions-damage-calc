@@ -9,21 +9,22 @@ const ALL_TYPES = [
   'rock','ghost','dragon','dark','steel','fairy',
 ];
 
-const EFF_GROUPS = [
-  { key: 4,    label: '4×',           bg: 'var(--acc-red-bg)',     text: 'var(--acc-red-text)',     defaultOpen: true  },
-  { key: 2,    label: '2×',           bg: 'var(--acc-orange-bg)',  text: 'var(--acc-orange-text)',  defaultOpen: true  },
-  { key: 1,    label: 'Neutral (1×)', bg: 'var(--acc-neutral-bg)', text: 'var(--acc-neutral-text)', defaultOpen: false },
-  { key: 0.5,  label: '½×',           bg: 'var(--acc-dkblue-bg)', text: 'var(--acc-dkblue-text)',  defaultOpen: false },
-  { key: 0.25, label: '¼×',           bg: 'var(--acc-navy-bg)',    text: 'var(--acc-navy-text)',    defaultOpen: false },
-  { key: 0,    label: 'Immune (0×)',   bg: 'var(--acc-void-bg)',    text: 'var(--acc-void-text)',    defaultOpen: false },
-];
+const EFF_COLORS = {
+  4:    { bg: '#7f1d1d', text: '#fca5a5' },
+  2:    { bg: '#78350f', text: '#fcd34d' },
+  1:    { bg: '#1f2937', text: '#6b7280' },
+  0.5:  { bg: '#1e3a8a', text: '#93c5fd' },
+  0.25: { bg: '#172554', text: '#93c5fd' },
+  0:    { bg: '#111827', text: '#374151' },
+};
+const EFF_LABELS = { 4: '4×', 2: '2×', 1: '1×', 0.5: '½×', 0.25: '¼×', 0: '0×' };
 
 const GOALS = [
   {
     key: 'super-effective',
     label: 'Most 2x+ coverage',
-    description: 'Maximize Pokémon hit for 2x or better — 4x counts as strictly better',
-    sort: (a, b) => b.gained2xPlus - a.gained2xPlus || b.gained4x - a.gained4x,
+    description: 'Maximize Pokémon hit for 2x or better, weighted so unique coverage beats redundant overlap',
+    sort: (a, b) => b.weightedScore - a.weightedScore || b.gained4x - a.gained4x,
     primary: r => `+${r.gained2xPlus} newly at 2x+`,
     secondary: r => r.gained4x > 0 ? `(+${r.gained4x} at 4x)` : null,
   },
@@ -48,9 +49,6 @@ const GOALS = [
 export default function CoverageTab({ attackers, pokemonData }) {
   const eligible = attackers.filter(a => a.pokemon);
   const [selectedIds, setSelectedIds] = useState(() => new Set(eligible.map(a => a.id)));
-  const [openGroups, setOpenGroups] = useState(
-    () => new Set(EFF_GROUPS.filter(g => g.defaultOpen).map(g => g.key))
-  );
   const [goal, setGoal] = useState('super-effective');
   const [showAllRecs, setShowAllRecs] = useState(false);
 
@@ -62,15 +60,7 @@ export default function CoverageTab({ attackers, pokemonData }) {
     });
   }
 
-  function toggleGroup(key) {
-    setOpenGroups(prev => {
-      const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
-      return next;
-    });
-  }
-
-  const { groups, moveTypes, recommendations } = useMemo(() => {
+  const { pokemonCards, moveTypes, recommendations } = useMemo(() => {
     const selected = eligible.filter(a => selectedIds.has(a.id));
 
     const types = new Set();
@@ -83,62 +73,72 @@ export default function CoverageTab({ attackers, pokemonData }) {
       }
     }
 
-    if (types.size === 0) return { groups: null, moveTypes: types, recommendations: null };
+    if (types.size === 0) return { pokemonCards: null, moveTypes: types, recommendations: null };
 
-    // Compute per-Pokemon current best effectiveness
+    // Per-pokemon: best effectiveness from current team moves + 2x+ coverage depth
     const pokemonBests = pokemonData.map(p => {
       let best = 0;
+      let depth = 0;
       for (const t of types) {
         const e = getTypeEffectiveness(t, p.types);
         if (e > best) best = e;
+        if (e >= 2) depth++;
       }
-      return { pokemon: p, best };
+      return { pokemon: p, best, depth };
     });
 
-    // Group by current best
-    const g = { 0: [], 0.25: [], 0.5: [], 1: [], 2: [], 4: [] };
-    for (const { pokemon, best } of pokemonBests) {
-      const bucket = g[best];
-      if (bucket) bucket.push(pokemon);
-      else g[1].push(pokemon);
-    }
-
-    // Compute recommendation scores for all 18 types
+    // Recommendation scores for all 18 types
     const recs = ALL_TYPES.map(type => {
-      let gained2xPlus = 0;
-      let total2xPlus = 0;
-      let gained4x = 0;
-      let total4x = 0;
-      let pluggedImmune = 0;
-      let wallsAfter = 0;
+      let gained2xPlus = 0, total2xPlus = 0, gained4x = 0, total4x = 0;
+      let pluggedImmune = 0, wallsAfter = 0, weightedScore = 0;
 
-      for (const { pokemon, best: currentBest } of pokemonBests) {
+      for (const { pokemon, best: currentBest, depth } of pokemonBests) {
         const typeEff = getTypeEffectiveness(type, pokemon.types);
         const newBest = Math.max(currentBest, typeEff);
-
         if (newBest >= 2) total2xPlus++;
         if (newBest >= 4) total4x++;
         if (currentBest < 2 && newBest >= 2) gained2xPlus++;
         if (currentBest < 4 && newBest >= 4) gained4x++;
         if (currentBest === 0 && typeEff > 0) pluggedImmune++;
         if (newBest <= 0.5) wallsAfter++;
+        // Diminishing returns: unique (depth=0) = 1.0, first overlap = 0.5, etc.
+        if (typeEff >= 2) weightedScore += 1 / (depth + 1);
       }
 
       return {
-        type,
-        gained2xPlus, total2xPlus,
-        gained4x, total4x,
-        pluggedImmune,
-        wallsAfter,
+        type, gained2xPlus, total2xPlus, gained4x, total4x,
+        pluggedImmune, wallsAfter, weightedScore,
         alreadyHave: types.has(type),
       };
     });
 
-    return { groups: g, moveTypes: types, recommendations: recs };
+    // Per-pokemon cards: best effectiveness each attacker can achieve
+    const cards = pokemonData.map(p => {
+      const attackerEffs = selected.map(atk => {
+        let best = 0;
+        let hasMove = false;
+        for (const move of atk.moves) {
+          if (!move.power || move.category === 'status') continue;
+          hasMove = true;
+          const { type } = getEffectiveMove(move, atk.ability);
+          const eff = getTypeEffectiveness(type, p.types);
+          if (eff > best) best = eff;
+        }
+        return { attacker: atk, eff: hasMove ? best : null };
+      });
+      const bestEff = attackerEffs.reduce((m, a) => Math.max(m, a.eff ?? 0), 0);
+      const count2xPlus = attackerEffs.filter(a => (a.eff ?? 0) >= 2).length;
+      return { pokemon: p, attackerEffs, bestEff, count2xPlus };
+    });
+
+    // Worst for us first: lowest best coverage, then fewest attackers at 2x+
+    cards.sort((a, b) => a.bestEff - b.bestEff || a.count2xPlus - b.count2xPlus);
+
+    return { pokemonCards: cards, moveTypes: types, recommendations: recs };
   }, [selectedIds, attackers, pokemonData]);
 
-  const hasImmunities = groups ? (groups[0]?.length ?? 0) > 0 : false;
-  const hasWalls = groups ? ((groups[0]?.length ?? 0) + (groups[0.25]?.length ?? 0) + (groups[0.5]?.length ?? 0)) > 0 : false;
+  const hasImmunities = pokemonCards ? pokemonCards.some(c => c.bestEff === 0) : false;
+  const hasWalls = pokemonCards ? pokemonCards.some(c => c.bestEff <= 0.5) : false;
   const activeGoalKey =
     (!hasImmunities && goal === 'plug-immune') ? 'super-effective' :
     (!hasWalls && goal === 'minimize-walls') ? 'super-effective' : goal;
@@ -147,9 +147,7 @@ export default function CoverageTab({ attackers, pokemonData }) {
     (g.key !== 'minimize-walls' || hasWalls)
   );
   const currentGoal = GOALS.find(g => g.key === activeGoalKey);
-  const sortedRecs = recommendations
-    ? [...recommendations].sort(currentGoal.sort)
-    : null;
+  const sortedRecs = recommendations ? [...recommendations].sort(currentGoal.sort) : null;
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
@@ -163,21 +161,14 @@ export default function CoverageTab({ attackers, pokemonData }) {
             {eligible.map(a => {
               const on = selectedIds.has(a.id);
               return (
-                <button
-                  key={a.id}
-                  onClick={() => toggleAttacker(a.id)}
+                <button key={a.id} onClick={() => toggleAttacker(a.id)}
                   className={`flex items-center gap-1.5 px-2 py-1 rounded border text-xs transition-colors ${
-                    on
-                      ? 'bg-blue-700 border-blue-500 text-white'
-                      : 'bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
+                    on ? 'bg-blue-700 border-blue-500 text-white' : 'bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700'
+                  }`}>
                   {(a.pokemon.artwork || a.pokemon.sprite) && (
-                    <img
-                      src={a.pokemon.artwork || a.pokemon.sprite}
+                    <img src={a.pokemon.artwork || a.pokemon.sprite}
                       onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
-                      alt="" className="w-6 h-6 object-contain"
-                    />
+                      alt="" className="w-6 h-6 object-contain" />
                   )}
                   {toDisplayName(a.pokemon.name)}
                 </button>
@@ -204,24 +195,17 @@ export default function CoverageTab({ attackers, pokemonData }) {
         <p className="text-gray-600 text-sm italic mb-4">Selected attackers have no damaging moves.</p>
       )}
 
-      {/* Type recommendations */}
+      {/* Type recommendation */}
       {sortedRecs && (
         <div className="mb-5 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
           <div className="px-3 pt-3 pb-2 border-b border-gray-800">
             <div className="text-xs font-semibold text-gray-300 mb-2">Recommend a move type to add</div>
-            {/* Goal toggles */}
             <div className="flex flex-wrap gap-1.5">
               {visibleGoals.map(g => (
-                <button
-                  key={g.key}
-                  onClick={() => setGoal(g.key)}
-                  title={g.description}
+                <button key={g.key} onClick={() => setGoal(g.key)} title={g.description}
                   className={`text-xs px-2.5 py-1 rounded transition-colors ${
-                    activeGoalKey === g.key
-                      ? 'bg-emerald-700 text-white'
-                      : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                  }`}
-                >
+                    activeGoalKey === g.key ? 'bg-emerald-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                  }`}>
                   {g.label}
                 </button>
               ))}
@@ -230,113 +214,80 @@ export default function CoverageTab({ attackers, pokemonData }) {
           </div>
 
           <div className="p-2 space-y-1">
-            {(showAllRecs ? sortedRecs : sortedRecs.slice(0, 8)).map((r, i) => {
+            {(showAllRecs ? sortedRecs : sortedRecs.slice(0, 1)).map((r, i) => {
               const primary = currentGoal.primary(r);
               const secondary = currentGoal.secondary(r);
               return (
-                <div
-                  key={r.type}
+                <div key={r.type}
                   className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded ${
-                    i === 0 && !r.alreadyHave ? 'bg-gray-800 ring-1 ring-emerald-700' : 'bg-gray-850 hover:bg-gray-800'
+                    i === 0 && !r.alreadyHave ? 'bg-gray-800 ring-1 ring-emerald-700' : 'hover:bg-gray-800'
                   }`}
-                  style={i !== 0 || r.alreadyHave ? { backgroundColor: 'var(--acc-void-bg)' } : {}}
-                >
-                  {/* Rank */}
+                  style={i !== 0 || r.alreadyHave ? { backgroundColor: 'var(--acc-void-bg)' } : {}}>
                   <span className="text-xs text-gray-600 w-4 text-right shrink-0">{i + 1}</span>
-
-                  {/* Type badge */}
-                  <span
-                    className="rounded px-2 py-0.5 text-white font-semibold shrink-0"
-                    style={{ backgroundColor: TYPE_COLORS[r.type] || '#888', fontSize: 11, minWidth: 52, textAlign: 'center' }}
-                  >
+                  <span className="rounded px-2 py-0.5 text-white font-semibold shrink-0"
+                    style={{ backgroundColor: TYPE_COLORS[r.type] || '#888', fontSize: 11, minWidth: 52, textAlign: 'center' }}>
                     {r.type}
                   </span>
-
-                  {/* Primary score */}
                   <span className={`text-xs font-medium flex-1 ${i === 0 && !r.alreadyHave ? 'text-emerald-400' : 'text-gray-300'}`}>
                     {primary}
                   </span>
-
-                  {/* Secondary info */}
-                  {secondary && (
-                    <span className="text-xs text-gray-500">{secondary}</span>
-                  )}
-
-                  {/* Already have badge */}
-                  {r.alreadyHave && (
-                    <span className="text-xs text-gray-600 italic shrink-0">have</span>
-                  )}
-
-                  {/* Top badge */}
+                  {secondary && <span className="text-xs text-gray-500">{secondary}</span>}
+                  {r.alreadyHave && <span className="text-xs text-gray-600 italic shrink-0">have</span>}
                   {i === 0 && !r.alreadyHave && (
-                    <span className="text-xs bg-emerald-800 text-emerald-300 px-1.5 py-0.5 rounded font-medium shrink-0">
-                      top pick
-                    </span>
+                    <span className="text-xs bg-emerald-800 text-emerald-300 px-1.5 py-0.5 rounded font-medium shrink-0">top pick</span>
                   )}
                 </div>
               );
             })}
           </div>
 
-          {sortedRecs.length > 8 && (
-            <button
-              onClick={() => setShowAllRecs(v => !v)}
-              className="w-full text-xs text-gray-500 hover:text-gray-300 py-2 border-t border-gray-800 transition-colors"
-            >
-              {showAllRecs ? 'Show fewer ▲' : `Show all ${sortedRecs.length} types ▼`}
-            </button>
-          )}
+          <button onClick={() => setShowAllRecs(v => !v)}
+            className="w-full text-xs text-gray-500 hover:text-gray-300 py-2 border-t border-gray-800 transition-colors">
+            {showAllRecs ? 'Show fewer ▲' : `Show all ${sortedRecs.length} types ▼`}
+          </button>
         </div>
       )}
 
-      {/* Effectiveness groups */}
-      {groups && EFF_GROUPS.map(({ key, label, bg, text }) => {
-        const list = groups[key] || [];
-        const open = openGroups.has(key);
-        return (
-          <div key={key} className="mb-2 rounded-lg overflow-hidden border border-gray-800">
-            <button
-              className="w-full flex items-center justify-between px-3 py-2 text-left hover:brightness-110 transition-all"
-              style={{ backgroundColor: bg }}
-              onClick={() => toggleGroup(key)}
-            >
-              <span className="text-sm font-bold" style={{ color: text }}>{label}</span>
-              <span className="text-xs" style={{ color: text }}>
-                {list.length} Pokémon {open ? '▲' : '▼'}
-              </span>
-            </button>
-            {open && (
-              list.length === 0
-                ? <div className="px-3 py-2 text-xs text-gray-600 italic bg-gray-950">None</div>
-                : (
-                  <div className="p-2 bg-gray-950 grid gap-1"
-                    style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
-                    {list.map(p => (
-                      <div key={p.id} className="flex items-center gap-1.5 bg-gray-900 rounded px-1.5 py-1 min-w-0">
-                        <img
-                          src={p.artwork || p.sprite}
-                          onError={e => { if (p.sprite) e.target.src = p.sprite; }}
-                          alt="" className="w-8 h-8 object-contain shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <div className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(p.name)}</div>
-                          <div className="flex gap-0.5 mt-0.5 flex-wrap">
-                            {p.types.map(t => (
-                              <span key={t} className="rounded text-white px-0.5"
-                                style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-            )}
-          </div>
-        );
-      })}
+      {/* Per-pokemon coverage cards — worst coverage first */}
+      {pokemonCards && (
+        <div className="space-y-1">
+          {pokemonCards.map(({ pokemon, attackerEffs }) => (
+            <div key={pokemon.id} className="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-lg px-2.5 py-1.5">
+              <img src={pokemon.artwork || pokemon.sprite}
+                onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
+                alt="" className="w-8 h-8 object-contain shrink-0" />
+              <div className="shrink-0" style={{ minWidth: 110 }}>
+                <div className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(pokemon.name)}</div>
+                <div className="flex gap-0.5 mt-0.5">
+                  {pokemon.types.map(t => (
+                    <span key={t} className="rounded text-white px-0.5"
+                      style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {attackerEffs.map(({ attacker, eff }) => {
+                  const colors = eff === null ? { bg: '#1f2937', text: '#4b5563' } : EFF_COLORS[eff] ?? EFF_COLORS[1];
+                  const label = eff === null ? '—' : EFF_LABELS[eff] ?? '1×';
+                  return (
+                    <div key={attacker.id} className="flex flex-col items-center gap-0.5">
+                      <img src={attacker.pokemon.artwork || attacker.pokemon.sprite}
+                        onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
+                        alt="" className="w-6 h-6 object-contain" />
+                      <span className="rounded font-bold text-center leading-none py-0.5 block"
+                        style={{ backgroundColor: colors.bg, color: colors.text, fontSize: 8, minWidth: 22 }}>
+                        {label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
