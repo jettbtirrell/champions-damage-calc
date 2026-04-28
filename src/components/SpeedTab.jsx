@@ -1,15 +1,7 @@
 import { useState, useMemo } from 'react';
 import { calcAllStats } from '../utils/statCalc';
-import { NATURES } from '../utils/natures';
 import { ITEMS } from '../data/items';
-import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
-
-const GROUP_CONFIG = {
-  faster: { label: 'Faster',  bg: 'var(--acc-red-bg)',   text: 'var(--acc-red-text)'   },
-  tied:   { label: 'Tied',    bg: 'var(--acc-amber-bg)', text: 'var(--acc-amber-text)' },
-  slower: { label: 'Slower',  bg: 'var(--acc-green-bg)', text: 'var(--acc-green-text)' },
-};
 
 function applyEnemyMods(spe, mods) {
   let s = spe;
@@ -23,115 +15,6 @@ function formatCompSpe(p, comparisonMode) {
   if (comparisonMode === 'min')  return Math.floor(0.9 * (p.stats.spe + 20));
   if (comparisonMode === 'max')  return Math.floor(1.1 * (p.stats.spe + 52));
   return p.stats.spe + 20; // base
-}
-
-function natureSpeBadge(nature) {
-  const n = NATURES[nature];
-  if (!n) return null;
-  if (n.plus === 'spe')  return { label: '+Spe', color: 'text-green-400' };
-  if (n.minus === 'spe') return { label: '−Spe', color: 'text-red-400' };
-  return null;
-}
-
-function PokemonEntry({ pokemon, compSpe, delta }) {
-  const deltaStr = delta === 0 ? '=' : delta > 0 ? `+${delta}` : `${delta}`;
-  const deltaColor = delta === 0 ? 'text-gray-500' : delta > 0 ? 'text-red-400' : 'text-green-400';
-  return (
-    <div className="flex items-center gap-1.5 bg-gray-900 rounded px-1.5 py-1 min-w-0">
-      <img
-        src={pokemon.artwork || pokemon.sprite}
-        onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
-        alt="" className="w-8 h-8 object-contain shrink-0"
-      />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-1">
-          <span className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(pokemon.name)}</span>
-          <span className={`text-xs font-mono shrink-0 ${deltaColor}`}>{deltaStr}</span>
-        </div>
-        <div className="flex items-center justify-between gap-1 mt-0.5">
-          <div className="flex gap-0.5 flex-wrap">
-            {pokemon.types.map(t => (
-              <span key={t} className="rounded text-white px-0.5"
-                style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
-                {t}
-              </span>
-            ))}
-          </div>
-          <span className="text-xs font-mono text-gray-500 shrink-0">{compSpe}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SpeedGroup({ group, entries, defaultOpen }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const cfg = GROUP_CONFIG[group];
-  return (
-    <div className="rounded overflow-hidden border border-gray-800">
-      <button
-        className="w-full flex items-center justify-between px-3 py-1.5 text-left hover:brightness-110 transition-all"
-        style={{ backgroundColor: cfg.bg }}
-        onClick={() => setOpen(v => !v)}
-      >
-        <span className="text-xs font-bold" style={{ color: cfg.text }}>{cfg.label}</span>
-        <span className="text-xs" style={{ color: cfg.text }}>{entries.length} {open ? '▲' : '▼'}</span>
-      </button>
-      {open && (
-        entries.length === 0
-          ? <div className="px-3 py-2 text-xs text-gray-600 italic bg-gray-950">None</div>
-          : (
-            <div className="p-2 bg-gray-950 grid gap-1"
-              style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
-              {entries.map(e => (
-                <PokemonEntry key={e.pokemon.id} {...e} />
-              ))}
-            </div>
-          )
-      )}
-    </div>
-  );
-}
-
-function AttackerSection({ section }) {
-  const [open, setOpen] = useState(false);
-  const { attacker, attackerSpe, scarfed, faster, tied, slower } = section;
-  const badge = natureSpeBadge(attacker.nature);
-
-  return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden mb-3">
-      <button
-        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-gray-800 transition-colors"
-        onClick={() => setOpen(v => !v)}
-      >
-        <img
-          src={attacker.pokemon.artwork || attacker.pokemon.sprite}
-          onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
-          alt="" className="w-8 h-8 object-contain shrink-0"
-        />
-        <span className="text-sm font-medium text-gray-200">{toDisplayName(attacker.pokemon.name)}</span>
-        <span className="font-mono text-blue-300 text-sm">{attackerSpe}</span>
-        {scarfed && <span className="text-xs font-semibold text-yellow-400">Scarf</span>}
-        {badge && <span className={`text-xs font-semibold ${badge.color}`}>{badge.label}</span>}
-        <span className="text-xs text-gray-600 ml-auto mr-2">
-          <span className="text-red-400">{faster.length}</span>
-          <span className="text-gray-600"> / </span>
-          <span className="text-yellow-400">{tied.length}</span>
-          <span className="text-gray-600"> / </span>
-          <span className="text-green-400">{slower.length}</span>
-        </span>
-        <span className="text-gray-600 text-xs">{open ? '▲' : '▼'}</span>
-      </button>
-
-      {open && (
-        <div className="px-3 pb-3 space-y-2 border-t border-gray-800 pt-2">
-          {['faster', 'tied', 'slower'].map(g => (
-            <SpeedGroup key={g} group={g} entries={section[g]} defaultOpen={g !== 'tied'} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 // ─── Speed Chart ────────────────────────────────────────────────────────────
@@ -348,7 +231,7 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
       {/* Toolbar */}
       <div className="sticky top-0 z-10 bg-gray-900 border-b border-gray-800 px-4 py-2.5 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">Compare:</span>
+          <span className="text-xs text-gray-500">Format Pokémon Stats:</span>
           {[
             { key: 'min',  label: 'Min (0 EVs / −Spe)' },
             { key: 'base', label: 'Base (0 EVs / neutral)' },
@@ -364,7 +247,7 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">Enemies:</span>
+          <span className="text-xs text-gray-500">Format Pokémon Conditions / Items:</span>
           {[
             { key: 'tailwind',  label: 'Tailwind',  on: 'bg-sky-700 text-sky-200' },
             { key: 'scarf',     label: 'Scarf',     on: 'bg-yellow-700 text-yellow-200' },
@@ -386,12 +269,6 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
           comparisonMode={comparisonMode}
           enemyMods={enemyMods}
         />
-
-        <div className="mt-4">
-          {sections.map(section => (
-            <AttackerSection key={section.attacker.id} section={section} />
-          ))}
-        </div>
       </div>
     </div>
   );

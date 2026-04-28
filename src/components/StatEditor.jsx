@@ -5,6 +5,8 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
   const natureDef = NATURES[nature] || NATURES.hardy;
   const used = totalPoints(statPoints);
   const computed = calcAllStats(pokemon, statPoints, nature);
+  const anyBoosted = STAT_KEYS.some(s => (boosts[s] || 0) > 0);
+  const valWidth = anyBoosted ? '5.5rem' : '2.25rem';
 
   function set(stat, rawVal) {
     const val = Math.min(MAX_PER_STAT, Math.max(0, parseInt(rawVal, 10) || 0));
@@ -46,7 +48,7 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
               className="w-10 bg-gray-700 border border-gray-600 rounded text-center text-xs text-white py-0.5 focus:outline-none focus:border-blue-500"
             />
             <span className={`text-xs shrink-0 font-mono text-right ${isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-300'}`}
-              style={{ minWidth: boostedVal ? '5.5rem' : '2.25rem' }}>
+              style={{ minWidth: valWidth }}>
               {computed[stat]}
               {boostedVal && (
                 <span className="text-blue-400 ml-1">({boostedVal})</span>

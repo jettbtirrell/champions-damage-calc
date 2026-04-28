@@ -38,6 +38,19 @@ function TypeGrid({ team, label }) {
     [team]
   );
 
+  const colTints = useMemo(() => {
+    if (rows.length === 0) return {};
+    const tints = {};
+    for (const t of ALL_TYPES) {
+      const mults = rows.map(row => row.cells.find(c => c.type === t).mult);
+      const allAtMost1 = mults.every(m => m <= 1) && mults.some(m => m < 1);
+      const allAtLeast1 = mults.every(m => m >= 1) && mults.some(m => m > 1);
+      if (allAtMost1) tints[t] = 'blue';
+      else if (allAtLeast1) tints[t] = 'red';
+    }
+    return tints;
+  }, [rows]);
+
   if (rows.length === 0) {
     return (
       <div className="mb-8">
@@ -58,16 +71,22 @@ function TypeGrid({ team, label }) {
               <th className="sticky left-0 z-10 bg-gray-900 text-left px-3 py-2 text-gray-500 font-medium border-r border-gray-800 whitespace-nowrap" style={{ minWidth: 130 }}>
                 Pokémon
               </th>
-              {ALL_TYPES.map(t => (
-                <th key={t} className="py-2 px-0.5 font-medium text-center" style={{ minWidth: 36 }}>
-                  <div
-                    className="rounded px-1 py-0.5 mx-auto text-white font-medium"
-                    style={{ backgroundColor: TYPE_COLORS[t], fontSize: 9, width: 'fit-content' }}
-                  >
-                    {TYPE_ABBR[t]}
-                  </div>
-                </th>
-              ))}
+              {ALL_TYPES.map(t => {
+                const tint = colTints[t];
+                return (
+                  <th key={t} className="py-2 px-0.5 font-medium text-center" style={{
+                    minWidth: 36,
+                    backgroundColor: tint === 'red' ? 'rgba(180,30,30,0.18)' : tint === 'blue' ? 'rgba(30,80,200,0.18)' : undefined,
+                  }}>
+                    <div
+                      className="rounded px-1 py-0.5 mx-auto text-white font-medium"
+                      style={{ backgroundColor: TYPE_COLORS[t], fontSize: 9, width: 'fit-content' }}
+                    >
+                      {TYPE_ABBR[t]}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -97,8 +116,11 @@ function TypeGrid({ team, label }) {
                 </td>
                 {row.cells.map(({ type, mult }) => {
                   const style = MULT_STYLE[mult] ?? MULT_STYLE[1];
+                  const tint = colTints[type];
                   return (
-                    <td key={type} className="p-0.5 text-center">
+                    <td key={type} className="p-0.5 text-center" style={{
+                      backgroundColor: tint === 'red' ? 'rgba(200,30,30,0.10)' : tint === 'blue' ? 'rgba(30,80,200,0.10)' : undefined,
+                    }}>
                       {style.label ? (
                         <div
                           className="rounded font-bold mx-auto flex items-center justify-center"

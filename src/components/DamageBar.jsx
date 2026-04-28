@@ -2,7 +2,7 @@ export default function DamageBar({ minDmg, maxDmg, defenderHp, noEffect, immune
   if (immune) return (
     <div className="flex items-center gap-2 w-full">
       <div className="relative flex-1 h-2 bg-gray-700 rounded overflow-hidden" style={{ minWidth: 80 }} />
-      <span className="text-gray-500 text-xs italic shrink-0" style={{ minWidth: '9rem' }}>Immune</span>
+      <div className="shrink-0 text-right text-gray-500 italic" style={{ minWidth: '8rem', fontSize: 11 }}>Immune</div>
     </div>
   );
   if (noEffect) return <span className="text-gray-600 text-xs italic">—</span>;
@@ -10,13 +10,10 @@ export default function DamageBar({ minDmg, maxDmg, defenderHp, noEffect, immune
 
   const minPct = (minDmg / defenderHp) * 100;
   const maxPct = (maxDmg / defenderHp) * 100;
-  const isOHKO = maxDmg >= defenderHp;
-
-  // High damage = green (good), medium = yellow, low = red (bad)
   const [solidColor, fadeColor] =
-    maxPct >= 50  ? ['#15803d', '#86efac'] // green: dark → light
-    : maxPct >= 25 ? ['#b45309', '#fcd34d'] // yellow: dark → light
-    :                ['#b91c1c', '#fca5a5']; // red: dark → light
+    minDmg >= defenderHp ? ['#15803d', '#86efac'] // green: guaranteed OHKO
+    : minPct > 50 ? ['#b45309', '#fcd34d'] // yellow: guaranteed >50%
+    :               ['#b91c1c', '#fca5a5']; // red: not guaranteed >50%
 
   const solidWidth = Math.min(minPct, 100);
   const fadeLeft   = solidWidth;
@@ -36,12 +33,11 @@ export default function DamageBar({ minDmg, maxDmg, defenderHp, noEffect, immune
             style={{ left: `${fadeLeft}%`, width: `${Math.max(fadeWidth, 0.8)}%`, backgroundColor: fadeColor }} />
         )}
       </div>
-      <div className="text-xs shrink-0 text-right" style={{ minWidth: '9rem' }}>
+      <div className="shrink-0 text-right" style={{ minWidth: '8rem', fontSize: 11 }}>
         <span className="text-gray-200">{minDmg}–{maxDmg}</span>
         <span className="text-gray-500 ml-1">
           ({Math.round(minPct)}–{Math.round(maxPct)}%)
         </span>
-        {isOHKO && <span className="text-green-400 font-bold ml-1">OHKO</span>}
       </div>
     </div>
   );

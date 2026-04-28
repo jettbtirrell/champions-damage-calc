@@ -112,8 +112,10 @@ function pctLabel(min, max) { return `${min}–${max}%`; }
 function SurviveChip({ mon, result, hp }) {
   const minPct = Math.round(result.minDmg / hp * 100);
   const maxPct = Math.round(result.maxDmg / hp * 100);
+  const avgPct = (result.minDmg + result.maxDmg) / 2 / hp * 100;
   const guaranteed = !result.immune && minPct >= 100;
   const ko         = !result.immune && maxPct >= 100;
+  const overHalf   = !result.immune && !ko && avgPct > 50;
 
   const chipCls = result.immune
     ? 'border-gray-700 bg-gray-900'
@@ -121,11 +123,14 @@ function SurviveChip({ mon, result, hp }) {
     ? 'border-red-800 bg-red-950/50'
     : ko
     ? 'border-orange-800 bg-orange-950/40'
+    : overHalf
+    ? 'border-yellow-700 bg-yellow-950/40'
     : 'border-green-900 bg-green-950/40';
 
   const pctCls = result.immune ? 'text-gray-600'
     : guaranteed ? 'text-red-400'
     : ko ? 'text-orange-400'
+    : overHalf ? 'text-yellow-400'
     : 'text-green-400';
 
   return (
@@ -148,6 +153,9 @@ function SurviveChip({ mon, result, hp }) {
 }
 
 function ThreatCard({ threat }) {
+  const isPhysical = threat.move.category === 'physical';
+  const autoSubtitle = isPhysical ? 'Max Atk · Adamant' : 'Max SpA · Modest';
+  const weatherLabel = threat.weather !== 'none' ? ` · ${threat.weather.charAt(0).toUpperCase() + threat.weather.slice(1)}` : '';
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
       <div className="flex items-center gap-3 px-3 py-2 border-b border-gray-800">
@@ -158,7 +166,7 @@ function ThreatCard({ threat }) {
         />
         <div>
           <div className="text-sm font-semibold text-gray-100">{threat.label}</div>
-          <div className="text-xs text-gray-500">{threat.subtitle}</div>
+          <div className="text-xs text-gray-500">{autoSubtitle}{weatherLabel}</div>
         </div>
       </div>
       {threat.results.length === 0
@@ -240,8 +248,13 @@ export default function TestCasesTab({ attackers, defenders, pokemonData }) {
     THREATS.map(threat => {
       const atkPokemon = pokemonData.find(p => p.name === threat.attackerName);
       if (!atkPokemon) return null;
-      const atkStats = calcAllStats(atkPokemon, threat.statPoints, threat.nature);
-      const atk = threat.move.category === 'physical' ? atkStats.atk : atkStats.spa;
+      const isPhysical = threat.move.category === 'physical';
+      const maxStatPoints = isPhysical
+        ? { hp: 0, atk: 32, def: 0, spa: 0, spd: 0, spe: 0 }
+        : { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 0 };
+      const maxNature = isPhysical ? 'adamant' : 'modest';
+      const atkStats = calcAllStats(atkPokemon, maxStatPoints, maxNature);
+      const atk = isPhysical ? atkStats.atk : atkStats.spa;
 
       const results = team.map(mon => {
         const defStats = calcAllStats(mon.pokemon, mon.statPoints, mon.nature);

@@ -38,6 +38,7 @@ export default function PokemonSearch({ value, onChange, pokemonData, placeholde
         value={query}
         onChange={e => { setQuery(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}
+        onKeyDown={e => { if (e.key === 'Enter' && filtered.length > 0) select(filtered[0]); }}
       />
       {open && filtered.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded shadow-xl max-h-52 overflow-y-auto">

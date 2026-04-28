@@ -7,6 +7,25 @@ import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import DamageBar from './DamageBar';
 
+function bestDamageTier(damageRows, defHp) {
+  let best = -1;
+  for (const { rows } of damageRows) {
+    for (const { result } of rows) {
+      if (result.noEffect || result.immune) continue;
+      const minPct = (result.minDmg / defHp) * 100;
+      const tier = result.minDmg >= defHp ? 2 : minPct > 50 ? 1 : 0;
+      if (tier > best) best = tier;
+    }
+  }
+  return best;
+}
+
+const TIER_TINT = {
+  2: 'rgba(21,128,61,0.12)',
+  1: 'rgba(180,83,9,0.12)',
+  0: 'rgba(185,28,28,0.10)',
+};
+
 export function DefenderDamageCard({ defender, attackers, weather, inlineHeader = false }) {
   const defStats = calcAllStats(defender.pokemon, defender.statPoints, defender.nature);
   const defBoosts = defender.boosts || {};
@@ -55,8 +74,11 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
     });
   }, [attackers, weatherDef, weather]);
 
+  const cardTint = inlineHeader ? TIER_TINT[bestDamageTier(damageRows, defStats.hp)] : undefined;
+
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-2">
+    <div className="border border-gray-700 rounded-lg p-2 space-y-1"
+      style={{ background: cardTint ? `linear-gradient(${cardTint}, ${cardTint}), #111827` : '#111827' }}>
       {inlineHeader ? (
         /* Inline header: attacker → defender on one row */
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -65,19 +87,18 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
               <img
                 src={damageRows[0].attacker.pokemon.artwork || damageRows[0].attacker.pokemon.sprite}
                 onError={e => { if (damageRows[0].attacker.pokemon.sprite) e.target.src = damageRows[0].attacker.pokemon.sprite; }}
-                alt="" className="w-6 h-6 object-contain shrink-0"
+                alt="" className="w-7 h-7 object-contain shrink-0"
               />
-              <span className="text-xs font-semibold text-gray-200 truncate">{toDisplayName(damageRows[0].attacker.pokemon.name)}</span>
+              <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13 }}>{toDisplayName(damageRows[0].attacker.pokemon.name)}</span>
             </>
           )}
-          <span className="text-gray-600 text-xs shrink-0">→</span>
+          <span className="text-gray-600 shrink-0" style={{ fontSize: 13 }}>→</span>
           <img
             src={defender.pokemon.artwork || defender.pokemon.sprite}
             onError={e => { if (defender.pokemon.sprite) e.target.src = defender.pokemon.sprite; }}
-            alt="" className="w-6 h-6 object-contain shrink-0"
+            alt="" className="w-7 h-7 object-contain shrink-0"
           />
-          <span className="text-xs font-semibold text-gray-200 truncate">{toDisplayName(defender.pokemon.name)}</span>
-          <span className="text-xs text-gray-500 ml-auto shrink-0">HP <span className="font-mono text-gray-300">{defStats.hp}</span></span>
+          <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13 }}>{toDisplayName(defender.pokemon.name)}</span>
         </div>
       ) : (
         /* Standard header: defender prominent */
@@ -108,7 +129,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
       {damageRows.length === 0 && (
         <div className="text-xs text-gray-600 italic">No attackers selected.</div>
       )}
-      <div className="space-y-2 border-t border-gray-800 pt-2">
+      <div className="space-y-1 border-t border-gray-800 pt-1">
         {damageRows.map(({ attacker, rows }) => (
           <div key={attacker.id}>
             {!inlineHeader && (
@@ -127,8 +148,8 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
             <div className={`space-y-1 ${!inlineHeader ? 'pl-7' : ''}`}>
               {rows.filter(r => !r.result.noEffect).map(({ move, effMove, result }) => (
                 <div key={move.id} className="space-y-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-gray-400">{toDisplayName(move.name)}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-400" style={{ fontSize: 11 }}>{toDisplayName(move.name)}</span>
                     <span className="text-xs px-1 rounded text-white"
                       style={{ backgroundColor: TYPE_COLORS[effMove.type] || '#888', fontSize: 9 }}>
                       {effMove.type !== move.type && (

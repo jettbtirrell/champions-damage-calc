@@ -132,6 +132,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               statPoints={statPoints}
               nature={nature}
               onChange={sp => update({ statPoints: sp })}
+              boosts={defBoosts}
             />
           </div>
 
