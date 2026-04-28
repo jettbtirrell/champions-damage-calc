@@ -244,6 +244,7 @@ export default function App() {
                 key={d.id}
                 defender={d}
                 pokemonData={filteredPokemon}
+                movesData={movesData}
                 attackers={attackers}
                 weather={weather}
                 onChange={patch => updateDefender(d.id, patch)}

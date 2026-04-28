@@ -9,10 +9,13 @@ import pokemonAbilities from '../data/pokemonAbilities.json';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import PokemonSearch from './PokemonSearch';
+import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
 import DamageBar from './DamageBar';
 
-export default function DefenderCard({ defender, onChange, onRemove, attackers, weather, pokemonData }) {
+const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' };
+
+export default function DefenderCard({ defender, onChange, onRemove, attackers, weather, pokemonData, movesData }) {
   const { pokemon, nature, statPoints } = defender;
   const defStats = calcAllStats(pokemon, statPoints, nature);
 
@@ -158,6 +161,46 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               ))}
             </div>
           </div>
+
+          {/* Moves */}
+          {movesData && (
+            <div>
+              <div className="text-xs text-gray-500 mb-1.5">Moves</div>
+              <div className="space-y-1 mb-1.5">
+                {(defender.moves || []).map((move, i) => {
+                  const eff = getEffectiveMove(move, defender.ability, weather);
+                  const typeChanged = eff.type !== move.type;
+                  const powerChanged = eff.power !== move.power;
+                  return (
+                    <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-1">
+                      <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
+                      <span className="text-xs px-1 py-0.5 rounded text-white"
+                        style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
+                        {typeChanged && <span className="opacity-60 line-through mr-0.5">{move.type}</span>}
+                        {eff.type}
+                      </span>
+                      <span className="text-xs px-1 py-0.5 rounded text-white"
+                        style={{ backgroundColor: CAT_COLORS[move.category] || '#888', fontSize: 9 }}>
+                        {move.category}
+                      </span>
+                      <span className={`text-xs w-8 text-right ${powerChanged ? 'text-yellow-400' : 'text-gray-500'}`}>
+                        {eff.power || '—'}{powerChanged && <span className="opacity-50 line-through ml-1 text-gray-500">{move.power}</span>}
+                      </span>
+                      <button
+                        onClick={() => update({ moves: (defender.moves || []).filter((_, j) => j !== i) })}
+                        className="text-gray-600 hover:text-red-400 text-sm ml-1 leading-none"
+                      >×</button>
+                    </div>
+                  );
+                })}
+              </div>
+              <MoveSearch
+                movesData={movesData}
+                existingMoves={defender.moves || []}
+                onAdd={m => update({ moves: [...(defender.moves || []), m] })}
+              />
+            </div>
+          )}
 
           {/* Item + Ability */}
           <div className="flex gap-2">
