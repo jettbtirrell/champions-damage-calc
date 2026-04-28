@@ -61,20 +61,55 @@ function bestResult(attacker, defender, weather) {
   return null;
 }
 
+const DMG_STOPS = [
+  { t: 0,    r: 255, g: 0,   b: 0   },
+  { t: 1/3,  r: 255, g: 147, b: 0   },
+  { t: 2/3,  r: 251, g: 255, b: 0   },
+  { t: 1,    r: 73,  g: 255, b: 0   },
+];
+
+function interpDmgColor(t) {
+  t = Math.max(0, Math.min(1, t));
+  let lo = DMG_STOPS[0], hi = DMG_STOPS[DMG_STOPS.length - 1];
+  for (let i = 0; i < DMG_STOPS.length - 1; i++) {
+    if (t <= DMG_STOPS[i + 1].t) { lo = DMG_STOPS[i]; hi = DMG_STOPS[i + 1]; break; }
+  }
+  const f = hi.t === lo.t ? 0 : (t - lo.t) / (hi.t - lo.t);
+  return {
+    r: Math.round(lo.r + f * (hi.r - lo.r)),
+    g: Math.round(lo.g + f * (hi.g - lo.g)),
+    b: Math.round(lo.b + f * (hi.b - lo.b)),
+  };
+}
+
+function blend(channel, toward, f) { return Math.round(channel + (toward - channel) * f); }
+
 function cellColors(minPct, maxPct) {
   if (minPct >= 100) {
     return {
-      bg:     'hsl(210, 80%, 38%)',
-      border: 'hsl(210, 80%, 62%)',
-      text:   'hsl(210, 50%, 92%)',
+      bg:     'rgb(99, 255, 232)',
+      border: 'rgb(0, 210, 180)',
+      text:   'rgb(0, 75, 62)',
     };
   }
   const t = Math.min(maxPct, 100) / 100;
-  const hue = Math.round(t * 120);
+  const { r, g, b } = interpDmgColor(t);
+
+  const bgR = blend(r, 255, 0.38);
+  const bgG = blend(g, 255, 0.38);
+  const bgB = blend(b, 255, 0.38);
+
+  const brR = blend(r, 255, 0.05);
+  const brG = blend(g, 255, 0.05);
+  const brB = blend(b, 255, 0.05);
+
+  const lum = 0.299 * bgR + 0.587 * bgG + 0.114 * bgB;
+  const text = lum > 155 ? 'rgb(25, 25, 25)' : 'rgb(240, 240, 240)';
+
   return {
-    bg:     `hsl(${hue}, 85%, 28%)`,
-    border: `hsl(${hue}, 80%, 48%)`,
-    text:   `hsl(${hue}, 50%, 92%)`,
+    bg:     `rgb(${bgR}, ${bgG}, ${bgB})`,
+    border: `rgb(${brR}, ${brG}, ${brB})`,
+    text,
   };
 }
 
