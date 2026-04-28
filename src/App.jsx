@@ -13,7 +13,7 @@ import MetaTab from './components/MetaTab';
 import RolesTab from './components/RolesTab';
 import TestCasesTab from './components/TestCasesTab';
 import MatchupMatrix from './components/MatchupMatrix';
-import DamageTab from './components/DamageTab';
+import DamageTab2 from './components/DamageTab2';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
@@ -57,16 +57,23 @@ export default function App() {
   const [defSearchKey, setDefSearchKey] = useState(0);
   const [selectedAtkId, setSelectedAtkId] = useState(null);
   const [selectedDefId, setSelectedDefId] = useState(null);
-  const [dmgDeselAtk, setDmgDeselAtk] = useState(new Set());
-  const [dmgDeselDef, setDmgDeselDef] = useState(new Set());
+  const [atkShowAdd, setAtkShowAdd] = useState(false);
+  const [defShowAdd, setDefShowAdd] = useState(false);
+  const [dmg2SelectedId, setDmg2SelectedId] = useState(null);
+  const [dmg2SelectedSide, setDmg2SelectedSide] = useState(null);
 
   const filteredPokemon = useMemo(
     () => pokemonData.filter(FORMATS[format].filter),
     [format]
   );
 
-  const selectedAtk = selectedAtkId ? (attackers.find(a => a.id === selectedAtkId) ?? null) : null;
-  const selectedDef = selectedDefId ? (defenders.find(d => d.id === selectedDefId) ?? null) : null;
+  const eligibleAtk = attackers.filter(a => a.pokemon);
+  const eligibleDef = defenders.filter(d => d.pokemon);
+
+  const selectedAtk = atkShowAdd ? null
+    : (attackers.find(a => a.id === selectedAtkId) ?? eligibleAtk[0] ?? null);
+  const selectedDef = defShowAdd ? null
+    : (defenders.find(d => d.id === selectedDefId) ?? eligibleDef[0] ?? null);
 
   function updateAttacker(id, patch) {
     setAttackers(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
@@ -82,10 +89,11 @@ export default function App() {
     });
   }
   function addAttackerWithPokemon(p) {
-    if (attackers.length >= 20) return;
+    if (attackers.length >= 6) return;
     const entry = { ...makeAttacker(), pokemon: p };
     setAttackers(prev => [...prev, entry]);
     setSelectedAtkId(entry.id);
+    setAtkShowAdd(false);
     setAtkSearchKey(k => k + 1);
   }
 
@@ -103,9 +111,11 @@ export default function App() {
     });
   }
   function addDefenderWithPokemon(p) {
+    if (defenders.length >= 6) return;
     const entry = { ...makeDefender(), pokemon: p };
     setDefenders(prev => [...prev, entry]);
     setSelectedDefId(entry.id);
+    setDefShowAdd(false);
     setDefSearchKey(k => k + 1);
   }
 
@@ -114,6 +124,8 @@ export default function App() {
     setDefenders(attackers);
     setSelectedAtkId(selectedDefId);
     setSelectedDefId(selectedAtkId);
+    setAtkShowAdd(defShowAdd);
+    setDefShowAdd(atkShowAdd);
   }
 
   return (
@@ -176,15 +188,16 @@ export default function App() {
         </button>
       </header>
 
+      {tab === 'damage' && (
+        <DamageTab2
+          attackers={attackers} defenders={defenders} weather={weather}
+          selectedId={dmg2SelectedId} setSelectedId={setDmg2SelectedId}
+          selectedSide={dmg2SelectedSide} setSelectedSide={setDmg2SelectedSide}
+          setSetupAtkId={setSelectedAtkId} setSetupDefId={setSelectedDefId}
+        />
+      )}
       {tab === 'matrix' && (
         <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
-      )}
-      {tab === 'damage' && (
-        <DamageTab
-          attackers={attackers} defenders={defenders} weather={weather}
-          deselAtk={dmgDeselAtk} setDeselAtk={setDmgDeselAtk}
-          deselDef={dmgDeselDef} setDeselDef={setDmgDeselDef}
-        />
       )}
       {tab === 'types' && (
         <TypeChartTab attackers={attackers} defenders={defenders} />
@@ -216,7 +229,7 @@ export default function App() {
           <div className="bg-gray-900 border-b border-gray-800 shrink-0">
             <div className="flex items-center justify-between px-4 py-2">
               <span className="text-sm font-semibold text-gray-200">
-                Attackers <span className="text-gray-600 font-normal text-xs">({attackers.length}/20)</span>
+                Attackers <span className="text-gray-600 font-normal text-xs">({attackers.length}/6)</span>
               </span>
               <div className="flex items-center gap-2">
                 <button onClick={swapSides}
@@ -229,7 +242,7 @@ export default function App() {
             </div>
             <div className="flex overflow-x-auto border-t border-gray-800">
               {attackers.filter(a => a.pokemon).map(a => (
-                <button key={a.id} onClick={() => setSelectedAtkId(a.id)}
+                <button key={a.id} onClick={() => { setSelectedAtkId(a.id); setAtkShowAdd(false); }}
                   title={toDisplayName(a.pokemon.name)}
                   className={`flex items-center justify-center px-2 pt-1.5 pb-1 shrink-0 border-b-2 transition-colors ${
                     selectedAtk?.id === a.id
@@ -241,8 +254,8 @@ export default function App() {
                     alt="" className="w-10 h-10 object-contain" />
                 </button>
               ))}
-              {attackers.length < 20 && (
-                <button onClick={() => setSelectedAtkId(null)}
+              {attackers.length < 6 && (
+                <button onClick={() => setAtkShowAdd(true)}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
                     !selectedAtk
                       ? 'border-blue-500 bg-gray-800 text-blue-400'
@@ -281,7 +294,7 @@ export default function App() {
           <div className="bg-gray-900 border-b border-gray-800 shrink-0">
             <div className="flex items-center justify-between px-4 py-2">
               <span className="text-sm font-semibold text-gray-200">
-                Defenders <span className="text-gray-600 font-normal text-xs">({defenders.length})</span>
+                Defenders <span className="text-gray-600 font-normal text-xs">({defenders.length}/6)</span>
               </span>
               <button onClick={() => setDefModal(true)}
                 className="text-xs px-2.5 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
@@ -289,7 +302,7 @@ export default function App() {
             </div>
             <div className="flex overflow-x-auto border-t border-gray-800">
               {defenders.filter(d => d.pokemon).map(d => (
-                <button key={d.id} onClick={() => setSelectedDefId(d.id)}
+                <button key={d.id} onClick={() => { setSelectedDefId(d.id); setDefShowAdd(false); }}
                   title={toDisplayName(d.pokemon.name)}
                   className={`flex items-center justify-center px-2 pt-1.5 pb-1 shrink-0 border-b-2 transition-colors ${
                     selectedDef?.id === d.id
@@ -301,14 +314,16 @@ export default function App() {
                     alt="" className="w-10 h-10 object-contain" />
                 </button>
               ))}
-              <button onClick={() => setSelectedDefId(null)}
-                className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
-                  !selectedDef
-                    ? 'border-orange-500 bg-gray-800 text-orange-400'
-                    : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
-                }`} style={{ minWidth: 56, height: 54 }}>
-                +
-              </button>
+              {defenders.length < 6 && (
+                <button onClick={() => setDefShowAdd(true)}
+                  className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
+                    !selectedDef
+                      ? 'border-orange-500 bg-gray-800 text-orange-400'
+                      : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
+                  }`} style={{ minWidth: 56, height: 54 }}>
+                  +
+                </button>
+              )}
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-2">
@@ -341,19 +356,20 @@ export default function App() {
       {atkModal && (
         <ImportExportModal
           team={attackers}
-          maxSize={20}
+          maxSize={6}
           pokemonData={filteredPokemon}
           movesData={movesData}
-          onApply={team => { setAttackers(team); setAtkModal(false); }}
+          onApply={team => { setAttackers(team); setAtkModal(false); setSelectedAtkId(team.find(a => a.pokemon)?.id ?? null); setAtkShowAdd(false); }}
           onClose={() => setAtkModal(false)}
         />
       )}
       {defModal && (
         <ImportExportModal
           team={defenders}
+          maxSize={6}
           pokemonData={filteredPokemon}
           movesData={movesData}
-          onApply={team => { setDefenders(team); setDefModal(false); }}
+          onApply={team => { setDefenders(team); setDefModal(false); setSelectedDefId(team.find(d => d.pokemon)?.id ?? null); setDefShowAdd(false); }}
           onClose={() => setDefModal(false)}
         />
       )}

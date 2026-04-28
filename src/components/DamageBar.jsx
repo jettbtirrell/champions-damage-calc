@@ -1,5 +1,10 @@
 export default function DamageBar({ minDmg, maxDmg, defenderHp, noEffect, immune }) {
-  if (immune) return <span className="text-gray-500 text-xs italic">Immune</span>;
+  if (immune) return (
+    <div className="flex items-center gap-2 w-full">
+      <div className="relative flex-1 h-2 bg-gray-700 rounded overflow-hidden" style={{ minWidth: 80 }} />
+      <span className="text-gray-500 text-xs italic shrink-0" style={{ minWidth: '9rem' }}>Immune</span>
+    </div>
+  );
   if (noEffect) return <span className="text-gray-600 text-xs italic">—</span>;
   if (!defenderHp) return null;
 

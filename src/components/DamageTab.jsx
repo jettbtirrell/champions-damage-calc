@@ -7,7 +7,7 @@ import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import DamageBar from './DamageBar';
 
-function DefenderDamageCard({ defender, attackers, weather }) {
+export function DefenderDamageCard({ defender, attackers, weather }) {
   const defStats = calcAllStats(defender.pokemon, defender.statPoints, defender.nature);
   const defBoosts = defender.boosts || {};
 
