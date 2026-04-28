@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { toDisplayName } from './utils/importExport';
 import pokemonData from './data/pokemon.json';
 import movesData from './data/moves.json';
@@ -13,7 +13,7 @@ import MetaTab from './components/MetaTab';
 import RolesTab from './components/RolesTab';
 import TestCasesTab from './components/TestCasesTab';
 import MatchupMatrix from './components/MatchupMatrix';
-import DamageTab2 from './components/DamageTab2';
+import { DefenderDamageCard } from './components/DamageTab';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
@@ -25,6 +25,8 @@ const WEATHER_ACTIVE  = {
   sand: 'bg-yellow-700 text-white',
   snow: 'bg-cyan-700 text-white',
 };
+
+const ALL_TABS = ['setup', 'damage', 'matrix', 'types', 'coverage', 'speed', 'roles', 'tests', 'meta'];
 
 function makeAttacker() {
   return {
@@ -59,8 +61,6 @@ export default function App() {
   const [selectedDefId, setSelectedDefId] = useState(null);
   const [atkShowAdd, setAtkShowAdd] = useState(false);
   const [defShowAdd, setDefShowAdd] = useState(false);
-  const [dmg2SelectedId, setDmg2SelectedId] = useState(null);
-  const [dmg2SelectedSide, setDmg2SelectedSide] = useState(null);
 
   const filteredPokemon = useMemo(
     () => pokemonData.filter(FORMATS[format].filter),
@@ -74,6 +74,23 @@ export default function App() {
     : (attackers.find(a => a.id === selectedAtkId) ?? eligibleAtk[0] ?? null);
   const selectedDef = defShowAdd ? null
     : (defenders.find(d => d.id === selectedDefId) ?? eligibleDef[0] ?? null);
+
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key !== 'Tab') return;
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      e.preventDefault();
+      setTab(t => {
+        const idx = ALL_TABS.indexOf(t);
+        return e.shiftKey
+          ? ALL_TABS[(idx - 1 + ALL_TABS.length) % ALL_TABS.length]
+          : ALL_TABS[(idx + 1) % ALL_TABS.length];
+      });
+    }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
 
   function updateAttacker(id, patch) {
     setAttackers(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
@@ -128,6 +145,8 @@ export default function App() {
     setDefShowAdd(atkShowAdd);
   }
 
+  const showSharedHeader = tab === 'setup' || tab === 'damage';
+
   return (
     <div className={`min-h-screen bg-gray-950 flex flex-col${theme === 'light' ? ' light' : ''}`}>
       {/* Header */}
@@ -148,13 +167,10 @@ export default function App() {
           <span className="text-xs text-gray-500">Format:</span>
           <div className="flex gap-1">
             {FORMAT_OPTIONS.map(f => (
-              <button
-                key={f}
-                onClick={() => setFormat(f)}
+              <button key={f} onClick={() => setFormat(f)}
                 className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
                   format === f ? 'bg-purple-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                }`}
-              >
+                }`}>
                 {FORMATS[f].label}
               </button>
             ))}
@@ -165,15 +181,10 @@ export default function App() {
           <span className="text-xs text-gray-500">Weather:</span>
           <div className="flex gap-1">
             {WEATHER_OPTIONS.map(w => (
-              <button
-                key={w}
-                onClick={() => setWeather(w)}
+              <button key={w} onClick={() => setWeather(w)}
                 className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
-                  weather === w
-                    ? WEATHER_ACTIVE[w]
-                    : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-                }`}
-              >
+                  weather === w ? WEATHER_ACTIVE[w] : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                }`}>
                 {WEATHER_LABELS[w]}
               </button>
             ))}
@@ -182,51 +193,16 @@ export default function App() {
         {/* Theme toggle */}
         <button
           onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-          className="text-xs px-2.5 py-1 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-200 transition-colors"
-        >
+          className="text-xs px-2.5 py-1 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-gray-200 transition-colors">
           {theme === 'dark' ? 'Light' : 'Dark'}
         </button>
       </header>
 
-      {tab === 'damage' && (
-        <DamageTab2
-          attackers={attackers} defenders={defenders} weather={weather}
-          selectedId={dmg2SelectedId} setSelectedId={setDmg2SelectedId}
-          selectedSide={dmg2SelectedSide} setSelectedSide={setDmg2SelectedSide}
-          setSetupAtkId={setSelectedAtkId} setSetupDefId={setSelectedDefId}
-        />
-      )}
-      {tab === 'matrix' && (
-        <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
-      )}
-      {tab === 'types' && (
-        <TypeChartTab attackers={attackers} defenders={defenders} />
-      )}
-      {tab === 'coverage' && (
-        <CoverageTab attackers={attackers} pokemonData={filteredPokemon} />
-      )}
-      {tab === 'speed' && (
-        <SpeedTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
-      )}
-      {tab === 'roles' && (
-        <RolesTab attackers={attackers} defenders={defenders} />
-      )}
-      {tab === 'tests' && (
-        <TestCasesTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
-      )}
-      {tab === 'meta' && (
-        <MetaTab pokemonData={filteredPokemon} movesData={movesData} onAddDefender={(p, moves = []) => {
-                const entry = { ...makeDefender(), pokemon: p, statPoints: { hp: 32, atk: 0, def: 17, spa: 0, spd: 17, spe: 0 }, moves };
-                setDefenders(prev => [...prev, entry]);
-                setSelectedDefId(entry.id);
-              }} />
-      )}
-
-      {/* Main panels */}
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 57px)', display: (tab === 'setup') ? undefined : 'none' }}>
-        {/* Attackers panel */}
-        <section className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
-          <div className="bg-gray-900 border-b border-gray-800 shrink-0">
+      {/* Shared attacker/defender header — visible in Setup and Damage */}
+      {showSharedHeader && (
+        <div className="bg-gray-900 border-b border-gray-800 shrink-0 flex">
+          {/* Attackers side */}
+          <div className="flex-1 flex flex-col border-r border-gray-800 min-w-0">
             <div className="flex items-center justify-between px-4 py-2">
               <span className="text-sm font-semibold text-gray-200">
                 Attackers <span className="text-gray-600 font-normal text-xs">({attackers.length}/6)</span>
@@ -266,32 +242,9 @@ export default function App() {
               )}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-2">
-            {selectedAtk ? (
-              <AttackerCard
-                key={selectedAtk.id}
-                attacker={selectedAtk}
-                pokemonData={filteredPokemon}
-                movesData={movesData}
-                weather={weather}
-                onChange={patch => updateAttacker(selectedAtk.id, patch)}
-                onRemove={() => removeAttacker(selectedAtk.id)}
-              />
-            ) : (
-              <PokemonSearch
-                key={atkSearchKey}
-                value={null}
-                onChange={addAttackerWithPokemon}
-                pokemonData={filteredPokemon}
-                placeholder="Add Pokémon"
-              />
-            )}
-          </div>
-        </section>
 
-        {/* Defenders panel */}
-        <section className="flex-1 flex flex-col overflow-hidden min-w-0">
-          <div className="bg-gray-900 border-b border-gray-800 shrink-0">
+          {/* Defenders side */}
+          <div className="flex-1 flex flex-col min-w-0">
             <div className="flex items-center justify-between px-4 py-2">
               <span className="text-sm font-semibold text-gray-200">
                 Defenders <span className="text-gray-600 font-normal text-xs">({defenders.length}/6)</span>
@@ -326,31 +279,131 @@ export default function App() {
               )}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-2">
-            {selectedDef ? (
-              <DefenderCard
-                key={selectedDef.id}
-                defender={selectedDef}
-                pokemonData={filteredPokemon}
-                movesData={movesData}
-                attackers={attackers}
-                weather={weather}
-                onChange={patch => updateDefender(selectedDef.id, patch)}
-                onRemove={() => removeDefender(selectedDef.id)}
-                showDamage={false}
-              />
+        </div>
+      )}
+
+      {/* Setup body */}
+      {tab === 'setup' && (
+        <main className="flex-1 flex overflow-hidden">
+          <section className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
+            <div className="flex-1 overflow-y-auto p-2">
+              {selectedAtk ? (
+                <AttackerCard
+                  key={selectedAtk.id}
+                  attacker={selectedAtk}
+                  pokemonData={filteredPokemon}
+                  movesData={movesData}
+                  weather={weather}
+                  onChange={patch => updateAttacker(selectedAtk.id, patch)}
+                  onRemove={() => removeAttacker(selectedAtk.id)}
+                />
+              ) : (
+                <PokemonSearch
+                  key={atkSearchKey}
+                  value={null}
+                  onChange={addAttackerWithPokemon}
+                  pokemonData={filteredPokemon}
+                  placeholder="Add Pokémon"
+                />
+              )}
+            </div>
+          </section>
+          <section className="flex-1 flex flex-col overflow-hidden min-w-0">
+            <div className="flex-1 overflow-y-auto p-2">
+              {selectedDef ? (
+                <DefenderCard
+                  key={selectedDef.id}
+                  defender={selectedDef}
+                  pokemonData={filteredPokemon}
+                  movesData={movesData}
+                  attackers={attackers}
+                  weather={weather}
+                  onChange={patch => updateDefender(selectedDef.id, patch)}
+                  onRemove={() => removeDefender(selectedDef.id)}
+                  showDamage={false}
+                />
+              ) : (
+                <PokemonSearch
+                  key={defSearchKey}
+                  value={null}
+                  onChange={addDefenderWithPokemon}
+                  pokemonData={filteredPokemon}
+                  placeholder="Add Pokémon"
+                />
+              )}
+            </div>
+          </section>
+        </main>
+      )}
+
+      {/* Damage body — split screen */}
+      {tab === 'damage' && (
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left: selected attacker vs each defender */}
+          <div className="flex-1 overflow-y-auto p-4 border-r border-gray-800 min-w-0">
+            {!selectedAtk ? (
+              <div className="flex items-center justify-center h-full text-gray-600 text-sm">
+                Add an attacker in Setup.
+              </div>
+            ) : eligibleDef.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-600 text-sm">
+                Add defenders in Setup.
+              </div>
             ) : (
-              <PokemonSearch
-                key={defSearchKey}
-                value={null}
-                onChange={addDefenderWithPokemon}
-                pokemonData={filteredPokemon}
-                placeholder="Add Pokémon"
-              />
+              <div className="space-y-3">
+                {eligibleDef.map(def => (
+                  <DefenderDamageCard key={def.id} defender={def} attackers={[selectedAtk]} weather={weather} />
+                ))}
+              </div>
             )}
           </div>
-        </section>
-      </main>
+
+          {/* Right: each attacker vs selected defender */}
+          <div className="flex-1 overflow-y-auto p-4 min-w-0">
+            {!selectedDef ? (
+              <div className="flex items-center justify-center h-full text-gray-600 text-sm">
+                Add a defender in Setup.
+              </div>
+            ) : eligibleAtk.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-600 text-sm">
+                Add attackers in Setup.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {eligibleAtk.map(atk => (
+                  <DefenderDamageCard key={atk.id} defender={selectedDef} attackers={[atk]} weather={weather} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {tab === 'matrix' && (
+        <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
+      )}
+      {tab === 'types' && (
+        <TypeChartTab attackers={attackers} defenders={defenders} />
+      )}
+      {tab === 'coverage' && (
+        <CoverageTab attackers={attackers} pokemonData={filteredPokemon} />
+      )}
+      {tab === 'speed' && (
+        <SpeedTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
+      )}
+      {tab === 'roles' && (
+        <RolesTab attackers={attackers} defenders={defenders} />
+      )}
+      {tab === 'tests' && (
+        <TestCasesTab attackers={attackers} defenders={defenders} pokemonData={filteredPokemon} />
+      )}
+      {tab === 'meta' && (
+        <MetaTab pokemonData={filteredPokemon} movesData={movesData} onAddDefender={(p, moves = []) => {
+          const entry = { ...makeDefender(), pokemon: p, statPoints: { hp: 32, atk: 0, def: 17, spa: 0, spd: 17, spe: 0 }, moves };
+          setDefenders(prev => [...prev, entry]);
+          setSelectedDefId(entry.id);
+        }} />
+      )}
 
       {/* Modals */}
       {atkModal && (
