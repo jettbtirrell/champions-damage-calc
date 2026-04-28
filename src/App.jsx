@@ -350,9 +350,9 @@ export default function App() {
                 Add defenders in Setup.
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 {eligibleDef.map(def => (
-                  <DefenderDamageCard key={def.id} defender={def} attackers={[selectedAtk]} weather={weather} />
+                  <DefenderDamageCard key={def.id} defender={def} attackers={[selectedAtk]} weather={weather} inlineHeader />
                 ))}
               </div>
             )}
@@ -369,9 +369,9 @@ export default function App() {
                 Add attackers in Setup.
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 {eligibleAtk.map(atk => (
-                  <DefenderDamageCard key={atk.id} defender={selectedDef} attackers={[atk]} weather={weather} />
+                  <DefenderDamageCard key={atk.id} defender={selectedDef} attackers={[atk]} weather={weather} inlineHeader />
                 ))}
               </div>
             )}

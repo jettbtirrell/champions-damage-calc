@@ -7,7 +7,7 @@ import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import DamageBar from './DamageBar';
 
-export function DefenderDamageCard({ defender, attackers, weather }) {
+export function DefenderDamageCard({ defender, attackers, weather, inlineHeader = false }) {
   const defStats = calcAllStats(defender.pokemon, defender.statPoints, defender.nature);
   const defBoosts = defender.boosts || {};
 
@@ -57,28 +57,52 @@ export function DefenderDamageCard({ defender, attackers, weather }) {
 
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-2">
-      {/* Defender header */}
-      <div className="flex items-center gap-2.5">
-        <img
-          src={defender.pokemon.artwork || defender.pokemon.sprite}
-          onError={e => { if (defender.pokemon.sprite) e.target.src = defender.pokemon.sprite; }}
-          alt="" className="w-11 h-11 object-contain shrink-0"
-        />
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-200 truncate">{toDisplayName(defender.pokemon.name)}</div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-xs text-gray-500">HP <span className="font-mono text-gray-300">{defStats.hp}</span></span>
-            <div className="flex gap-0.5">
-              {defender.pokemon.types.map(t => (
-                <span key={t} className="text-white rounded px-1"
-                  style={{ backgroundColor: TYPE_COLORS[t], fontSize: 8, lineHeight: '13px' }}>
-                  {t}
-                </span>
-              ))}
+      {inlineHeader ? (
+        /* Inline header: attacker → defender on one row */
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {damageRows[0] && (
+            <>
+              <img
+                src={damageRows[0].attacker.pokemon.artwork || damageRows[0].attacker.pokemon.sprite}
+                onError={e => { if (damageRows[0].attacker.pokemon.sprite) e.target.src = damageRows[0].attacker.pokemon.sprite; }}
+                alt="" className="w-6 h-6 object-contain shrink-0"
+              />
+              <span className="text-xs font-semibold text-gray-200 truncate">{toDisplayName(damageRows[0].attacker.pokemon.name)}</span>
+            </>
+          )}
+          <span className="text-gray-600 text-xs shrink-0">→</span>
+          <img
+            src={defender.pokemon.artwork || defender.pokemon.sprite}
+            onError={e => { if (defender.pokemon.sprite) e.target.src = defender.pokemon.sprite; }}
+            alt="" className="w-6 h-6 object-contain shrink-0"
+          />
+          <span className="text-xs font-semibold text-gray-200 truncate">{toDisplayName(defender.pokemon.name)}</span>
+          <span className="text-xs text-gray-500 ml-auto shrink-0">HP <span className="font-mono text-gray-300">{defStats.hp}</span></span>
+        </div>
+      ) : (
+        /* Standard header: defender prominent */
+        <div className="flex items-center gap-2.5">
+          <img
+            src={defender.pokemon.artwork || defender.pokemon.sprite}
+            onError={e => { if (defender.pokemon.sprite) e.target.src = defender.pokemon.sprite; }}
+            alt="" className="w-11 h-11 object-contain shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-gray-200 truncate">{toDisplayName(defender.pokemon.name)}</div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-gray-500">HP <span className="font-mono text-gray-300">{defStats.hp}</span></span>
+              <div className="flex gap-0.5">
+                {defender.pokemon.types.map(t => (
+                  <span key={t} className="text-white rounded px-1"
+                    style={{ backgroundColor: TYPE_COLORS[t], fontSize: 8, lineHeight: '13px' }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Attacker damage rows */}
       {damageRows.length === 0 && (
@@ -87,18 +111,20 @@ export function DefenderDamageCard({ defender, attackers, weather }) {
       <div className="space-y-2 border-t border-gray-800 pt-2">
         {damageRows.map(({ attacker, rows }) => (
           <div key={attacker.id}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <img
-                src={attacker.pokemon.artwork || attacker.pokemon.sprite}
-                onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
-                alt="" className="w-6 h-6 object-contain shrink-0"
-              />
-              <span className="text-xs font-medium text-gray-300">{toDisplayName(attacker.pokemon.name)}</span>
-            </div>
-            {rows.length === 0 && (
-              <div className="text-xs text-gray-600 italic pl-7">No moves</div>
+            {!inlineHeader && (
+              <div className="flex items-center gap-1.5 mb-1">
+                <img
+                  src={attacker.pokemon.artwork || attacker.pokemon.sprite}
+                  onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
+                  alt="" className="w-6 h-6 object-contain shrink-0"
+                />
+                <span className="text-xs font-medium text-gray-300">{toDisplayName(attacker.pokemon.name)}</span>
+              </div>
             )}
-            <div className="space-y-1 pl-7">
+            {rows.length === 0 && (
+              <div className={`text-xs text-gray-600 italic ${!inlineHeader ? 'pl-7' : ''}`}>No moves</div>
+            )}
+            <div className={`space-y-1 ${!inlineHeader ? 'pl-7' : ''}`}>
               {rows.filter(r => !r.result.noEffect).map(({ move, effMove, result }) => (
                 <div key={move.id} className="space-y-0.5">
                   <div className="flex items-center gap-1.5">
