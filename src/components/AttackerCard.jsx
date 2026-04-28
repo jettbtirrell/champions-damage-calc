@@ -18,14 +18,14 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
   function update(patch) { onChange({ ...attacker, ...patch }); }
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-3">
+    <div className="bg-gray-900 border border-gray-700 rounded-lg p-2 space-y-2">
       {/* Header row */}
       <div className="flex items-center gap-2">
         {(pokemon?.artwork || pokemon?.sprite) && (
           <img
             src={pokemon.artwork || pokemon.sprite}
             onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
-            alt={pokemon.name} className="w-14 h-14 object-contain shrink-0"
+            alt={pokemon.name} className="w-12 h-12 object-contain shrink-0"
           />
         )}
         <div className="flex-1 min-w-0">
@@ -54,12 +54,12 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
       {pokemon && (
         <>
           {/* Nature */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <label className="text-xs text-gray-400 w-14 shrink-0">Nature</label>
             <select
               value={nature}
               onChange={e => update({ nature: e.target.value })}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
             >
               {Object.keys(NATURES).map(n => (
                 <option key={n} value={n}>{natureLabel(n)}</option>
@@ -69,7 +69,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
 
           {/* Stat points */}
           <div>
-            <div className="text-xs text-gray-500 mb-1.5">Stat Points</div>
+            <div className="text-xs text-gray-500 mb-1">Stat Points</div>
             <StatEditor
               pokemon={pokemon}
               statPoints={statPoints}
@@ -81,7 +81,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
 
           {/* Stat boosts */}
           <div>
-            <div className="text-xs text-gray-500 mb-1.5">Boosts</div>
+            <div className="text-xs text-gray-500 mb-1">Boosts</div>
             <div className="space-y-1">
               {BOOST_STATS.map(({ key, label }) => (
                 <div key={key} className="flex items-center gap-1.5">
@@ -108,14 +108,14 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
 
           {/* Moves */}
           <div>
-            <div className="text-xs text-gray-500 mb-1.5">Moves</div>
-            <div className="space-y-1 mb-1.5">
+            <div className="text-xs text-gray-500 mb-1">Moves</div>
+            <div className="space-y-1 mb-1">
               {moves.map((move, i) => {
                 const eff = getEffectiveMove(move, attacker.ability, weather);
                 const typeChanged = eff.type !== move.type;
                 const powerChanged = eff.power !== move.power;
                 return (
-                <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-1">
+                <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-0.5">
                   <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
                   <span className="text-xs px-1 py-0.5 rounded text-white"
                     style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
@@ -145,13 +145,13 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
           </div>
 
           {/* Item + Ability */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <div className="flex-1">
-              <label className="text-xs text-gray-400 block mb-1">Item</label>
+              <label className="text-xs text-gray-400 block mb-0.5">Item</label>
               <select
                 value={attacker.item || ''}
                 onChange={e => update({ item: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {ITEM_GROUPS.map(group => (
@@ -164,11 +164,11 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
               </select>
             </div>
             <div className="flex-1">
-              <label className="text-xs text-gray-400 block mb-1">Ability</label>
+              <label className="text-xs text-gray-400 block mb-0.5">Ability</label>
               <select
                 value={attacker.ability || ''}
                 onChange={e => update({ ability: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {(() => {

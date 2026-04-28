@@ -15,7 +15,7 @@ import DamageBar from './DamageBar';
 
 const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' };
 
-export default function DefenderCard({ defender, onChange, onRemove, attackers, weather, pokemonData, movesData }) {
+export default function DefenderCard({ defender, onChange, onRemove, attackers, weather, pokemonData, movesData, showDamage = true }) {
   const { pokemon, nature, statPoints } = defender;
   const defStats = calcAllStats(pokemon, statPoints, nature);
 
@@ -77,14 +77,14 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
   }, [pokemon, attackers, weatherDef, weather]);
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 space-y-3">
+    <div className="bg-gray-900 border border-gray-700 rounded-lg p-2 space-y-2">
       {/* Header */}
       <div className="flex items-center gap-2">
         {(pokemon?.artwork || pokemon?.sprite) && (
           <img
             src={pokemon.artwork || pokemon.sprite}
             onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
-            alt={pokemon.name} className="w-14 h-14 object-contain shrink-0"
+            alt={pokemon.name} className="w-12 h-12 object-contain shrink-0"
           />
         )}
         <div className="flex-1 min-w-0">
@@ -112,12 +112,12 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
 
       {pokemon && (
         <>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <label className="text-xs text-gray-400 w-14 shrink-0">Nature</label>
             <select
               value={nature}
               onChange={e => update({ nature: e.target.value })}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
             >
               {Object.keys(NATURES).map(n => (
                 <option key={n} value={n}>{natureLabel(n)}</option>
@@ -126,7 +126,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
           </div>
 
           <div>
-            <div className="text-xs text-gray-500 mb-1.5">Stat Points</div>
+            <div className="text-xs text-gray-500 mb-1">Stat Points</div>
             <StatEditor
               pokemon={pokemon}
               statPoints={statPoints}
@@ -137,7 +137,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
 
           {/* Stat boosts */}
           <div>
-            <div className="text-xs text-gray-500 mb-1.5">Boosts</div>
+            <div className="text-xs text-gray-500 mb-1">Boosts</div>
             <div className="space-y-1">
               {[{ key: 'def', label: 'Def' }, { key: 'spd', label: 'SpD' }].map(({ key, label }) => (
                 <div key={key} className="flex items-center gap-1.5">
@@ -165,14 +165,14 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
           {/* Moves */}
           {movesData && (
             <div>
-              <div className="text-xs text-gray-500 mb-1.5">Moves</div>
-              <div className="space-y-1 mb-1.5">
+              <div className="text-xs text-gray-500 mb-1">Moves</div>
+              <div className="space-y-1 mb-1">
                 {(defender.moves || []).map((move, i) => {
                   const eff = getEffectiveMove(move, defender.ability, weather);
                   const typeChanged = eff.type !== move.type;
                   const powerChanged = eff.power !== move.power;
                   return (
-                    <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-1">
+                    <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-0.5">
                       <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
                       <span className="text-xs px-1 py-0.5 rounded text-white"
                         style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
@@ -203,13 +203,13 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
           )}
 
           {/* Item + Ability */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <div className="flex-1">
-              <label className="text-xs text-gray-400 block mb-1">Item</label>
+              <label className="text-xs text-gray-400 block mb-0.5">Item</label>
               <select
                 value={defender.item || ''}
                 onChange={e => update({ item: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {ITEM_GROUPS.map(group => (
@@ -222,11 +222,11 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               </select>
             </div>
             <div className="flex-1">
-              <label className="text-xs text-gray-400 block mb-1">Ability</label>
+              <label className="text-xs text-gray-400 block mb-0.5">Ability</label>
               <select
                 value={defender.ability || ''}
                 onChange={e => update({ ability: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {(() => {
@@ -247,18 +247,20 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5 flex-wrap">
-            <span><span className="text-gray-500">HP:</span> <span className="font-mono font-semibold text-white">{defStats.hp}</span></span>
-            {weatherDef.def !== defStats.def && (
-              <span><span className="text-gray-500">Def:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.def}</span><span className="font-mono font-semibold text-cyan-400">{weatherDef.def}</span></span>
-            )}
-            {weatherDef.spd !== defStats.spd && (
-              <span><span className="text-gray-500">SpD:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.spd}</span><span className="font-mono font-semibold text-yellow-400">{weatherDef.spd}</span></span>
-            )}
-          </div>
+          {showDamage && (
+            <div className="flex items-center gap-3 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5 flex-wrap">
+              <span><span className="text-gray-500">HP:</span> <span className="font-mono font-semibold text-white">{defStats.hp}</span></span>
+              {weatherDef.def !== defStats.def && (
+                <span><span className="text-gray-500">Def:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.def}</span><span className="font-mono font-semibold text-cyan-400">{weatherDef.def}</span></span>
+              )}
+              {weatherDef.spd !== defStats.spd && (
+                <span><span className="text-gray-500">SpD:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.spd}</span><span className="font-mono font-semibold text-yellow-400">{weatherDef.spd}</span></span>
+              )}
+            </div>
+          )}
 
           {/* Damage breakdown per attacker */}
-          {damageRows.length > 0 && (
+          {showDamage && damageRows.length > 0 && (
             <div className="space-y-2 border-t border-gray-800 pt-2">
               {damageRows.map(({ attacker, rows }) => (
                 <div key={attacker.id}>

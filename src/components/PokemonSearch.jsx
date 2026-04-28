@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { toDisplayName } from '../utils/importExport';
 import { TYPE_COLORS } from '../data/typeChart';
 
-export default function PokemonSearch({ value, onChange, pokemonData }) {
+export default function PokemonSearch({ value, onChange, pokemonData, placeholder = 'Search Pokémon…' }) {
   const [query, setQuery] = useState(value ? toDisplayName(value.name) : '');
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -34,7 +34,7 @@ export default function PokemonSearch({ value, onChange, pokemonData }) {
     <div ref={ref} className="relative w-full">
       <input
         className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
-        placeholder="Search Pokémon…"
+        placeholder={placeholder}
         value={query}
         onChange={e => { setQuery(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}

@@ -55,7 +55,7 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
           </div>
         );
       })}
-      <div className={`text-xs text-right mt-1 ${used > TOTAL_STAT_POINTS ? 'text-red-400' : 'text-gray-500'}`}>
+      <div className={`text-xs text-right ${used > TOTAL_STAT_POINTS ? 'text-red-400' : 'text-gray-500'}`}>
         {used} / {TOTAL_STAT_POINTS} pts
       </div>
     </div>
