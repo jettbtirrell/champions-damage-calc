@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { getEffectiveMove } from '../data/abilities';
@@ -162,13 +162,9 @@ function SelectorList({ label, items, deselected, onToggle, accentOn, accentOff 
   );
 }
 
-export default function DamageTab({ attackers, defenders, weather }) {
+export default function DamageTab({ attackers, defenders, weather, deselAtk, setDeselAtk, deselDef, setDeselDef }) {
   const eligibleAtk = attackers.filter(a => a.pokemon);
   const eligibleDef = defenders.filter(d => d.pokemon);
-
-  // Track deselected IDs — new pokemon auto-appear as selected
-  const [deselAtk, setDeselAtk] = useState(new Set());
-  const [deselDef, setDeselDef] = useState(new Set());
 
   function toggleAtk(id) {
     setDeselAtk(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });

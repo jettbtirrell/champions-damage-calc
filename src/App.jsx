@@ -57,6 +57,8 @@ export default function App() {
   const [defSearchKey, setDefSearchKey] = useState(0);
   const [selectedAtkId, setSelectedAtkId] = useState(null);
   const [selectedDefId, setSelectedDefId] = useState(null);
+  const [dmgDeselAtk, setDmgDeselAtk] = useState(new Set());
+  const [dmgDeselDef, setDmgDeselDef] = useState(new Set());
 
   const filteredPokemon = useMemo(
     () => pokemonData.filter(FORMATS[format].filter),
@@ -178,7 +180,11 @@ export default function App() {
         <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
       )}
       {tab === 'damage' && (
-        <DamageTab attackers={attackers} defenders={defenders} weather={weather} />
+        <DamageTab
+          attackers={attackers} defenders={defenders} weather={weather}
+          deselAtk={dmgDeselAtk} setDeselAtk={setDmgDeselAtk}
+          deselDef={dmgDeselDef} setDeselDef={setDmgDeselDef}
+        />
       )}
       {tab === 'types' && (
         <TypeChartTab attackers={attackers} defenders={defenders} />
