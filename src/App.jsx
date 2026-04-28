@@ -157,6 +157,7 @@ export default function App() {
   }
 
   const showSharedHeader = true;
+  const selectionActive = tab === 'setup' || tab === 'damage';
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
@@ -229,35 +230,31 @@ export default function App() {
       {showSharedHeader && (
         <div className="bg-gray-900 border-b border-gray-800 shrink-0 flex">
           {/* Attackers side */}
-          <div className="flex-1 flex flex-col border-r border-gray-800 min-w-0">
-            <div className="flex items-center justify-between px-4 py-1">
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex items-center gap-2 px-4 py-1">
               <span className="text-sm font-semibold text-gray-200">
                 Attackers <span className="text-gray-600 font-normal text-xs">({attackers.length}/6)</span>
               </span>
-              <div className="flex items-center gap-2">
-                <button onClick={swapSides}
-                  className="text-xs px-2.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
-                  title="Swap attackers and defenders">⇄ Swap</button>
-                <button onClick={() => setAtkModal(true)}
-                  className="text-xs px-2.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
-                  Import / Export</button>
-              </div>
+              <button onClick={() => setAtkModal(true)}
+                className="text-xs px-2.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
+                Import / Export</button>
             </div>
             <div className="flex overflow-x-auto border-t border-gray-800">
               {attackers.filter(a => a.pokemon).map(a => (
-                <button key={a.id} onClick={() => { setSelectedAtkId(a.id); setAtkShowAdd(false); }}
+                <button key={a.id}
+                  onClick={selectionActive ? () => { setSelectedAtkId(a.id); setAtkShowAdd(false); } : undefined}
                   title={toDisplayName(a.pokemon.name)}
                   className={`flex items-center justify-center px-1.5 pt-1 pb-0.5 shrink-0 border-b-2 transition-colors ${
-                    selectedAtk?.id === a.id
+                    selectionActive && selectedAtk?.id === a.id
                       ? 'border-blue-500 bg-gray-800'
-                      : 'border-transparent hover:bg-gray-800/50 opacity-60 hover:opacity-100'
-                  }`} style={{ minWidth: 52 }}>
+                      : 'border-transparent opacity-60'
+                  } ${selectionActive ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
                   <img src={a.pokemon.artwork || a.pokemon.sprite}
                     onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
                     alt="" className="w-10 h-10 object-contain" />
                 </button>
               ))}
-              {attackers.length < 6 && (
+              {selectionActive && attackers.length < 6 && (
                 <button onClick={() => setAtkShowAdd(true)}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
                     !selectedAtk
@@ -270,9 +267,14 @@ export default function App() {
             </div>
           </div>
 
+          {/* Swap button — full-height column */}
+          <button onClick={swapSides}
+            className="flex items-center justify-center border-x border-gray-800 px-2 shrink-0 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-sm"
+            title="Swap attackers and defenders">⇄</button>
+
           {/* Defenders side */}
           <div className="flex-1 flex flex-col min-w-0">
-            <div className="flex items-center justify-between px-4 py-1">
+            <div className="flex items-center gap-2 px-4 py-1">
               <span className="text-sm font-semibold text-gray-200">
                 Defenders <span className="text-gray-600 font-normal text-xs">({defenders.length}/6)</span>
               </span>
@@ -282,19 +284,20 @@ export default function App() {
             </div>
             <div className="flex overflow-x-auto border-t border-gray-800">
               {defenders.filter(d => d.pokemon).map(d => (
-                <button key={d.id} onClick={() => { setSelectedDefId(d.id); setDefShowAdd(false); }}
+                <button key={d.id}
+                  onClick={selectionActive ? () => { setSelectedDefId(d.id); setDefShowAdd(false); } : undefined}
                   title={toDisplayName(d.pokemon.name)}
                   className={`flex items-center justify-center px-1.5 pt-1 pb-0.5 shrink-0 border-b-2 transition-colors ${
-                    selectedDef?.id === d.id
+                    selectionActive && selectedDef?.id === d.id
                       ? 'border-orange-500 bg-gray-800'
-                      : 'border-transparent hover:bg-gray-800/50 opacity-60 hover:opacity-100'
-                  }`} style={{ minWidth: 52 }}>
+                      : 'border-transparent opacity-60'
+                  } ${selectionActive ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
                   <img src={d.pokemon.artwork || d.pokemon.sprite}
                     onError={e => { if (d.pokemon.sprite) e.target.src = d.pokemon.sprite; }}
                     alt="" className="w-10 h-10 object-contain" />
                 </button>
               ))}
-              {defenders.length < 6 && (
+              {selectionActive && defenders.length < 6 && (
                 <button onClick={() => setDefShowAdd(true)}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
                     !selectedDef
