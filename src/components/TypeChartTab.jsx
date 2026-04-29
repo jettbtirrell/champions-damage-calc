@@ -15,12 +15,12 @@ const TYPE_ABBR = {
 };
 
 const MULT_STYLE = {
-  0:    { label: '0×',  bg: 'var(--acc-zero-bg)',    text: 'var(--acc-zero-text)'    },
-  0.25: { label: '¼×',  bg: 'var(--acc-dkgreen-bg)', text: 'var(--acc-dkgreen-text)'  },
-  0.5:  { label: '½×',  bg: 'var(--acc-ltgreen-bg)', text: 'var(--acc-ltgreen-text)' },
-  1:    { label: null,  bg: null,                    text: null                       },
-  2:    { label: '2×',  bg: 'var(--acc-orange-bg)',  text: 'var(--acc-orange-text)'  },
-  4:    { label: '4×',  bg: 'var(--acc-red-bg)',     text: 'var(--acc-red-text)'     },
+  0:    { label: '0×',  bg: 'var(--badge-immune-bg)',  text: 'var(--badge-immune-text)'  },
+  0.25: { label: '¼×',  bg: 'var(--badge-quarter-bg)', text: 'var(--badge-quarter-text)' },
+  0.5:  { label: '½×',  bg: 'var(--badge-half-bg)',    text: 'var(--badge-half-text)'    },
+  1:    { label: null,  bg: null,                      text: null                         },
+  2:    { label: '2×',  bg: 'var(--badge-2x-bg)',      text: 'var(--badge-2x-text)'      },
+  4:    { label: '4×',  bg: 'var(--badge-4x-bg)',      text: 'var(--badge-4x-text)'      },
 };
 
 function TypeGrid({ team, label }) {

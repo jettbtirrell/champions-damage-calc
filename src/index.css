@@ -1,111 +1,124 @@
 @import "tailwindcss";
 
-/* ── Core UI palette ────────────────────────────────────────────────────── */
+/* ── Core UI palette ─────────────────────────────────────────────────────── */
+/* Each variable has a paired -light counterpart defined on the same line.   */
+/* The .light class at the bottom remaps each active variable to its -light  */
+/* value. To change the app palette, edit the two columns below.             */
 :root {
-  /* Backgrounds */
-  --bg-card:       #111827;   /* dark card / header */
-  --bg-content:    #ffffff;   /* white inset section inside dark cards */
-  --bg-panel:      #1f2937;   /* sidebar / toolbar */
+  /* ── Tailwind gray scale ─────────────────────────────────────────────────── */
+  /* Drives all bg-gray-*, text-gray-*, border-gray-* Tailwind utilities.     */
+  --color-gray-950: #070d1a;  --color-gray-950-light: #f9fafb;  /* page background */
+  --color-gray-900: #111827;  --color-gray-900-light: #f3f4f6;  /* header, cards */
+  --color-gray-800: #1f2937;  --color-gray-800-light: #e5e7eb;  /* panels, subtle borders */
+  --color-gray-700: #374151;  --color-gray-700-light: #d1d5db;  /* borders, dividers */
+  --color-gray-600: #4b5563;  --color-gray-600-light: #9ca3af;  /* disabled text */
+  --color-gray-500: #6b7280;  --color-gray-500-light: #6b7280;  /* placeholder / secondary labels */
+  --color-gray-400: #9ca3af;  --color-gray-400-light: #4b5563;  /* secondary text */
+  --color-gray-300: #d1d5db;  --color-gray-300-light: #374151;  /* light text on dark */
+  --color-gray-200: #e5e7eb;  --color-gray-200-light: #1f2937;  /* near-white text */
+  --color-gray-100: #f3f4f6;  --color-gray-100-light: #111827;  /* bright text */
 
-  /* Borders & dividers */
-  --border:        #374151;   /* standard separator */
-  --border-subtle: rgba(0,0,0,0.15);  /* divider drawn on light surfaces */
+  /* ── Surface backgrounds (used in inline styles) ────────────────────────── */
+  --surface-card:      #111827;  --surface-card-light:      #ffffff;  /* card / header bg */
+  --surface-inset:     #ffffff;  --surface-inset-light:     #f9fafb;  /* content section inside a card */
+  --surface-sidebar:   #371f1f;  --surface-sidebar-light:   #f3f4f6;  /* sidebar / toolbar bg */
 
-  /* Text on dark surfaces */
-  --text-bright:   #f3f4f6;
-  --text-normal:   #9ca3af;
-  --text-dim:      #6b7280;
+  /* ── Borders & dividers ──────────────────────────────────────────────────── */
+  --border-divider:    #374151;  --border-divider-light:    #d1d5db;  /* standard separator */
+  --border-inner: rgba(0,0,0,0.15);  --border-inner-light: rgba(0,0,0,0.1);  /* divider on light surfaces */
 
-  /* Text on light (white / pastel) surfaces */
-  --text-on-light: #111827;
-  --text-subtle:   #374151;
-  --text-muted:    #6b7280;
-  --text-accent:   #92400e;   /* BP / item boost label */
+  /* ── Text on dark surfaces ───────────────────────────────────────────────── */
+  --text-primary:      #f3f4f6;  --text-primary-light:      #111827;  /* most prominent text */
+  --text-secondary:    #9ca3af;  --text-secondary-light:    #374151;  /* standard body text */
+  --text-tertiary:     #6b7280;  --text-tertiary-light:     #6b7280;  /* dim / placeholder */
 
-  /* Damage bar */
-  --bar-track:     #1f2937;   /* empty portion on white bg */
-  --bar-track-lt:  #e5e7eb;   /* empty portion on pastel bg */
+  /* ── Text on light (white / pastel) surfaces ─────────────────────────────── */
+  --text-on-surface:   #111827;  --text-on-surface-light:   #111827;  /* main text on white card sections */
+  --text-label:        #374151;  --text-label-light:        #374151;  /* move names, section labels */
+  --text-meta:         #6b7280;  --text-meta-light:         #6b7280;  /* percentages, secondary info */
+  --text-boost:        #92400e;  --text-boost-light:        #92400e;  /* BP / item boost callout */
 
-  /* Tier colours — green = OHKO, yellow = 2HKO, red = neither */
-  --tier-green-bg:     #bbf7d0;
-  --tier-green-border: #15803d;
-  --tier-green-text:   #052e16;
-  --tier-green-fade:   rgba(21,128,61,0.35);
+  /* ── Damage bar ──────────────────────────────────────────────────────────── */
+  --bar-empty:         #1f2937;  --bar-empty-light:         #d1d5db;  /* unfilled track on white bg */
+  --bar-empty-pastel:  #e5e7eb;  --bar-empty-pastel-light:  #d1d5db;  /* unfilled track on pastel bg */
 
-  --tier-yellow-bg:     #fef9c3;
-  --tier-yellow-border: #b45309;
-  --tier-yellow-text:   #451a03;
-  --tier-yellow-fade:   rgba(180,67,9,0.35);
+  /* ── KO tier colours ─────────────────────────────────────────────────────── */
+  /* green = OHKO, yellow = 2HKO, red = neither. Always on white/pastel bg.  */
+  --tier-ohko-bg:        #bbf7d0;  --tier-ohko-bg-light:        #bbf7d0;
+  --tier-ohko-border:    #15803d;  --tier-ohko-border-light:    #15803d;
+  --tier-ohko-text:      #052e16;  --tier-ohko-text-light:      #052e16;
+  --tier-ohko-fade: rgba(21,128,61,0.35);   --tier-ohko-fade-light: rgba(21,128,61,0.35);
 
-  --tier-red-bg:     #fecaca;
-  --tier-red-border: #b91c1c;
-  --tier-red-text:   #450a0a;
-  --tier-red-fade:   rgba(185,28,28,0.35);
+  --tier-twohko-bg:      #fef9c3;  --tier-twohko-bg-light:      #fef9c3;
+  --tier-twohko-border:  #b45309;  --tier-twohko-border-light:  #b45309;
+  --tier-twohko-text:    #451a03;  --tier-twohko-text-light:    #451a03;
+  --tier-twohko-fade: rgba(180,67,9,0.35);  --tier-twohko-fade-light: rgba(180,67,9,0.35);
 
-  /* Type chart resistance badge colours */
-  --acc-red-bg:     #450a0a; --acc-red-text:     #fca5a5;
-  --acc-orange-bg:  #7c2d12; --acc-orange-text:  #fdba74;
-  --acc-amber-bg:   #3d3200; --acc-amber-text:   #fde68a;
-  --acc-green-bg:   #052e16; --acc-green-text:   #86efac;
-  --acc-blue-bg:    #1d4ed8; --acc-blue-text:    #bfdbfe;
-  --acc-dkblue-bg:  #1e3a8a; --acc-dkblue-text:  #bfdbfe;
-  --acc-ltgreen-bg: #052e16; --acc-ltgreen-text: #86efac;
-  --acc-dkgreen-bg: #022c22; --acc-dkgreen-text: #6ee7b7;
-  --acc-navy-bg:    #172554; --acc-navy-text:    #93c5fd;
-  --acc-neutral-bg: #1f2937; --acc-neutral-text: #9ca3af;
-  --acc-void-bg:    #111827; --acc-void-text:    #4b5563;
-  --acc-zero-bg:    #374151; --acc-zero-text:    #d1d5db;
+  --tier-noko-bg:        #fecaca;  --tier-noko-bg-light:        #fecaca;
+  --tier-noko-border:    #b91c1c;  --tier-noko-border-light:    #b91c1c;
+  --tier-noko-text:      #450a0a;  --tier-noko-text-light:      #450a0a;
+  --tier-noko-fade: rgba(185,28,28,0.35);   --tier-noko-fade-light: rgba(185,28,28,0.35);
 
-  --matrix-empty-bg:  #111111;
-  --matrix-immune-bg: #1a1a1a;
-  --matrix-header-bg: var(--bg-card);
+  /* ── Type chart effectiveness badges ─────────────────────────────────────── */
+  --badge-4x-bg:           #450a0a;  --badge-4x-bg-light:           #fef2f2;
+  --badge-4x-text:         #fca5a5;  --badge-4x-text-light:         #991b1b;
+  --badge-2x-bg:           #7c2d12;  --badge-2x-bg-light:           #fff7ed;
+  --badge-2x-text:         #fdba74;  --badge-2x-text-light:         #9a3412;
+  --badge-half-bg:         #052e16;  --badge-half-bg-light:         #dcfce7;
+  --badge-half-text:       #86efac;  --badge-half-text-light:       #166534;
+  --badge-quarter-bg:      #022c22;  --badge-quarter-bg-light:      #bbf7d0;
+  --badge-quarter-text:    #6ee7b7;  --badge-quarter-text-light:    #14532d;
+  --badge-immune-bg:       #374151;  --badge-immune-bg-light:       #f3f4f6;
+  --badge-immune-text:     #d1d5db;  --badge-immune-text-light:     #374151;
+
+  /* ── Matchup matrix cells ────────────────────────────────────────────────── */
+  --matrix-empty-bg:   #111111;  --matrix-empty-bg-light:   #f3f4f6;  /* no-move cell */
+  --matrix-immune-bg:  #1a1a1a;  --matrix-immune-bg-light:  #f9fafb;  /* immune cell */
+  --matrix-header-bg:  var(--surface-card);  /* label rows/cols — inherits surface-card */
 }
 
-/* ── Light theme overrides ──────────────────────────────────────────────── */
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+/* Each line remaps a variable to its -light counterpart defined above.      */
 .light {
-  --bg-card:       #ffffff;
-  --bg-content:    #f9fafb;
-  --bg-panel:      #f3f4f6;
-  --border:        #d1d5db;
-  --text-bright:   #111827;
-  --text-normal:   #374151;
-  --text-dim:      #6b7280;
-  --bar-track:     #d1d5db;
-  --bar-track-lt:  #d1d5db;
-  --matrix-empty-bg:  #f3f4f6;
-  --matrix-immune-bg: #f9fafb;
+  --color-gray-950: var(--color-gray-950-light);
+  --color-gray-900: var(--color-gray-900-light);
+  --color-gray-800: var(--color-gray-800-light);
+  --color-gray-700: var(--color-gray-700-light);
+  --color-gray-600: var(--color-gray-600-light);
+  --color-gray-500: var(--color-gray-500-light);
+  --color-gray-400: var(--color-gray-400-light);
+  --color-gray-300: var(--color-gray-300-light);
+  --color-gray-200: var(--color-gray-200-light);
+  --color-gray-100: var(--color-gray-100-light);
+  --color-white:    #111827;  /* map white → near-black so text-white reads on light inputs */
 
-  /* Flip the Tailwind gray palette */
-  --color-gray-950: #f9fafb;
-  --color-gray-900: #f3f4f6;
-  --color-gray-800: #e5e7eb;
-  --color-gray-700: #d1d5db;
-  --color-gray-600: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-400: #4b5563;
-  --color-gray-300: #374151;
-  --color-gray-200: #1f2937;
-  --color-gray-100: #111827;
-  /* Map white → near-black so text-white on gray inputs/labels reads correctly */
-  --color-white:    #111827;
+  --surface-card:    var(--surface-card-light);
+  --surface-inset:   var(--surface-inset-light);
+  --surface-sidebar: var(--surface-sidebar-light);
 
-  /* Accent colours → light equivalents */
-  --acc-red-bg:     #fef2f2; --acc-red-text:     #991b1b;
-  --acc-orange-bg:  #fff7ed; --acc-orange-text:  #9a3412;
-  --acc-amber-bg:   #fffbeb; --acc-amber-text:   #78350f;
-  --acc-green-bg:   #f0fdf4; --acc-green-text:   #166534;
-  --acc-blue-bg:    #dbeafe; --acc-blue-text:    #1d4ed8;
-  --acc-dkblue-bg:  #dbeafe; --acc-dkblue-text:  #1e40af;
-  --acc-ltgreen-bg: #dcfce7; --acc-ltgreen-text: #166534;
-  --acc-dkgreen-bg: #bbf7d0; --acc-dkgreen-text: #14532d;
-  --acc-navy-bg:    #eff6ff; --acc-navy-text:    #1e3a8a;
-  --acc-neutral-bg: #f1f5f9; --acc-neutral-text: #475569;
-  --acc-void-bg:    #f8fafc; --acc-void-text:    #94a3b8;
-  --acc-zero-bg:    #f3f4f6; --acc-zero-text:    #374151;
+  --border-divider:  var(--border-divider-light);
+  --border-inner:    var(--border-inner-light);
 
-  --matrix-empty-bg:    #f3f4f6; --matrix-empty-border:  #e5e7eb;
-  --matrix-immune-bg:   #f9fafb; --matrix-immune-border: #d1d5db;
-  --matrix-header-bg:   #f3f4f6;
+  --text-primary:    var(--text-primary-light);
+  --text-secondary:  var(--text-secondary-light);
+  --text-tertiary:   var(--text-tertiary-light);
+
+  --bar-empty:         var(--bar-empty-light);
+  --bar-empty-pastel:  var(--bar-empty-pastel-light);
+
+  --badge-4x-bg:         var(--badge-4x-bg-light);
+  --badge-4x-text:       var(--badge-4x-text-light);
+  --badge-2x-bg:         var(--badge-2x-bg-light);
+  --badge-2x-text:       var(--badge-2x-text-light);
+  --badge-half-bg:       var(--badge-half-bg-light);
+  --badge-half-text:     var(--badge-half-text-light);
+  --badge-quarter-bg:    var(--badge-quarter-bg-light);
+  --badge-quarter-text:  var(--badge-quarter-text-light);
+  --badge-immune-bg:     var(--badge-immune-bg-light);
+  --badge-immune-text:   var(--badge-immune-text-light);
+
+  --matrix-empty-bg:   var(--matrix-empty-bg-light);
+  --matrix-immune-bg:  var(--matrix-immune-bg-light);
 }
 
 @layer base {
