@@ -7,7 +7,7 @@ import DefenderCard from './components/DefenderCard';
 import ImportExportModal from './components/ImportExportModal';
 import TypeChartTab from './components/TypeChartTab';
 import PokemonSearch from './components/PokemonSearch';
-import CoverageTab from './components/CoverageTab';
+import CoverageTab from './components/CoverageTab2';
 import SpeedTab from './components/SpeedTab';
 import MetaTab from './components/MetaTab';
 import RolesTab from './components/RolesTab';
@@ -17,7 +17,7 @@ import { DefenderDamageCard } from './components/DamageTab';
 import { FORMATS, FORMAT_OPTIONS } from './data/formats';
 import metaData from './data/meta.json';
 
-const META_TOP_30 = new Set(Object.keys(metaData).slice(0, 30));
+const META_TOP_40 = new Set(Object.keys(metaData).slice(0, 40));
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
 const WEATHER_LABELS  = { none: '—', sun: 'Sun', rain: 'Rain', sand: 'Sand', snow: 'Snow' };
@@ -65,7 +65,11 @@ export default function App() {
   const [atkShowAdd, setAtkShowAdd] = useState(false);
   const [defShowAdd, setDefShowAdd] = useState(false);
   const [metaMode, setMetaMode] = useState(false);
+  const [coverageDeselectedIds, setCoverageDeselectedIds] = useState(new Set());
+  const [cov2DefSP, setCov2DefSP] = useState({ hp: 0, def: 0, spd: 0 });
   const weatherTimerRef = useRef(null);
+  const atkInputRef = useRef(null);
+  const defInputRef = useRef(null);
 
   const filteredPokemon = useMemo(
     () => pokemonData.filter(FORMATS[format].filter),
@@ -74,7 +78,14 @@ export default function App() {
 
   const speedCovData = useMemo(() => {
     if (metaMode && format === 'reg-ma')
-      return filteredPokemon.filter(p => META_TOP_30.has(p.name));
+      return filteredPokemon.filter(p => {
+        if (META_TOP_40.has(p.name)) return true;
+        if (p.name.includes('-mega')) {
+          const baseName = p.name.replace(/-mega.*$/, '');
+          return META_TOP_40.has(baseName);
+        }
+        return false;
+      });
     return filteredPokemon;
   }, [metaMode, format, filteredPokemon]);
 
@@ -94,9 +105,10 @@ export default function App() {
       e.preventDefault();
       setTab(t => {
         const idx = ALL_TABS.indexOf(t);
+        const base = idx === -1 ? 0 : idx;
         return e.shiftKey
-          ? ALL_TABS[(idx - 1 + ALL_TABS.length) % ALL_TABS.length]
-          : ALL_TABS[(idx + 1) % ALL_TABS.length];
+          ? ALL_TABS[(base - 1 + ALL_TABS.length) % ALL_TABS.length]
+          : ALL_TABS[(base + 1) % ALL_TABS.length];
       });
     }
     document.addEventListener('keydown', handleKey);
@@ -158,6 +170,7 @@ export default function App() {
 
   const showSharedHeader = true;
   const selectionActive = tab === 'setup' || tab === 'damage';
+  const coverageMultiSelect = tab === 'coverage';
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
@@ -166,7 +179,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">Pokémin-max</span>
           <div className="flex gap-1">
-            {[['setup', 'Setup'], ['damage', 'Damage'], ['matrix', 'Matrix'], ['types', 'Type Charts'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
+            {[['setup', 'Setup'], ['damage', 'Damage'], ['matrix', 'Matrix'], ['types', 'Resistances'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
@@ -195,7 +208,7 @@ export default function App() {
             className={`text-xs px-2.5 py-1 rounded transition-colors ${
               metaMode ? 'bg-indigo-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
             }`}
-            title="Limit Speed and Coverage to top 30 meta Pokémon">
+            title="Limit Speed and Coverage to top 40 meta Pokémon (+ their megas)">
             Meta Mode
           </button>
         )}
@@ -240,22 +253,32 @@ export default function App() {
                 Import / Export</button>
             </div>
             <div className="flex overflow-x-auto border-t border-gray-800">
-              {attackers.filter(a => a.pokemon).map(a => (
+              {attackers.filter(a => a.pokemon).map(a => {
+                const singleSelected = selectionActive && selectedAtk?.id === a.id;
+                const multiIncluded = coverageMultiSelect && !coverageDeselectedIds.has(a.id);
+                const multiExcluded = coverageMultiSelect && coverageDeselectedIds.has(a.id);
+                return (
                 <button key={a.id}
-                  onClick={selectionActive ? () => { setSelectedAtkId(a.id); setAtkShowAdd(false); } : undefined}
+                  onClick={
+                    selectionActive ? () => { setSelectedAtkId(a.id); setAtkShowAdd(false); }
+                    : coverageMultiSelect ? () => setCoverageDeselectedIds(prev => { const s = new Set(prev); s.has(a.id) ? s.delete(a.id) : s.add(a.id); return s; })
+                    : undefined
+                  }
                   title={toDisplayName(a.pokemon.name)}
                   className={`flex items-center justify-center px-1.5 pt-1 pb-0.5 shrink-0 border-b-2 transition-colors ${
-                    selectionActive && selectedAtk?.id === a.id
-                      ? 'border-blue-500 bg-gray-800'
-                      : 'border-transparent opacity-60'
-                  } ${selectionActive ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
+                    singleSelected ? 'border-blue-500 bg-gray-800'
+                    : multiIncluded ? 'border-blue-400 bg-gray-800/70'
+                    : multiExcluded ? 'border-transparent opacity-30'
+                    : 'border-transparent opacity-60'
+                  } ${selectionActive || coverageMultiSelect ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
                   <img src={a.pokemon.artwork || a.pokemon.sprite}
                     onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
                     alt="" className="w-10 h-10 object-contain" />
                 </button>
-              ))}
+                );
+              })}
               {selectionActive && attackers.length < 6 && (
-                <button onClick={() => setAtkShowAdd(true)}
+                <button onClick={() => { setAtkShowAdd(true); setTimeout(() => atkInputRef.current?.focus(), 0); }}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
                     !selectedAtk
                       ? 'border-blue-500 bg-gray-800 text-blue-400'
@@ -298,7 +321,7 @@ export default function App() {
                 </button>
               ))}
               {selectionActive && defenders.length < 6 && (
-                <button onClick={() => setDefShowAdd(true)}
+                <button onClick={() => { setDefShowAdd(true); setTimeout(() => defInputRef.current?.focus(), 0); }}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
                     !selectedDef
                       ? 'border-orange-500 bg-gray-800 text-orange-400'
@@ -334,6 +357,7 @@ export default function App() {
                   onChange={addAttackerWithPokemon}
                   pokemonData={filteredPokemon}
                   placeholder="Add Pokémon"
+                  inputRef={atkInputRef}
                 />
               )}
             </div>
@@ -359,6 +383,7 @@ export default function App() {
                   onChange={addDefenderWithPokemon}
                   pokemonData={filteredPokemon}
                   placeholder="Add Pokémon"
+                  inputRef={defInputRef}
                 />
               )}
             </div>
@@ -416,7 +441,7 @@ export default function App() {
         <TypeChartTab attackers={attackers} defenders={defenders} />
       )}
       {tab === 'coverage' && (
-        <CoverageTab attackers={attackers} pokemonData={speedCovData} />
+        <CoverageTab attackers={attackers} pokemonData={speedCovData} deselectedIds={coverageDeselectedIds} weather={weather} defSP={cov2DefSP} setDefSP={setCov2DefSP} />
       )}
       {tab === 'speed' && (
         <SpeedTab attackers={attackers} defenders={defenders} pokemonData={speedCovData} />

@@ -20,10 +20,15 @@ function bestDamageTier(damageRows, defHp) {
   return best;
 }
 
-const TIER_TINT = {
-  2: 'rgba(21,128,61,0.12)',
-  1: 'rgba(180,83,9,0.12)',
-  0: 'rgba(185,28,28,0.10)',
+const TIER_BORDER = {
+  2: '#4ade80',
+  1: '#facc15',
+  0: '#f87171',
+};
+const TIER_BG = {
+  2: '#071a0f',
+  1: '#1a1600',
+  0: '#1a0707',
 };
 
 export function DefenderDamageCard({ defender, attackers, weather, inlineHeader = false }) {
@@ -74,11 +79,14 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
     });
   }, [attackers, weatherDef, weather]);
 
-  const cardTint = inlineHeader ? TIER_TINT[bestDamageTier(damageRows, defStats.hp)] : undefined;
+  const cardTier = inlineHeader ? bestDamageTier(damageRows, defStats.hp) : undefined;
 
   return (
-    <div className="border border-gray-700 rounded-lg p-2 space-y-1"
-      style={{ background: cardTint ? `linear-gradient(${cardTint}, ${cardTint}), #111827` : '#111827' }}>
+    <div className="border rounded-lg p-2 space-y-1"
+      style={{
+        borderColor: cardTier !== undefined ? TIER_BORDER[cardTier] : '#374151',
+        background: cardTier !== undefined ? TIER_BG[cardTier] : '#111827',
+      }}>
       {inlineHeader ? (
         /* Inline header: attacker → defender on one row */
         <div className="flex items-center gap-1.5 flex-wrap">

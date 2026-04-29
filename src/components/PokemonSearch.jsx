@@ -2,10 +2,12 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { toDisplayName } from '../utils/importExport';
 import { TYPE_COLORS } from '../data/typeChart';
 
-export default function PokemonSearch({ value, onChange, pokemonData, placeholder = 'Search Pokémon…' }) {
+export default function PokemonSearch({ value, onChange, pokemonData, placeholder = 'Search Pokémon…', inputRef: externalInputRef }) {
   const [query, setQuery] = useState(value ? toDisplayName(value.name) : '');
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const internalInputRef = useRef(null);
+  const inputRef = externalInputRef || internalInputRef;
 
   useEffect(() => {
     if (value) setQuery(toDisplayName(value.name));
@@ -33,6 +35,7 @@ export default function PokemonSearch({ value, onChange, pokemonData, placeholde
   return (
     <div ref={ref} className="relative w-full">
       <input
+        ref={inputRef}
         className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
         placeholder={placeholder}
         value={query}

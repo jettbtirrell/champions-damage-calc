@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 
 const FORMAT = 'gen9championsvgc2026regma';
 const REPLAY_API = 'https://replay.pokemonshowdown.com';
-const PAGES = 2; // 50 replays per page
+const PAGES = 6; // 50 replays per page
 
 // Showdown uses bare name for the default gender form; PokeAPI uses -male/-female
 const SHOWDOWN_NAME_MAP = {

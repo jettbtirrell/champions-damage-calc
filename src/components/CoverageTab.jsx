@@ -46,22 +46,13 @@ const GOALS = [
   },
 ];
 
-export default function CoverageTab({ attackers, pokemonData }) {
+export default function CoverageTab({ attackers, pokemonData, deselectedIds }) {
   const eligible = attackers.filter(a => a.pokemon);
-  const [selectedIds, setSelectedIds] = useState(() => new Set(eligible.map(a => a.id)));
   const [goal, setGoal] = useState('super-effective');
   const [showAllRecs, setShowAllRecs] = useState(false);
 
-  function toggleAttacker(id) {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  }
-
   const { pokemonCards, moveTypes, recommendations } = useMemo(() => {
-    const selected = eligible.filter(a => selectedIds.has(a.id));
+    const selected = eligible.filter(a => !deselectedIds.has(a.id));
 
     const types = new Set();
     for (const a of selected) {
@@ -126,16 +117,15 @@ export default function CoverageTab({ attackers, pokemonData }) {
         }
         return { attacker: atk, eff: hasMove ? best : null };
       });
-      const bestEff = attackerEffs.reduce((m, a) => Math.max(m, a.eff ?? 0), 0);
-      const count2xPlus = attackerEffs.filter(a => (a.eff ?? 0) >= 2).length;
-      return { pokemon: p, attackerEffs, bestEff, count2xPlus };
+      const totalEff = attackerEffs.reduce((sum, a) => sum + (a.eff ?? 0), 0);
+      return { pokemon: p, attackerEffs, totalEff };
     });
 
-    // Worst for us first: lowest best coverage, then fewest attackers at 2x+
-    cards.sort((a, b) => a.bestEff - b.bestEff || a.count2xPlus - b.count2xPlus);
+    // Worst for us first: lowest sum of attacker multipliers
+    cards.sort((a, b) => a.totalEff - b.totalEff);
 
     return { pokemonCards: cards, moveTypes: types, recommendations: recs };
-  }, [selectedIds, attackers, pokemonData]);
+  }, [deselectedIds, attackers, pokemonData]);
 
   const hasImmunities = pokemonCards ? pokemonCards.some(c => c.bestEff === 0) : false;
   const hasWalls = pokemonCards ? pokemonCards.some(c => c.bestEff <= 0.5) : false;
@@ -151,33 +141,6 @@ export default function CoverageTab({ attackers, pokemonData }) {
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      {/* Attacker selector */}
-      <div className="mb-4">
-        <div className="text-xs text-gray-500 mb-2">Attackers to include:</div>
-        {eligible.length === 0 ? (
-          <p className="text-gray-600 text-sm italic">No attackers with a Pokémon set.</p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {eligible.map(a => {
-              const on = selectedIds.has(a.id);
-              return (
-                <button key={a.id} onClick={() => toggleAttacker(a.id)}
-                  className={`flex items-center gap-1.5 px-2 py-1 rounded border text-xs transition-colors ${
-                    on ? 'bg-blue-700 border-blue-500 text-white' : 'bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700'
-                  }`}>
-                  {(a.pokemon.artwork || a.pokemon.sprite) && (
-                    <img src={a.pokemon.artwork || a.pokemon.sprite}
-                      onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
-                      alt="" className="w-6 h-6 object-contain" />
-                  )}
-                  {toDisplayName(a.pokemon.name)}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
       {/* Active coverage types */}
       {moveTypes && moveTypes.size > 0 && (
         <div className="flex flex-wrap items-center gap-1 mb-4">
@@ -191,7 +154,7 @@ export default function CoverageTab({ attackers, pokemonData }) {
         </div>
       )}
 
-      {selectedIds.size > 0 && moveTypes && moveTypes.size === 0 && (
+      {eligible.length > deselectedIds.size && moveTypes && moveTypes.size === 0 && (
         <p className="text-gray-600 text-sm italic mb-4">Selected attackers have no damaging moves.</p>
       )}
 
@@ -248,26 +211,30 @@ export default function CoverageTab({ attackers, pokemonData }) {
         </div>
       )}
 
-      {/* Per-pokemon coverage cards — worst coverage first */}
+      {/* Per-pokemon coverage cards — worst coverage first, dynamic grid */}
       {pokemonCards && (
-        <div className="space-y-1">
+        <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
           {pokemonCards.map(({ pokemon, attackerEffs }) => (
-            <div key={pokemon.id} className="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-lg px-2.5 py-1.5">
-              <img src={pokemon.artwork || pokemon.sprite}
-                onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
-                alt="" className="w-8 h-8 object-contain shrink-0" />
-              <div className="shrink-0" style={{ minWidth: 110 }}>
-                <div className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(pokemon.name)}</div>
-                <div className="flex gap-0.5 mt-0.5">
-                  {pokemon.types.map(t => (
-                    <span key={t} className="rounded text-white px-0.5"
-                      style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
-                      {t}
-                    </span>
-                  ))}
+            <div key={pokemon.id} className="bg-gray-900 border border-gray-800 rounded-lg p-2 flex flex-col gap-1.5">
+              {/* Pokemon header */}
+              <div className="flex items-center gap-1.5">
+                <img src={pokemon.artwork || pokemon.sprite}
+                  onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
+                  alt="" className="w-8 h-8 object-contain shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(pokemon.name)}</div>
+                  <div className="flex gap-0.5 mt-0.5">
+                    {pokemon.types.map(t => (
+                      <span key={t} className="rounded text-white px-0.5"
+                        style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              {/* Attacker grid — 3 columns × 2 rows */}
+              <div className="grid grid-cols-3 gap-1">
                 {attackerEffs.map(({ attacker, eff }) => {
                   const colors = eff === null ? { bg: '#1f2937', text: '#4b5563' } : EFF_COLORS[eff] ?? EFF_COLORS[1];
                   const label = eff === null ? '—' : EFF_LABELS[eff] ?? '1×';
@@ -275,9 +242,9 @@ export default function CoverageTab({ attackers, pokemonData }) {
                     <div key={attacker.id} className="flex flex-col items-center gap-0.5">
                       <img src={attacker.pokemon.artwork || attacker.pokemon.sprite}
                         onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
-                        alt="" className="w-6 h-6 object-contain" />
-                      <span className="rounded font-bold text-center leading-none py-0.5 block"
-                        style={{ backgroundColor: colors.bg, color: colors.text, fontSize: 8, minWidth: 22 }}>
+                        alt="" className="w-7 h-7 object-contain" />
+                      <span className="rounded font-bold text-center leading-none py-0.5 block w-full"
+                        style={{ backgroundColor: colors.bg, color: colors.text, fontSize: 8 }}>
                         {label}
                       </span>
                     </div>
