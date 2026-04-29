@@ -185,7 +185,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold text-white">Pokémin-max</span>
           <div className="flex gap-1">
-            {[['setup', 'Setup'], ['damage', 'Damage'], ['matrix', 'Matrix'], ['types', 'Resistances'], ['coverage', 'Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
+            {[['setup', 'Setup'], ['damage', 'Damage'], ['matrix', 'Matrix'], ['types', 'Def Coverage'], ['coverage', 'Off Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
                 className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}

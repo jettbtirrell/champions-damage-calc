@@ -70,15 +70,14 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
   }, [attackers, weatherDef, weather]);
 
   const cardTier = inlineHeader ? bestDamageTier(damageRows, defStats.hp) : undefined;
+  const validTier = cardTier !== undefined && cardTier >= 0;
 
-  const isLight = cardTier !== undefined;
-  const textPrimary  = isLight ? '#111827' : undefined;
-  const moveNameColor = isLight ? '#374151' : '#9ca3af';
-  const dividerStyle  = isLight ? { borderColor: 'rgba(0,0,0,0.15)' } : { borderColor: '#374151' };
+  const textPrimary = validTier ? '#111827' : undefined;
+  const moveNameColor = '#374151';
 
   return (
-    <div className="rounded-lg p-2 space-y-1"
-      style={{ background: isLight ? TIER_COLORS[cardTier].bg : '#111827' }}>
+    <div className="rounded-lg p-2 space-y-1 overflow-hidden"
+      style={{ background: validTier ? TIER_COLORS[cardTier].bg : '#111827' }}>
       {inlineHeader ? (
         /* Inline header: attacker → defender on one row */
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -125,11 +124,12 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
         </div>
       )}
 
-      {/* Attacker damage rows */}
-      {damageRows.length === 0 && (
-        <div className="text-xs text-gray-600 italic">No attackers selected.</div>
-      )}
-      <div className="space-y-1 border-t pt-1" style={dividerStyle}>
+      {/* Attacker damage rows — always white below the divider */}
+      <div className="-mx-2 -mb-2 px-2 pb-2" style={{ background: '#ffffff', marginTop: 0 }}>
+        {damageRows.length === 0 && (
+          <div className="text-xs italic" style={{ color: '#6b7280' }}>No attackers selected.</div>
+        )}
+        <div className="space-y-1 border-t pt-1" style={{ borderColor: 'rgba(0,0,0,0.15)' }}>
         {damageRows.map(({ attacker, rows }) => (
           <div key={attacker.id}>
             {!inlineHeader && (
@@ -139,7 +139,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                   onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
                   alt="" className="w-6 h-6 object-contain shrink-0"
                 />
-                <span className="text-xs font-medium text-gray-300">{toDisplayName(attacker.pokemon.name)}</span>
+                <span className="text-xs font-medium" style={{ color: '#374151' }}>{toDisplayName(attacker.pokemon.name)}</span>
               </div>
             )}
             {rows.length === 0 && (
@@ -158,12 +158,12 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                       {effMove.type}
                     </span>
                     {effMove.power !== move.power && (
-                      <span className="text-yellow-600 text-xs" style={{ color: isLight ? '#92400e' : undefined }}>{effMove.power} BP</span>
+                      <span className="text-xs" style={{ color: '#92400e' }}>{effMove.power} BP</span>
                     )}
                     {(() => {
                       const itemDef = attacker.item ? ITEMS[attacker.item] : null;
                       return itemDef?.effect === 'type-boost' && itemDef.type === effMove.type
-                        ? <span className="text-xs text-amber-400 opacity-80" style={{ color: isLight ? '#92400e' : undefined }}>{itemDef.label}</span>
+                        ? <span className="text-xs" style={{ color: '#92400e' }}>{itemDef.label}</span>
                         : null;
                     })()}
                   </div>
@@ -173,13 +173,14 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                     defenderHp={defStats.hp}
                     immune={result.immune}
                     noEffect={result.noEffect}
-                    lightBg={isLight}
+                    variant="white"
                   />
                 </div>
               ))}
             </div>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
