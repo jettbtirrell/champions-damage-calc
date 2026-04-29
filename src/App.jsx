@@ -67,6 +67,7 @@ export default function App() {
   const [metaMode, setMetaMode] = useState(false);
   const [coverageDeselectedIds, setCoverageDeselectedIds] = useState(new Set());
   const [cov2DefSP, setCov2DefSP] = useState({ hp: 0, def: 0, spd: 0 });
+  const [myTeamSide, setMyTeamSide] = useState('attackers');
   const weatherTimerRef = useRef(null);
   const atkInputRef = useRef(null);
   const defInputRef = useRef(null);
@@ -166,11 +167,16 @@ export default function App() {
     setSelectedDefId(selectedAtkId);
     setAtkShowAdd(defShowAdd);
     setDefShowAdd(atkShowAdd);
+    setMyTeamSide(s => s === 'attackers' ? 'defenders' : 'attackers');
   }
 
   const showSharedHeader = true;
   const selectionActive = tab === 'setup' || tab === 'damage';
   const coverageMultiSelect = tab === 'coverage';
+  const yourTeamIsAttackers = myTeamSide === 'attackers';
+  const atkLabel = yourTeamIsAttackers ? 'Your Team' : 'Enemy Team';
+  const defLabel = yourTeamIsAttackers ? 'Enemy Team' : 'Your Team';
+  const roleQualifier = tab !== 'setup' && tab !== 'types';
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
@@ -246,7 +252,7 @@ export default function App() {
           <div className="flex-1 flex flex-col min-w-0">
             <div className="flex items-center gap-2 px-4 py-1">
               <span className="text-sm font-semibold text-gray-200">
-                Attackers <span className="text-gray-600 font-normal text-xs">({attackers.length}/6)</span>
+                {atkLabel}{roleQualifier && <span className="text-gray-500 font-normal text-xs"> (attacking)</span>} <span className="text-gray-600 font-normal text-xs">({attackers.length}/6)</span>
               </span>
               <button onClick={() => setAtkModal(true)}
                 className="text-xs px-2.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
@@ -299,7 +305,7 @@ export default function App() {
           <div className="flex-1 flex flex-col min-w-0">
             <div className="flex items-center gap-2 px-4 py-1">
               <span className="text-sm font-semibold text-gray-200">
-                Defenders <span className="text-gray-600 font-normal text-xs">({defenders.length}/6)</span>
+                {defLabel}{roleQualifier && <span className="text-gray-500 font-normal text-xs"> (defending)</span>} <span className="text-gray-600 font-normal text-xs">({defenders.length}/6)</span>
               </span>
               <button onClick={() => setDefModal(true)}
                 className="text-xs px-2.5 py-0.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
@@ -340,6 +346,7 @@ export default function App() {
         <main className="flex-1 flex overflow-hidden">
           <section className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
             <div className="flex-1 overflow-y-auto p-2">
+              {!selectedAtk && <p className="text-xs text-gray-600 px-1 pb-2">Add Pokémon to your team, then configure their moves, EVs, items, and nature. Accurate sets give more accurate damage calculations.</p>}
               {selectedAtk ? (
                 <AttackerCard
                   key={selectedAtk.id}
@@ -396,6 +403,7 @@ export default function App() {
         <div className="flex-1 flex overflow-hidden">
           {/* Left: selected attacker vs each defender */}
           <div className="flex-1 overflow-y-auto p-2 border-r border-gray-800 min-w-0">
+            {!selectedAtk && eligibleDef.length > 0 && <p className="text-xs text-gray-600 px-1 pb-2">Select an attacker above to see how much damage it deals to each opponent. Green = guaranteed OHKO, yellow = guaranteed 2HKO.</p>}
             {!selectedAtk ? (
               <div className="flex items-center justify-center h-full text-gray-600 text-sm">
                 Add an attacker in Setup.
@@ -438,7 +446,7 @@ export default function App() {
         <MatchupMatrix attackers={attackers} defenders={defenders} weather={weather} />
       )}
       {tab === 'types' && (
-        <TypeChartTab attackers={attackers} defenders={defenders} />
+        <TypeChartTab attackers={attackers} defenders={defenders} atkLabel={atkLabel} defLabel={defLabel} />
       )}
       {tab === 'coverage' && (
         <CoverageTab attackers={attackers} pokemonData={speedCovData} deselectedIds={coverageDeselectedIds} weather={weather} defSP={cov2DefSP} setDefSP={setCov2DefSP} />

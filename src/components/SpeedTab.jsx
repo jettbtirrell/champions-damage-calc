@@ -228,6 +228,7 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
 
   return (
     <div className="flex-1 overflow-y-auto">
+      <p className="text-xs text-gray-500 px-4 pt-3 pb-1">Speed tiers for your attackers relative to format Pokémon. Use this to decide where to invest speed EVs — faster Pokémon act first and can KO before taking damage.</p>
       {/* Toolbar */}
       <div className="sticky top-0 z-10 bg-gray-900 border-b border-gray-800 px-4 py-2.5 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-1.5">

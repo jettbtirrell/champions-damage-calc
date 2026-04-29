@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { toDisplayName } from '../utils/importExport';
+import { TIER_COLORS } from '../data/tierColors';
 
 function applyWeatherDef(defStats, types, weather) {
   return {
@@ -61,10 +62,10 @@ function bestResult(attacker, defender, weather) {
   return null;
 }
 
-function cellColors(minDmg, hp) {
-  if (minDmg >= hp)      return { bg: '#86efac', border: '#15803d', text: '#052e16' }; // green: guaranteed OHKO
-  if (minDmg / hp > 0.5) return { bg: '#fcd34d', border: '#b45309', text: '#451a03' }; // yellow: guaranteed >50%
-  return                        { bg: '#fca5a5', border: '#b91c1c', text: '#450a0a' }; // red: not guaranteed >50%
+function damageTier(minDmg, hp) {
+  if (minDmg >= hp) return 2;
+  if (minDmg / hp > 0.5) return 1;
+  return 0;
 }
 
 const CELL_W = 96;
@@ -80,8 +81,8 @@ function MatrixCell({ attacker, defender, weather }) {
   if (!data) {
     return (
       <td className="p-0.5">
-        <div className="flex items-center justify-center border rounded text-xs text-gray-700"
-          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-empty-bg)', borderColor: 'var(--matrix-empty-border)' }}>
+        <div className="flex items-center justify-center rounded text-xs text-gray-700"
+          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-empty-bg)' }}>
           —
         </div>
       </td>
@@ -91,8 +92,8 @@ function MatrixCell({ attacker, defender, weather }) {
   if (data.immune) {
     return (
       <td className="p-0.5">
-        <div className="flex items-center justify-center border rounded text-xs text-gray-600"
-          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-immune-bg)', borderColor: 'var(--matrix-immune-border)' }}>
+        <div className="flex items-center justify-center rounded text-xs text-gray-600"
+          style={{ width: CELL_W, height: CELL_H, backgroundColor: 'var(--matrix-immune-bg)' }}>
           Immune
         </div>
       </td>
@@ -102,12 +103,12 @@ function MatrixCell({ attacker, defender, weather }) {
   const { result, move, hp } = data;
   const minPct = Math.round(result.minDmg / hp * 100);
   const maxPct = Math.round(result.maxDmg / hp * 100);
-  const { bg, border, text } = cellColors(result.minDmg, hp);
+  const { bg, text } = TIER_COLORS[damageTier(result.minDmg, hp)];
 
   return (
     <td className="p-0.5">
-      <div className="flex flex-col items-center justify-center border rounded gap-0.5 px-1"
-        style={{ width: CELL_W, height: CELL_H, backgroundColor: bg, borderColor: border, color: text }}>
+      <div className="flex flex-col items-center justify-center rounded gap-0.5 px-1"
+        style={{ width: CELL_W, height: CELL_H, backgroundColor: bg, color: text }}>
         <span className="font-mono font-semibold text-sm leading-tight">
           {minPct}–{maxPct}%
         </span>
@@ -136,6 +137,7 @@ export default function MatchupMatrix({ attackers, defenders, weather }) {
 
   return (
     <div className="flex-1 overflow-auto p-4">
+      <p className="text-xs text-gray-500 mb-3">Full damage matrix — every attacker vs every defender at a glance. Shows the best move each attacker can use. Green = guaranteed OHKO, yellow = guaranteed 2HKO, red = neither.</p>
       <div className="w-fit">
       <table style={{ minWidth: 'max-content', borderCollapse: 'collapse' }}>
         <thead>
@@ -209,15 +211,15 @@ export default function MatchupMatrix({ attackers, defenders, weather }) {
       <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-500">
         <span className="font-medium text-gray-400"></span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#86efac' }} />
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: TIER_COLORS[2].bg }} />
           Guaranteed OHKO
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#fcd34d' }} />
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: TIER_COLORS[1].bg }} />
           Guaranteed 2HKO
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#fca5a5' }} />
+          <span className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: TIER_COLORS[0].bg }} />
           Not guaranteed 2HKO
         </span>
       </div>

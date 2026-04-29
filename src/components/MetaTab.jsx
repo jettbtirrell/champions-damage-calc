@@ -25,8 +25,9 @@ export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <span className="text-xs text-gray-500">Usage data from 306 replays · Reg M-A ladder</span>
+      <div className="mb-3 space-y-1">
+        <p className="text-xs text-gray-500">Pokémon Showdown replay data for the current format — usage rates, common moves, items, and abilities. Use this to understand what threats your team will face most often.</p>
+        <span className="text-xs text-gray-600">Usage data from 306 replays · Reg M-A ladder</span>
       </div>
       <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))' }}>
         {topMon.map(([name, data], index) => {

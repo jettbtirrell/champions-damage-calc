@@ -1,24 +1,7 @@
 import { useMemo, useState } from 'react';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
-import { TYPE_COLORS } from '../data/typeChart';
-import { toDisplayName } from '../utils/importExport';
-
-const TIER_COLORS = {
-  2: { bg: '#86efac', text: '#052e16', label: '✓' },
-  1: { bg: '#fcd34d', text: '#451a03', label: '2H' },
-  0: { bg: '#fca5a5', text: '#450a0a', label: '✕' },
-};
-const TIER_BORDER = {
-  2: '#4ade80',
-  1: '#facc15',
-  0: '#f87171',
-};
-const TIER_BG = {
-  2: '#071a0f',
-  1: '#1a1600',
-  0: '#1a0707',
-};
+import { TIER_COLORS } from '../data/tierColors';
 
 function getTier(minDmg, hp) {
   if (minDmg >= hp) return 2;
@@ -29,6 +12,13 @@ function getTier(minDmg, hp) {
 export default function CoverageTab2({ attackers, pokemonData, deselectedIds, weather, defSP, setDefSP }) {
   const eligible = attackers.filter(a => a.pokemon);
   const [sortMode, setSortMode] = useState('dex');
+  const [openCards, setOpenCards] = useState(new Set());
+
+  const toggleCard = id => setOpenCards(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
 
   const pokemonCards = useMemo(() => {
     const selected = eligible.filter(a => !deselectedIds.has(a.id));
@@ -125,6 +115,18 @@ export default function CoverageTab2({ attackers, pokemonData, deselectedIds, we
             </button>
           ))}
         </div>
+        <button onClick={() => {
+          if (pokemonCards && openCards.size === pokemonCards.length) {
+            setOpenCards(new Set());
+          } else if (pokemonCards) {
+            setOpenCards(new Set(pokemonCards.map(c => c.pokemon.id)));
+          }
+        }}
+          className={`text-xs px-2 py-1 rounded transition-colors shrink-0 ${
+            pokemonCards && openCards.size === pokemonCards.length ? 'bg-indigo-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+          }`}>
+          {pokemonCards && openCards.size === pokemonCards.length ? 'Collapse All' : 'Expand All'}
+        </button>
       </div>
 
       {/* Tier proportion bar */}
@@ -132,54 +134,51 @@ export default function CoverageTab2({ attackers, pokemonData, deselectedIds, we
         const counts = [0, 0, 0];
         for (const c of pokemonCards) counts[c.cardTier]++;
         const total = pokemonCards.length;
+        const segments = [2, 1, 0].filter(tier => counts[tier] > 0);
         return (
-          <div className="flex h-2 shrink-0 mx-8">
-            {[2, 1, 0].map(tier => counts[tier] > 0 && (
-              <div key={tier} style={{ flex: counts[tier] / total, backgroundColor: TIER_BORDER[tier] }} />
-            ))}
+          <div className="flex h-5 shrink-0 mx-8 gap-px">
+            {segments.map(tier => {
+              const pct = counts[tier] / total;
+              return (
+                <div key={tier} className="flex items-center justify-center overflow-hidden"
+                  style={{ flex: pct, backgroundColor: TIER_COLORS[tier].bg }}>
+                  {pct >= 0.08 && (
+                    <span className="font-bold select-none" style={{ fontSize: 10, color: '#111' }}>
+                      {Math.round(pct * 100)}%
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         );
       })()}
 
       {/* Cards grid */}
       <div className="flex-1 overflow-y-auto p-4">
+        <p className="text-xs text-gray-500 mb-3">How well your attackers can KO format Pokémon under the defender stats you set above. Green border = at least one attacker guaranteed OHKOs; yellow = at least one guaranteed 2HKOs; red = none. Hover a card to see per-attacker results.</p>
         {pokemonCards && (
-          <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+          <div className="flex flex-wrap gap-2 content-start items-start">
             {pokemonCards.map(({ pokemon, attackerResults, cardTier }) => {
+              const isOpen = openCards.has(pokemon.id);
               return (
-                <div key={pokemon.id} className="border rounded-lg p-2 flex flex-col gap-1.5"
-                  style={{ borderColor: TIER_BORDER[cardTier], background: TIER_BG[cardTier] }}>
-                  <div className="flex items-center gap-1.5">
-                    <img src={pokemon.artwork || pokemon.sprite}
-                      onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
-                      alt="" className="w-8 h-8 object-contain shrink-0" />
-                    <div className="min-w-0">
-                      <div className="text-xs text-gray-200 truncate leading-tight">{toDisplayName(pokemon.name)}</div>
-                      <div className="flex gap-0.5 mt-0.5">
-                        {pokemon.types.map(t => (
-                          <span key={t} className="rounded text-white px-0.5"
-                            style={{ backgroundColor: TYPE_COLORS[t], fontSize: 7, lineHeight: '13px' }}>
-                            {t}
-                          </span>
-                        ))}
+                <div key={pokemon.id} className="rounded-lg p-2 flex flex-row items-center gap-2 overflow-hidden cursor-pointer"
+                  style={{ background: TIER_COLORS[cardTier].bg, width: isOpen ? 180 : 112 }}
+                  onClick={() => toggleCard(pokemon.id)}>
+                  <img src={pokemon.artwork || pokemon.sprite}
+                    onError={e => { if (pokemon.sprite) e.target.src = pokemon.sprite; }}
+                    alt="" className="w-24 h-24 object-contain shrink-0" />
+                  <div data-grid="" className="grid grid-cols-2 gap-1 h-24 content-start shrink-0 overflow-hidden"
+                    style={{ display: isOpen ? 'grid' : 'none' }}>
+                    {attackerResults.map(({ attacker, tier }) => (
+                      <div key={attacker.id} className="rounded flex items-center justify-center"
+                        style={{ backgroundColor: TIER_COLORS[tier].bg, width: 28, height: 28 }}>
+                        <img
+                          src={attacker.pokemon.artwork || attacker.pokemon.sprite}
+                          onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
+                          alt="" className="w-6 h-6 object-contain" />
                       </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1">
-                    {attackerResults.map(({ attacker, tier }) => {
-                      const colors = TIER_COLORS[tier];
-                      return (
-                        <div key={attacker.id} className="flex flex-col items-center gap-0.5">
-                          <img src={attacker.pokemon.artwork || attacker.pokemon.sprite}
-                            onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
-                            alt="" className="w-7 h-7 object-contain" />
-                          <span className="rounded font-bold text-center leading-none py-0.5 block w-full"
-                            style={{ backgroundColor: colors.bg, color: colors.text, fontSize: 8 }}>
-                            {colors.label}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    ))}
                   </div>
                 </div>
               );

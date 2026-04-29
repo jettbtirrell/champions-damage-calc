@@ -6,6 +6,7 @@ import { ITEMS } from '../data/items';
 import { TYPE_COLORS } from '../data/typeChart';
 import { toDisplayName } from '../utils/importExport';
 import DamageBar from './DamageBar';
+import { TIER_COLORS } from '../data/tierColors';
 
 function bestDamageTier(damageRows, defHp) {
   let best = -1;
@@ -19,17 +20,6 @@ function bestDamageTier(damageRows, defHp) {
   }
   return best;
 }
-
-const TIER_BORDER = {
-  2: '#4ade80',
-  1: '#facc15',
-  0: '#f87171',
-};
-const TIER_BG = {
-  2: '#071a0f',
-  1: '#1a1600',
-  0: '#1a0707',
-};
 
 export function DefenderDamageCard({ defender, attackers, weather, inlineHeader = false }) {
   const defStats = calcAllStats(defender.pokemon, defender.statPoints, defender.nature);
@@ -81,12 +71,14 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
 
   const cardTier = inlineHeader ? bestDamageTier(damageRows, defStats.hp) : undefined;
 
+  const isLight = cardTier !== undefined;
+  const textPrimary  = isLight ? '#111827' : undefined;
+  const moveNameColor = isLight ? '#374151' : '#9ca3af';
+  const dividerStyle  = isLight ? { borderColor: 'rgba(0,0,0,0.15)' } : { borderColor: '#374151' };
+
   return (
-    <div className="border rounded-lg p-2 space-y-1"
-      style={{
-        borderColor: cardTier !== undefined ? TIER_BORDER[cardTier] : '#374151',
-        background: cardTier !== undefined ? TIER_BG[cardTier] : '#111827',
-      }}>
+    <div className="rounded-lg p-2 space-y-1"
+      style={{ background: isLight ? TIER_COLORS[cardTier].bg : '#111827' }}>
       {inlineHeader ? (
         /* Inline header: attacker → defender on one row */
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -97,16 +89,16 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                 onError={e => { if (damageRows[0].attacker.pokemon.sprite) e.target.src = damageRows[0].attacker.pokemon.sprite; }}
                 alt="" className="w-7 h-7 object-contain shrink-0"
               />
-              <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13 }}>{toDisplayName(damageRows[0].attacker.pokemon.name)}</span>
+              <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13, color: textPrimary }}>{toDisplayName(damageRows[0].attacker.pokemon.name)}</span>
             </>
           )}
-          <span className="text-gray-600 shrink-0" style={{ fontSize: 13 }}>→</span>
+          <span style={{ fontSize: 13, color: moveNameColor }}>→</span>
           <img
             src={defender.pokemon.artwork || defender.pokemon.sprite}
             onError={e => { if (defender.pokemon.sprite) e.target.src = defender.pokemon.sprite; }}
             alt="" className="w-7 h-7 object-contain shrink-0"
           />
-          <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13 }}>{toDisplayName(defender.pokemon.name)}</span>
+          <span className="font-semibold text-gray-200 truncate" style={{ fontSize: 13, color: textPrimary }}>{toDisplayName(defender.pokemon.name)}</span>
         </div>
       ) : (
         /* Standard header: defender prominent */
@@ -137,7 +129,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
       {damageRows.length === 0 && (
         <div className="text-xs text-gray-600 italic">No attackers selected.</div>
       )}
-      <div className="space-y-1 border-t border-gray-800 pt-1">
+      <div className="space-y-1 border-t pt-1" style={dividerStyle}>
         {damageRows.map(({ attacker, rows }) => (
           <div key={attacker.id}>
             {!inlineHeader && (
@@ -151,13 +143,13 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
               </div>
             )}
             {rows.length === 0 && (
-              <div className={`text-xs text-gray-600 italic ${!inlineHeader ? 'pl-7' : ''}`}>No moves</div>
+              <div className={`text-xs italic ${!inlineHeader ? 'pl-7' : ''}`} style={{ color: moveNameColor }}>No moves</div>
             )}
             <div className={`space-y-1 ${!inlineHeader ? 'pl-7' : ''}`}>
               {rows.filter(r => !r.result.noEffect).map(({ move, effMove, result }) => (
                 <div key={move.id} className="space-y-0.5">
                   <div className="flex items-center gap-1">
-                    <span className="text-gray-400" style={{ fontSize: 11 }}>{toDisplayName(move.name)}</span>
+                    <span style={{ fontSize: 11, color: moveNameColor }}>{toDisplayName(move.name)}</span>
                     <span className="text-xs px-1 rounded text-white"
                       style={{ backgroundColor: TYPE_COLORS[effMove.type] || '#888', fontSize: 9 }}>
                       {effMove.type !== move.type && (
@@ -166,12 +158,12 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                       {effMove.type}
                     </span>
                     {effMove.power !== move.power && (
-                      <span className="text-yellow-400 text-xs">{effMove.power} BP</span>
+                      <span className="text-yellow-600 text-xs" style={{ color: isLight ? '#92400e' : undefined }}>{effMove.power} BP</span>
                     )}
                     {(() => {
                       const itemDef = attacker.item ? ITEMS[attacker.item] : null;
                       return itemDef?.effect === 'type-boost' && itemDef.type === effMove.type
-                        ? <span className="text-xs text-amber-400 opacity-80">{itemDef.label}</span>
+                        ? <span className="text-xs text-amber-400 opacity-80" style={{ color: isLight ? '#92400e' : undefined }}>{itemDef.label}</span>
                         : null;
                     })()}
                   </div>
@@ -181,6 +173,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                     defenderHp={defStats.hp}
                     immune={result.immune}
                     noEffect={result.noEffect}
+                    lightBg={isLight}
                   />
                 </div>
               ))}

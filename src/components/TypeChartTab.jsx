@@ -149,11 +149,12 @@ function TypeGrid({ team, label }) {
   );
 }
 
-export default function TypeChartTab({ attackers, defenders }) {
+export default function TypeChartTab({ attackers, defenders, atkLabel = 'Your Team', defLabel = 'Enemy Team' }) {
   return (
     <div className="flex-1 overflow-y-auto p-4">
-<TypeGrid team={attackers} label="Attackers" />
-      <TypeGrid team={defenders} label="Defenders" />
+      <p className="text-xs text-gray-500 mb-4">Type resistances and weaknesses for your attacking and defending Pokémon. Use this to spot shared vulnerabilities across your team.</p>
+      <TypeGrid team={attackers} label={atkLabel} />
+      <TypeGrid team={defenders} label={defLabel} />
     </div>
   );
 }

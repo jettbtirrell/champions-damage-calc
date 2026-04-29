@@ -237,6 +237,7 @@ export default function RolesTab({ attackers, defenders }) {
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-5">
       <div>
+        <p className="text-xs text-gray-500 mb-3">Which competitive roles your attacking team covers. Each role represents a key function in doubles — missing several can leave your team without answers to common strategies.</p>
         <div className="text-xs text-gray-500 mb-3">
           {covered.length} of {ROLES.length} roles covered
         </div>
