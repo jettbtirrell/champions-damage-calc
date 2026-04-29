@@ -16,8 +16,8 @@ const TYPE_ABBR = {
 
 const MULT_STYLE = {
   0:    { label: '0×',  bg: 'var(--acc-zero-bg)',    text: 'var(--acc-zero-text)'    },
-  0.25: { label: '¼×',  bg: 'var(--acc-dkblue-bg)', text: 'var(--acc-dkblue-text)'  },
-  0.5:  { label: '½×',  bg: 'var(--acc-blue-bg)',    text: 'var(--acc-blue-text)'    },
+  0.25: { label: '¼×',  bg: 'var(--acc-dkgreen-bg)', text: 'var(--acc-dkgreen-text)'  },
+  0.5:  { label: '½×',  bg: 'var(--acc-ltgreen-bg)', text: 'var(--acc-ltgreen-text)' },
   1:    { label: null,  bg: null,                    text: null                       },
   2:    { label: '2×',  bg: 'var(--acc-orange-bg)',  text: 'var(--acc-orange-text)'  },
   4:    { label: '4×',  bg: 'var(--acc-red-bg)',     text: 'var(--acc-red-text)'     },
@@ -45,7 +45,7 @@ function TypeGrid({ team, label }) {
       const mults = rows.map(row => row.cells.find(c => c.type === t).mult);
       const allAtMost1 = mults.every(m => m <= 1) && mults.some(m => m < 1);
       const allAtLeast1 = mults.every(m => m >= 1) && mults.some(m => m > 1);
-      if (allAtMost1) tints[t] = 'blue';
+      if (allAtMost1) tints[t] = 'green';
       else if (allAtLeast1) tints[t] = 'red';
     }
     return tints;
@@ -76,7 +76,7 @@ function TypeGrid({ team, label }) {
                 return (
                   <th key={t} className="py-2 px-0.5 font-medium text-center" style={{
                     width: 36,
-                    backgroundColor: tint === 'red' ? 'rgba(180,30,30,0.18)' : tint === 'blue' ? 'rgba(30,80,200,0.18)' : undefined,
+                    backgroundColor: tint === 'red' ? 'rgba(180,30,30,0.18)' : tint === 'green' ? 'rgba(21,128,61,0.18)' : undefined,
                   }}>
                     <div
                       className="rounded px-1 py-0.5 mx-auto text-white font-medium"
@@ -119,7 +119,7 @@ function TypeGrid({ team, label }) {
                   const tint = colTints[type];
                   return (
                     <td key={type} className="p-0.5 text-center" style={{
-                      backgroundColor: tint === 'red' ? 'rgba(200,30,30,0.10)' : tint === 'blue' ? 'rgba(30,80,200,0.10)' : undefined,
+                      backgroundColor: tint === 'red' ? 'rgba(200,30,30,0.10)' : tint === 'green' ? 'rgba(21,128,61,0.10)' : undefined,
                     }}>
                       {style.label ? (
                         <div

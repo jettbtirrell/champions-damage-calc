@@ -1,8 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { toDisplayName } from '../utils/importExport';
 import { TYPE_COLORS } from '../data/typeChart';
-
-const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' };
+import { CAT_COLORS } from '../data/theme';
 
 export default function MoveSearch({ onAdd, movesData, existingMoves }) {
   const [query, setQuery] = useState('');

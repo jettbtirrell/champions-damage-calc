@@ -12,8 +12,7 @@ import PokemonSearch from './PokemonSearch';
 import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
 import DamageBar from './DamageBar';
-
-const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' };
+import { CAT_COLORS } from '../data/theme';
 
 export default function DefenderCard({ defender, onChange, onRemove, attackers, weather, pokemonData, movesData, showDamage = true }) {
   const { pokemon, nature, statPoints } = defender;

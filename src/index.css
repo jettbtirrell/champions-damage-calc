@@ -1,25 +1,80 @@
 @import "tailwindcss";
 
-/* ── Accent colour tokens (inline-style targets) ───────────────────────── */
+/* ── Core UI palette ────────────────────────────────────────────────────── */
 :root {
+  /* Backgrounds */
+  --bg-card:       #111827;   /* dark card / header */
+  --bg-content:    #ffffff;   /* white inset section inside dark cards */
+  --bg-panel:      #1f2937;   /* sidebar / toolbar */
+
+  /* Borders & dividers */
+  --border:        #374151;   /* standard separator */
+  --border-subtle: rgba(0,0,0,0.15);  /* divider drawn on light surfaces */
+
+  /* Text on dark surfaces */
+  --text-bright:   #f3f4f6;
+  --text-normal:   #9ca3af;
+  --text-dim:      #6b7280;
+
+  /* Text on light (white / pastel) surfaces */
+  --text-on-light: #111827;
+  --text-subtle:   #374151;
+  --text-muted:    #6b7280;
+  --text-accent:   #92400e;   /* BP / item boost label */
+
+  /* Damage bar */
+  --bar-track:     #1f2937;   /* empty portion on white bg */
+  --bar-track-lt:  #e5e7eb;   /* empty portion on pastel bg */
+
+  /* Tier colours — green = OHKO, yellow = 2HKO, red = neither */
+  --tier-green-bg:     #bbf7d0;
+  --tier-green-border: #15803d;
+  --tier-green-text:   #052e16;
+  --tier-green-fade:   rgba(21,128,61,0.35);
+
+  --tier-yellow-bg:     #fef9c3;
+  --tier-yellow-border: #b45309;
+  --tier-yellow-text:   #451a03;
+  --tier-yellow-fade:   rgba(180,67,9,0.35);
+
+  --tier-red-bg:     #fecaca;
+  --tier-red-border: #b91c1c;
+  --tier-red-text:   #450a0a;
+  --tier-red-fade:   rgba(185,28,28,0.35);
+
+  /* Type chart resistance badge colours */
   --acc-red-bg:     #450a0a; --acc-red-text:     #fca5a5;
   --acc-orange-bg:  #7c2d12; --acc-orange-text:  #fdba74;
   --acc-amber-bg:   #3d3200; --acc-amber-text:   #fde68a;
   --acc-green-bg:   #052e16; --acc-green-text:   #86efac;
   --acc-blue-bg:    #1d4ed8; --acc-blue-text:    #bfdbfe;
   --acc-dkblue-bg:  #1e3a8a; --acc-dkblue-text:  #bfdbfe;
+  --acc-ltgreen-bg: #052e16; --acc-ltgreen-text: #86efac;
+  --acc-dkgreen-bg: #022c22; --acc-dkgreen-text: #6ee7b7;
   --acc-navy-bg:    #172554; --acc-navy-text:    #93c5fd;
   --acc-neutral-bg: #1f2937; --acc-neutral-text: #9ca3af;
   --acc-void-bg:    #111827; --acc-void-text:    #4b5563;
   --acc-zero-bg:    #374151; --acc-zero-text:    #d1d5db;
 
-  --matrix-empty-bg:     #111111; --matrix-empty-border:   #1f2937;
-  --matrix-immune-bg:    #1a1a1a; --matrix-immune-border:  #374151;
-  --matrix-header-bg:    #111827;
+  --matrix-empty-bg:  #111111;
+  --matrix-immune-bg: #1a1a1a;
+  --matrix-header-bg: var(--bg-card);
 }
 
 /* ── Light theme overrides ──────────────────────────────────────────────── */
 .light {
+  --bg-card:       #ffffff;
+  --bg-content:    #f9fafb;
+  --bg-panel:      #f3f4f6;
+  --border:        #d1d5db;
+  --text-bright:   #111827;
+  --text-normal:   #374151;
+  --text-dim:      #6b7280;
+  --bar-track:     #d1d5db;
+  --bar-track-lt:  #d1d5db;
+  --matrix-empty-bg:  #f3f4f6;
+  --matrix-immune-bg: #f9fafb;
+
   /* Flip the Tailwind gray palette */
   --color-gray-950: #f9fafb;
   --color-gray-900: #f3f4f6;
@@ -41,6 +96,8 @@
   --acc-green-bg:   #f0fdf4; --acc-green-text:   #166534;
   --acc-blue-bg:    #dbeafe; --acc-blue-text:    #1d4ed8;
   --acc-dkblue-bg:  #dbeafe; --acc-dkblue-text:  #1e40af;
+  --acc-ltgreen-bg: #dcfce7; --acc-ltgreen-text: #166534;
+  --acc-dkgreen-bg: #bbf7d0; --acc-dkgreen-text: #14532d;
   --acc-navy-bg:    #eff6ff; --acc-navy-text:    #1e3a8a;
   --acc-neutral-bg: #f1f5f9; --acc-neutral-text: #475569;
   --acc-void-bg:    #f8fafc; --acc-void-text:    #94a3b8;

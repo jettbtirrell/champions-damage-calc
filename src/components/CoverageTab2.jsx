@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { calcAllStats, applyBoost } from '../utils/statCalc';
 import { calcDamage } from '../utils/damageCalc';
 import { TIER_COLORS } from '../data/tierColors';
+import { UI } from '../data/theme';
 
 function getTier(minDmg, hp) {
   if (minDmg >= hp) return 2;
@@ -143,7 +144,7 @@ export default function CoverageTab2({ attackers, pokemonData, deselectedIds, we
                 <div key={tier} className="flex items-center justify-center overflow-hidden"
                   style={{ flex: pct, backgroundColor: TIER_COLORS[tier].bg }}>
                   {pct >= 0.08 && (
-                    <span className="font-bold select-none" style={{ fontSize: 10, color: '#111' }}>
+                    <span className="font-bold select-none" style={{ fontSize: 10, color: UI.textOnLight }}>
                       {Math.round(pct * 100)}%
                     </span>
                   )}

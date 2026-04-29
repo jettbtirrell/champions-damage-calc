@@ -1,5 +1,20 @@
 export const TIER_COLORS = {
-  2: { bg: '#bbf7d0', border: '#15803d', text: '#052e16' },
-  1: { bg: '#fef9c3', border: '#b45309', text: '#451a03' },
-  0: { bg: '#fecaca', border: '#b91c1c', text: '#450a0a' },
+  2: {
+    bg:     'var(--tier-green-bg)',
+    border: 'var(--tier-green-border)',
+    text:   'var(--tier-green-text)',
+    fade:   'var(--tier-green-fade)',
+  },
+  1: {
+    bg:     'var(--tier-yellow-bg)',
+    border: 'var(--tier-yellow-border)',
+    text:   'var(--tier-yellow-text)',
+    fade:   'var(--tier-yellow-fade)',
+  },
+  0: {
+    bg:     'var(--tier-red-bg)',
+    border: 'var(--tier-red-border)',
+    text:   'var(--tier-red-text)',
+    fade:   'var(--tier-red-fade)',
+  },
 };

@@ -1,27 +1,20 @@
 import { TIER_COLORS } from '../data/tierColors';
+import { UI } from '../data/theme';
 
 const VARIANTS = {
-  // rows on white card section (regular damage tab)
+  // rows on white section (damage tab cards)
   white: {
-    track: '#1f2937',
-    text:  '#111827',
-    pct:   '#6b7280',
+    track: UI.barTrack,
+    text:  UI.textOnLight,
+    pct:   UI.textMuted,
     fade:  tier => TIER_COLORS[tier].bg,
   },
   // rows on pastel card (test cases tab)
   pastel: {
-    track: '#e5e7eb',
-    text:  '#111827',
-    pct:   '#6b7280',
-    // border color at ~35% opacity avoids blending into matching-tier card bg
-    fade:  tier => TIER_COLORS[tier].border + '59',
-  },
-  // rows on dark bg (unused now, kept for safety)
-  dark: {
-    track: '#374151',
-    text:  '#e5e7eb',
-    pct:   '#6b7280',
-    fade:  tier => TIER_COLORS[tier].bg,
+    track: UI.barTrackLt,
+    text:  UI.textOnLight,
+    pct:   UI.textMuted,
+    fade:  tier => TIER_COLORS[tier].fade,
   },
 };
 

@@ -7,8 +7,7 @@ import { ITEMS, ITEM_GROUPS } from '../data/items';
 import PokemonSearch from './PokemonSearch';
 import MoveSearch from './MoveSearch';
 import StatEditor from './StatEditor';
-
-const CAT_COLORS = { physical: '#f97316', special: '#818cf8', status: '#6b7280' };
+import { CAT_COLORS } from '../data/theme';
 const BOOST_STATS = [{ key: 'atk', label: 'Atk' }, { key: 'spa', label: 'SpA' }];
 const BOOST_STAGES = [0, 1, 2, 3, 4, 5, 6];
 
