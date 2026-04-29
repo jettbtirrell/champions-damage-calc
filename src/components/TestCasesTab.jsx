@@ -239,10 +239,8 @@ function TargetCard({ target }) {
 // ─── Main Tab ───────────────────────────────────────────────────────────────
 
 export default function TestCasesTab({ attackers, defenders, pokemonData }) {
-  const team = useMemo(() =>
-    [...attackers, ...defenders].filter(m => m.pokemon),
-    [attackers, defenders]
-  );
+  const defTeam = useMemo(() => defenders.filter(m => m.pokemon), [defenders]);
+  const atkTeam = useMemo(() => attackers.filter(m => m.pokemon), [attackers]);
 
   const threatResults = useMemo(() =>
     THREATS.map(threat => {
@@ -256,7 +254,7 @@ export default function TestCasesTab({ attackers, defenders, pokemonData }) {
       const atkStats = calcAllStats(atkPokemon, maxStatPoints, maxNature);
       const atk = isPhysical ? atkStats.atk : atkStats.spa;
 
-      const results = team.map(mon => {
+      const results = defTeam.map(mon => {
         const defStats = calcAllStats(mon.pokemon, mon.statPoints, mon.nature);
         const wDef = applyWeatherDef(defStats, mon.pokemon.types, threat.weather);
         const def = threat.move.category === 'physical' ? wDef.def : wDef.spd;
@@ -276,7 +274,7 @@ export default function TestCasesTab({ attackers, defenders, pokemonData }) {
 
       return { ...threat, atkPokemon, results };
     }).filter(Boolean),
-    [team, pokemonData]
+    [defTeam, pokemonData]
   );
 
   const targetResults = useMemo(() =>
@@ -285,7 +283,7 @@ export default function TestCasesTab({ attackers, defenders, pokemonData }) {
       if (!defPokemon) return null;
       const defStats = calcAllStats(defPokemon, target.statPoints, target.nature);
 
-      const results = attackers.filter(a => a.pokemon).map(attacker => {
+      const results = atkTeam.map(attacker => {
         const atkStats = calcAllStats(attacker.pokemon, attacker.statPoints, attacker.nature);
         const moveResults = (attacker.moves || [])
           .filter(m => m.category !== 'status' && m.power > 0)
@@ -310,39 +308,46 @@ export default function TestCasesTab({ attackers, defenders, pokemonData }) {
 
       return { ...target, defPokemon, defStats, results };
     }).filter(Boolean),
-    [attackers, pokemonData]
+    [atkTeam, pokemonData]
   );
 
-  if (team.length === 0) {
+  if (defTeam.length === 0 && atkTeam.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-600 text-sm">
-        Add Pokémon to your team to run test cases.
+        Add attackers and defenders to run test cases.
       </div>
     );
   }
 
-  const hasOffensive = attackers.some(a => a.pokemon && a.moves?.some(m => m.power > 0));
+  const hasOffensive = atkTeam.some(a => a.moves?.some(m => m.power > 0));
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-6">
-      <section>
-        <h2 className="text-sm font-semibold text-gray-300 mb-3">Can your team survive these threats?</h2>
-        <div className="space-y-3">
-          {threatResults.map(threat => <ThreatCard key={threat.id} threat={threat} />)}
+    <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col border-r border-gray-800 overflow-hidden min-w-0">
+        <div className="px-3 py-2 border-b border-gray-800 shrink-0">
+          <h2 className="text-xs font-semibold text-gray-400">Can your attackers KO these opponents?</h2>
         </div>
-      </section>
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
+          {!hasOffensive
+            ? <p className="text-xs text-gray-600 italic">Add attackers with damaging moves.</p>
+            : targetResults
+                .filter(t => t.results.some(r => r.moveResults.length > 0))
+                .map(target => <TargetCard key={target.id} target={target} />)
+          }
+        </div>
+      </div>
 
-      {hasOffensive && (
-        <section>
-          <h2 className="text-sm font-semibold text-gray-300 mb-3">Can your attackers KO these targets?</h2>
-          <div className="space-y-3">
-            {targetResults
-              .filter(t => t.results.some(r => r.moveResults.length > 0))
-              .map(target => <TargetCard key={target.id} target={target} />)
-            }
-          </div>
-        </section>
-      )}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <div className="px-3 py-2 border-b border-gray-800 shrink-0">
+          <h2 className="text-xs font-semibold text-gray-400">Can your defenders survive these threats?</h2>
+        </div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-3">
+          {defTeam.length === 0
+            ? <p className="text-xs text-gray-600 italic">Add defenders to check survivability.</p>
+            : threatResults.map(threat => <ThreatCard key={threat.id} threat={threat} />)
+          }
+        </div>
+      </div>
     </div>
   );
 }

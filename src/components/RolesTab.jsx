@@ -3,6 +3,26 @@ import { toDisplayName } from '../utils/importExport';
 
 const ROLES = [
   {
+    key: 'intimidate',
+    label: 'Intimidate',
+    description: 'Lowers both opponents\' Attack on entry',
+    bg: '#1a0808', border: '#b91c1c', text: '#fca5a5',
+    check: mon => mon.ability === 'intimidate' ? 'Intimidate' : null,
+  },
+  {
+    key: 'speed-control',
+    label: 'Speed Control',
+    description: 'Tailwind, Trick Room, or speed-reducing moves',
+    bg: '#051520', border: '#0284c7', text: '#7dd3fc',
+    check: mon => {
+      if (mon.moves?.find(m => m.name === 'tailwind')) return 'Tailwind';
+      if (mon.moves?.find(m => m.name === 'trick-room')) return 'Trick Room';
+      const SLOW = ['icy-wind', 'electroweb', 'bulldoze', 'mud-shot', 'rock-tomb', 'glaciate', 'scary-face', 'string-shot'];
+      const m = mon.moves?.find(m => SLOW.includes(m.name));
+      return m ? toDisplayName(m.name) : null;
+    },
+  },
+  {
     key: 'fake-out',
     label: 'Fake Out',
     description: 'First-turn flinch and momentum',
@@ -10,66 +30,134 @@ const ROLES = [
     check: mon => mon.moves?.find(m => m.name === 'fake-out') ? 'Fake Out' : null,
   },
   {
-    key: 'tailwind',
-    label: 'Tailwind',
-    description: 'Doubles team speed for 4 turns',
-    bg: '#0b1f14', border: '#16a34a', text: '#86efac',
-    check: mon => mon.moves?.find(m => m.name === 'tailwind') ? 'Tailwind' : null,
+    key: 'taunt',
+    label: 'Taunt',
+    description: 'Prevents opponent from using status moves',
+    bg: '#1a0d00', border: '#ea580c', text: '#fdba74',
+    check: mon => mon.moves?.find(m => m.name === 'taunt') ? 'Taunt' : null,
   },
   {
-    key: 'trick-room',
-    label: 'Trick Room',
-    description: 'Reverses speed order for 5 turns',
-    bg: '#140d30', border: '#7c3aed', text: '#c4b5fd',
-    check: mon => mon.moves?.find(m => m.name === 'trick-room') ? 'Trick Room' : null,
+    key: 'priority',
+    label: 'Priority',
+    description: 'Moves that act before normal speed order',
+    bg: '#1a1200', border: '#d97706', text: '#fde68a',
+    check: mon => {
+      const PRIORITY = ['aqua-jet', 'extreme-speed', 'sucker-punch', 'ice-shard', 'bullet-punch', 'mach-punch', 'shadow-sneak', 'water-shuriken', 'jet-punch', 'first-impression', 'accelerock', 'vacuum-wave', 'quick-attack', 'grassy-glide'];
+      const m = mon.moves?.find(m => PRIORITY.includes(m.name));
+      return m ? toDisplayName(m.name) : null;
+    },
+  },
+  {
+    key: 'weather',
+    label: 'Weather Setter',
+    description: 'Sets rain, sun, sand, or snow via ability or move',
+    bg: '#051828', border: '#0369a1', text: '#7dd3fc',
+    check: mon => {
+      const WEATHER_MOVES = { 'rain-dance': 'Rain Dance', 'sunny-day': 'Sunny Day', 'sandstorm': 'Sandstorm', 'snow': 'Snow', 'hail': 'Hail' };
+      const WEATHER_ABILITIES = { 'drizzle': 'Drizzle', 'drought': 'Drought', 'sand-stream': 'Sand Stream', 'snow-warning': 'Snow Warning', 'primordial-sea': 'Primordial Sea', 'desolate-land': 'Desolate Land', 'delta-stream': 'Delta Stream' };
+      const m = mon.moves?.find(m => WEATHER_MOVES[m.name]);
+      if (m) return WEATHER_MOVES[m.name];
+      return mon.ability && WEATHER_ABILITIES[mon.ability] ? WEATHER_ABILITIES[mon.ability] : null;
+    },
+  },
+  {
+    key: 'sleep',
+    label: 'Sleep',
+    description: 'Puts opponents to sleep',
+    bg: '#100a25', border: '#7c3aed', text: '#c4b5fd',
+    check: mon => {
+      const SLEEP_MOVES = ['spore', 'sleep-powder', 'hypnosis', 'yawn', 'dark-void', 'lovely-kiss', 'sing', 'grass-whistle', 'dire-claw'];
+      const m = mon.moves?.find(m => SLEEP_MOVES.includes(m.name));
+      return m ? toDisplayName(m.name) : null;
+    },
+  },
+  {
+    key: 'paralysis',
+    label: 'Paralysis',
+    description: 'Paralyzes opponents via move or ability',
+    bg: '#1a1500', border: '#ca8a04', text: '#fde68a',
+    check: mon => {
+      const PARA_MOVES = ['thunder-wave', 'nuzzle', 'stun-spore', 'glare', 'dire-claw', 'body-slam'];
+      const PARA_ABILITIES = ['static', 'effect-spore'];
+      const m = mon.moves?.find(m => PARA_MOVES.includes(m.name));
+      if (m) return toDisplayName(m.name);
+      if (mon.ability && PARA_ABILITIES.includes(mon.ability)) return toDisplayName(mon.ability);
+      return null;
+    },
+  },
+  {
+    key: 'burn',
+    label: 'Burn',
+    description: 'Burns opponents via move or ability',
+    bg: '#1f0900', border: '#c2410c', text: '#fdba74',
+    check: mon => {
+      const BURN_MOVES = ['will-o-wisp', 'sacred-fire', 'scald', 'lava-plume', 'dire-claw'];
+      const BURN_ABILITIES = ['flame-body'];
+      const m = mon.moves?.find(m => BURN_MOVES.includes(m.name));
+      if (m) return toDisplayName(m.name);
+      if (mon.ability && BURN_ABILITIES.includes(mon.ability)) return toDisplayName(mon.ability);
+      return null;
+    },
+  },
+  {
+    key: 'support-abilities',
+    label: 'Support Abilities',
+    description: 'Passive abilities that protect or aid allies',
+    bg: '#071a18', border: '#0f766e', text: '#5eead4',
+    check: mon => {
+      const SUPPORT = { 'hospitality': 'Hospitality', 'friend-guard': 'Friend Guard', 'lightning-rod': 'Lightning Rod', 'healer': 'Healer', 'storm-drain': 'Storm Drain' };
+      return mon.ability && SUPPORT[mon.ability] ? SUPPORT[mon.ability] : null;
+    },
+  },
+  {
+    key: 'perish-song',
+    label: 'Perish Song',
+    description: 'All active Pokémon faint after 3 turns',
+    bg: '#111827', border: '#6b7280', text: '#d1d5db',
+    check: mon => mon.moves?.find(m => m.name === 'perish-song') ? 'Perish Song' : null,
   },
   {
     key: 'redirection',
     label: 'Redirection',
-    description: 'Draws single-target moves away from partner',
-    bg: '#1f1000', border: '#c2410c', text: '#fdba74',
+    description: 'Draws single-target moves to self',
+    bg: '#1a0e00', border: '#92400e', text: '#fcd34d',
     check: mon => {
       const m = mon.moves?.find(m => ['follow-me', 'rage-powder'].includes(m.name));
       return m ? toDisplayName(m.name) : null;
     },
   },
   {
-    key: 'intimidate',
-    label: 'Intimidate',
-    description: 'Lowers both opponents\' Attack on entry',
-    bg: '#1a0a0a', border: '#b91c1c', text: '#fca5a5',
-    check: mon => mon.ability === 'intimidate' ? 'Intimidate' : null,
+    key: 'snarl',
+    label: 'Snarl',
+    description: 'Spread move that lowers both opponents\' Sp. Atk',
+    bg: '#0f1117', border: '#4b5563', text: '#9ca3af',
+    check: mon => mon.moves?.find(m => m.name === 'snarl') ? 'Snarl' : null,
   },
   {
-    key: 'speed-control',
-    label: 'Speed Control',
-    description: 'Slows, paralyzes, or denies opponent speed',
-    bg: '#0a1520', border: '#0284c7', text: '#7dd3fc',
+    key: 'roar',
+    label: 'Roar',
+    description: 'Forces opponent to switch out',
+    bg: '#0f1520', border: '#475569', text: '#94a3b8',
     check: mon => {
-      const SLOW = ['icy-wind', 'electroweb', 'bulldoze', 'mud-shot', 'thunder-wave', 'scary-face', 'string-shot', 'rock-tomb', 'glaciate'];
-      const m = mon.moves?.find(m => SLOW.includes(m.name));
+      const m = mon.moves?.find(m => ['roar', 'whirlwind', 'dragon-tail', 'circle-throw'].includes(m.name));
       return m ? toDisplayName(m.name) : null;
     },
   },
   {
-    key: 'priority',
-    label: 'Priority',
-    description: 'Moves that act before normal speed order',
-    bg: '#1a1500', border: '#a16207', text: '#fde68a',
-    check: mon => {
-      const PRIORITY = ['quick-attack', 'bullet-punch', 'aqua-jet', 'mach-punch', 'sucker-punch', 'extreme-speed', 'ice-shard', 'shadow-sneak', 'water-shuriken', 'jet-punch', 'first-impression', 'accelerock', 'grassy-glide', 'vacuum-wave'];
-      const m = mon.moves?.find(m => PRIORITY.includes(m.name));
-      return m ? toDisplayName(m.name) : null;
-    },
+    key: 'parting-shot',
+    label: 'Parting Shot',
+    description: 'Lowers opponent\'s offenses then switches out',
+    bg: '#0a0b28', border: '#4f46e5', text: '#a5b4fc',
+    check: mon => mon.moves?.find(m => m.name === 'parting-shot') ? 'Parting Shot' : null,
   },
   {
-    key: 'pivot',
-    label: 'Pivot',
-    description: 'Switches out while maintaining pressure',
-    bg: '#0d0d25', border: '#4338ca', text: '#a5b4fc',
+    key: 'support-moves',
+    label: 'Support Moves',
+    description: 'Wide Guard, Quick Guard, Helping Hand, Life Dew, Upper Hand',
+    bg: '#071a0f', border: '#15803d', text: '#86efac',
     check: mon => {
-      const PIVOT = ['u-turn', 'volt-switch', 'flip-turn', 'parting-shot', 'teleport', 'chilly-reception'];
-      const m = mon.moves?.find(m => PIVOT.includes(m.name));
+      const SUPPORT = ['wide-guard', 'quick-guard', 'helping-hand', 'life-dew', 'upper-hand'];
+      const m = mon.moves?.find(m => SUPPORT.includes(m.name));
       return m ? toDisplayName(m.name) : null;
     },
   },
@@ -77,66 +165,11 @@ const ROLES = [
     key: 'spread',
     label: 'Spread Damage',
     description: 'Hits both opponents at once',
-    bg: '#1a0808', border: '#9f1239', text: '#fda4af',
+    bg: '#1a0812', border: '#be123c', text: '#fda4af',
     check: mon => {
-      const SPREAD = ['earthquake', 'surf', 'blizzard', 'heat-wave', 'discharge', 'rock-slide', 'hyper-voice', 'dazzling-gleam', 'muddy-water', 'eruption', 'water-spout', 'glacial-lance', 'astral-barrage', 'snarl', 'lava-plume', 'thousand-arrows', 'breaking-swipe', 'electroweb', 'muddy-water', 'petal-blizzard'];
+      const SPREAD = ['earthquake', 'surf', 'blizzard', 'heat-wave', 'discharge', 'rock-slide', 'hyper-voice', 'dazzling-gleam', 'muddy-water', 'eruption', 'water-spout', 'glacial-lance', 'astral-barrage', 'lava-plume', 'thousand-arrows', 'breaking-swipe', 'petal-blizzard', 'boomburst', 'overdrive', 'hurricane', 'icy-wind', 'electroweb', 'snarl', 'bulldoze', 'magnitude', 'explosion', 'self-destruct'];
       const m = mon.moves?.find(m => SPREAD.includes(m.name));
       return m ? toDisplayName(m.name) : null;
-    },
-  },
-  {
-    key: 'weather',
-    label: 'Weather Setting',
-    description: 'Sets rain, sun, sand, or snow',
-    bg: '#091520', border: '#0369a1', text: '#7dd3fc',
-    check: mon => {
-      const WEATHER_MOVES = { 'rain-dance': 'Rain Dance', 'sunny-day': 'Sunny Day', 'sandstorm': 'Sandstorm', 'snow': 'Snow', 'hail': 'Hail' };
-      const WEATHER_ABILITIES = { 'drizzle': 'Drizzle', 'drought': 'Drought', 'sand-stream': 'Sand Stream', 'snow-warning': 'Snow Warning' };
-      const m = mon.moves?.find(m => WEATHER_MOVES[m.name]);
-      if (m) return WEATHER_MOVES[m.name];
-      return mon.ability && WEATHER_ABILITIES[mon.ability] ? WEATHER_ABILITIES[mon.ability] : null;
-    },
-  },
-  {
-    key: 'screens',
-    label: 'Screens',
-    description: 'Halves damage taken for 5 turns',
-    bg: '#091a1a', border: '#0f766e', text: '#5eead4',
-    check: mon => {
-      const m = mon.moves?.find(m => ['reflect', 'light-screen', 'aurora-veil'].includes(m.name));
-      return m ? toDisplayName(m.name) : null;
-    },
-  },
-  {
-    key: 'boost',
-    label: 'Stat Boost',
-    description: 'Sharply raises own or ally offensive/defensive stats',
-    bg: '#130820', border: '#9333ea', text: '#d8b4fe',
-    check: mon => {
-      const BOOSTS = ['swords-dance', 'nasty-plot', 'calm-mind', 'quiver-dance', 'dragon-dance', 'bulk-up', 'iron-defense', 'coaching', 'decorate', 'clangorous-soul', 'shell-smash', 'work-up', 'growth'];
-      const m = mon.moves?.find(m => BOOSTS.includes(m.name));
-      return m ? toDisplayName(m.name) : null;
-    },
-  },
-  {
-    key: 'item-removal',
-    label: 'Item Removal',
-    description: 'Removes or steals opponents\' held items',
-    bg: '#1a1200', border: '#92400e', text: '#fcd34d',
-    check: mon => {
-      const m = mon.moves?.find(m => ['knock-off', 'trick', 'switcheroo', 'thief', 'covet', 'pluck', 'bug-bite'].includes(m.name));
-      return m ? toDisplayName(m.name) : null;
-    },
-  },
-  {
-    key: 'terrain',
-    label: 'Terrain',
-    description: 'Sets electric, grassy, misty, or psychic terrain',
-    bg: '#0a1a0a', border: '#15803d', text: '#86efac',
-    check: mon => {
-      const T = { 'electric-terrain': 'Electric Terrain', 'grassy-terrain': 'Grassy Terrain', 'misty-terrain': 'Misty Terrain', 'psychic-terrain': 'Psychic Terrain' };
-      const m = mon.moves?.find(m => T[m.name]);
-      return m ? T[m.name] : null;
     },
   },
 ];
@@ -178,8 +211,8 @@ function RoleBucket({ role, members }) {
 
 export default function RolesTab({ attackers, defenders }) {
   const team = useMemo(() =>
-    [...attackers, ...defenders].filter(m => m.pokemon),
-    [attackers, defenders]
+    attackers.filter(m => m.pokemon),
+    [attackers]
   );
 
   const roleResults = useMemo(() =>
@@ -227,6 +260,15 @@ export default function RolesTab({ attackers, defenders }) {
           </div>
         </div>
       )}
+
+      <div className="pt-2 border-t border-gray-800">
+        <p className="text-xs text-gray-600">
+          Categories based on the VGC cheat sheet by{' '}
+          <span className="text-gray-500">False Swipe Gaming</span>
+          {', designed by '}
+          <span className="text-gray-500">@JRuva on X / Twitter</span>
+        </p>
+      </div>
     </div>
   );
 }
