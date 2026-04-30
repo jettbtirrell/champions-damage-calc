@@ -2,7 +2,7 @@ import { TIER_COLORS } from '../data/tierColors';
 import { UI } from '../data/theme';
 
 const VARIANTS = {
-  // rows on white section (damage tab cards)
+  // rows on white section
   white: {
     track: UI.barTrack,
     text:  UI.textOnLight,
@@ -14,6 +14,13 @@ const VARIANTS = {
     track: UI.barTrackLt,
     text:  UI.textOnLight,
     pct:   UI.textMuted,
+    fade:  tier => TIER_COLORS[tier].fade,
+  },
+  // rows on dark card body (damage tab)
+  dark: {
+    track: UI.barTrackDark,
+    text:  UI.textPrimary,
+    pct:   UI.textSecondary,
     fade:  tier => TIER_COLORS[tier].fade,
   },
 };

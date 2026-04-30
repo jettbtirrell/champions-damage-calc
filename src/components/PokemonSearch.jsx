@@ -36,7 +36,7 @@ export default function PokemonSearch({ value, onChange, pokemonData, placeholde
     <div ref={ref} className="relative w-full">
       <input
         ref={inputRef}
-        className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+        className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
         placeholder={placeholder}
         value={query}
         onChange={e => { setQuery(e.target.value); setOpen(true); }}
@@ -60,7 +60,7 @@ export default function PokemonSearch({ value, onChange, pokemonData, placeholde
               <span className="flex gap-1">
                 {p.types.map(t => (
                   <span key={t} className="text-xs px-1.5 py-0.5 rounded font-medium text-white"
-                    style={{ backgroundColor: TYPE_COLORS[t] || '#888', fontSize: 10 }}>
+                    style={{ backgroundColor: TYPE_COLORS[t] || 'var(--type-fallback)', fontSize: 10 }}>
                     {t}
                   </span>
                 ))}

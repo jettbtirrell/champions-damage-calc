@@ -125,8 +125,8 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
         </div>
       )}
 
-      {/* Attacker damage rows — always white below the divider */}
-      <div className="-mx-2 -mb-2 px-2 pb-2" style={{ background: UI.cardLight, marginTop: 0 }}>
+      {/* Attacker damage rows — dark section below the colored header */}
+      <div className="-mx-2 -mb-2 px-2 pb-2" style={{ background: UI.cardBody, marginTop: 0 }}>
         {damageRows.length === 0 && (
           <div className="text-xs italic" style={{ color: UI.textMuted }}>No attackers selected.</div>
         )}
@@ -140,7 +140,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                   onError={e => { if (attacker.pokemon.sprite) e.target.src = attacker.pokemon.sprite; }}
                   alt="" className="w-6 h-6 object-contain shrink-0"
                 />
-                <span className="text-xs font-medium" style={{ color: UI.textMove }}>{toDisplayName(attacker.pokemon.name)}</span>
+                <span className="text-xs font-medium" style={{ color: UI.textSecondary }}>{toDisplayName(attacker.pokemon.name)}</span>
               </div>
             )}
             {rows.length === 0 && (
@@ -150,9 +150,9 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
               {rows.filter(r => !r.result.noEffect).map(({ move, effMove, result }) => (
                 <div key={move.id} className="space-y-0.5">
                   <div className="flex items-center gap-1">
-                    <span style={{ fontSize: 11, color: moveNameColor }}>{toDisplayName(move.name)}</span>
+                    <span style={{ fontSize: 11, color: UI.textSecondary }}>{toDisplayName(move.name)}</span>
                     <span className="text-xs px-1 rounded text-white"
-                      style={{ backgroundColor: TYPE_COLORS[effMove.type] || '#888', fontSize: 9 }}>
+                      style={{ backgroundColor: TYPE_COLORS[effMove.type] || 'var(--type-fallback)', fontSize: 9 }}>
                       {effMove.type !== move.type && (
                         <span className="opacity-50 line-through mr-0.5">{move.type}</span>
                       )}
@@ -174,7 +174,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
                     defenderHp={defStats.hp}
                     immune={result.immune}
                     noEffect={result.noEffect}
-                    variant="white"
+                    variant="dark"
                   />
                 </div>
               ))}
@@ -187,7 +187,7 @@ export function DefenderDamageCard({ defender, attackers, weather, inlineHeader 
   );
 }
 
-function SelectorList({ label, items, deselected, onToggle, accentOn, accentOff }) {
+function SelectorList({ label, items, deselected, onToggle, accentOnStyle, accentOff }) {
   if (items.length === 0) return null;
   return (
     <div>
@@ -197,7 +197,8 @@ function SelectorList({ label, items, deselected, onToggle, accentOn, accentOff 
           const active = !deselected.has(item.id);
           return (
             <button key={item.id} onClick={() => onToggle(item.id)}
-              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${active ? accentOn : accentOff}`}>
+              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors border ${active ? '' : accentOff}`}
+              style={active ? accentOnStyle : undefined}>
               <img
                 src={item.pokemon.artwork || item.pokemon.sprite}
                 onError={e => { if (item.pokemon.sprite) e.target.src = item.pokemon.sprite; }}
@@ -243,16 +244,16 @@ export default function DamageTab({ attackers, defenders, weather, deselAtk, set
           items={eligibleAtk}
           deselected={deselAtk}
           onToggle={toggleAtk}
-          accentOn="bg-blue-900/50 text-blue-200 border border-blue-800/40"
-          accentOff="bg-gray-800 text-gray-500 hover:bg-gray-700"
+          accentOnStyle={{ background: 'var(--side-atk-sel-bg)', color: 'var(--side-atk-sel-text)', borderColor: 'var(--side-atk-sel-border)' }}
+          accentOff="bg-gray-800 text-gray-500 hover:bg-gray-700 border-transparent"
         />
         <SelectorList
           label="Defenders"
           items={eligibleDef}
           deselected={deselDef}
           onToggle={toggleDef}
-          accentOn="bg-orange-900/50 text-orange-200 border border-orange-800/40"
-          accentOff="bg-gray-800 text-gray-500 hover:bg-gray-700"
+          accentOnStyle={{ background: 'var(--side-def-sel-bg)', color: 'var(--side-def-sel-text)', borderColor: 'var(--side-def-sel-border)' }}
+          accentOff="bg-gray-800 text-gray-500 hover:bg-gray-700 border-transparent"
         />
       </div>
 

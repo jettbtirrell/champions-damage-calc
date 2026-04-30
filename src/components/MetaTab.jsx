@@ -50,8 +50,8 @@ export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline justify-between gap-1">
-                    <span className="text-sm font-semibold text-white truncate">{toDisplayName(name)}</span>
-                    <span className="text-blue-400 font-mono text-sm shrink-0">{data.usage}%</span>
+                    <span className="text-sm font-semibold text-gray-100 truncate">{toDisplayName(name)}</span>
+                    <span className="font-mono text-sm shrink-0" style={{ color: 'var(--meta-usage-text)' }}>{data.usage}%</span>
                   </div>
                   {pokemon && (
                     <div className="flex gap-1 mt-0.5">
@@ -64,7 +64,7 @@ export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
                     </div>
                   )}
                   {topItem && (
-                    <span className="text-xs text-amber-400 mt-0.5 block truncate">
+                    <span className="text-xs mt-0.5 block truncate" style={{ color: 'var(--meta-item-text)' }}>
                       {toDisplayName(topItem[0])}
                       <span className="text-gray-600 ml-1">{topItem[1]}%</span>
                     </span>
@@ -79,10 +79,9 @@ export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
                     onClick={() => handleAdd(pokemon, Object.keys(data.moves).slice(0, TOP_MOVES))}
                     disabled={added}
                     className={`mt-2 w-full text-xs py-1 rounded transition-colors ${
-                      added
-                        ? 'bg-green-800 text-green-300 cursor-default'
-                        : 'bg-gray-800 hover:bg-blue-700 text-gray-400 hover:text-white'
+                      added ? 'cursor-default' : 'bg-gray-800 hover:bg-blue-700 text-gray-400 hover:text-white'
                     }`}
+                    style={added ? { background: 'var(--meta-added-bg)', color: 'var(--meta-added-text)' } : undefined}
                   >
                     {added ? '✓ Added' : '+ Add as Defender'}
                   </button>
@@ -97,8 +96,8 @@ export default function MetaTab({ pokemonData, movesData, onAddDefender }) {
                       <span className="text-xs text-gray-400 shrink-0 w-28 truncate">{toDisplayName(move)}</span>
                       <div className="flex-1 bg-gray-800 rounded-full h-1.5 overflow-hidden">
                         <div
-                          className="h-full bg-indigo-500 rounded-full"
-                          style={{ width: `${Math.min(100, pct)}%` }}
+                          className="h-full rounded-full"
+                          style={{ width: `${Math.min(100, pct)}%`, background: 'var(--meta-bar-fill)' }}
                         />
                       </div>
                       <span className="text-xs text-gray-500 font-mono w-7 text-right shrink-0">{pct}%</span>

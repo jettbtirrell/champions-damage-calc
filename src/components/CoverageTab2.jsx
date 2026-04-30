@@ -110,7 +110,7 @@ export default function CoverageTab2({ attackers, pokemonData, deselectedIds, we
           {[['dex', 'Dex #'], ['color', 'Color']].map(([mode, label]) => (
             <button key={mode} onClick={() => setSortMode(mode)}
               className={`text-xs px-2 py-1 rounded transition-colors ${
-                sortMode === mode ? 'bg-blue-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                sortMode === mode ? 'bg-accent text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
               }`}>
               {label}
             </button>
@@ -124,7 +124,7 @@ export default function CoverageTab2({ attackers, pokemonData, deselectedIds, we
           }
         }}
           className={`text-xs px-2 py-1 rounded transition-colors shrink-0 ${
-            pokemonCards && openCards.size === pokemonCards.length ? 'bg-indigo-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+            pokemonCards && openCards.size === pokemonCards.length ? 'bg-accent-meta text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
           }`}>
           {pokemonCards && openCards.size === pokemonCards.length ? 'Collapse All' : 'Expand All'}
         </button>

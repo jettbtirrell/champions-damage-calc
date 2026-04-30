@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* ── Custom Tailwind accent classes ──────────────────────────────────────── */
+/* Exposes bg-accent, bg-accent-format, bg-accent-meta as Tailwind utilities. */
+/* To change: update both here AND the matching --accent-* vars in :root.    */
+@theme {
+  --color-accent:        #2563eb;  /* active tab, boost stage, primary action */
+  --color-accent-format: #7e22ce;  /* active format selector */
+  --color-accent-meta:   #4338ca;  /* meta mode toggle */
+}
+
 /* ── Core UI palette ─────────────────────────────────────────────────────── */
 /* Each variable has a paired -light counterpart defined on the same line.   */
 /* The .light class at the bottom remaps each active variable to its -light  */
@@ -7,11 +16,11 @@
 :root {
   /* ── Tailwind gray scale ─────────────────────────────────────────────────── */
   /* Drives all bg-gray-*, text-gray-*, border-gray-* Tailwind utilities.     */
-  --color-gray-950: #070d1a;  --color-gray-950-light: #f9fafb;  /* page background */
-  --color-gray-900: #111827;  --color-gray-900-light: #f3f4f6;  /* header, cards */
-  --color-gray-800: #1f2937;  --color-gray-800-light: #e5e7eb;  /* panels, subtle borders */
-  --color-gray-700: #374151;  --color-gray-700-light: #d1d5db;  /* borders, dividers */
-  --color-gray-600: #4b5563;  --color-gray-600-light: #9ca3af;  /* disabled text */
+  --color-gray-950: #070d1a;  --color-gray-950-light: #F8FAFC;  /* page background */
+  --color-gray-900: #111827;  --color-gray-900-light: #F8FAFC;  /* header, cards */
+  --color-gray-800: #1f2937;  --color-gray-800-light: #F1F4FF;  /* panels, subtle borders */
+  --color-gray-700: #374151;  --color-gray-700-light: #F0F0F0;  /* borders, dividers */
+  --color-gray-600: #4b5563;  --color-gray-600-light: #F1F4FF;  /* disabled text */
   --color-gray-500: #6b7280;  --color-gray-500-light: #6b7280;  /* placeholder / secondary labels */
   --color-gray-400: #9ca3af;  --color-gray-400-light: #4b5563;  /* secondary text */
   --color-gray-300: #d1d5db;  --color-gray-300-light: #374151;  /* light text on dark */
@@ -41,6 +50,7 @@
   /* ── Damage bar ──────────────────────────────────────────────────────────── */
   --bar-empty:         #1f2937;  --bar-empty-light:         #d1d5db;  /* unfilled track on white bg */
   --bar-empty-pastel:  #e5e7eb;  --bar-empty-pastel-light:  #d1d5db;  /* unfilled track on pastel bg */
+  --bar-empty-dark:    #374151;  --bar-empty-dark-light:    #d1d5db;  /* unfilled track on dark card body */
 
   /* ── KO tier colours ─────────────────────────────────────────────────────── */
   /* green = OHKO, yellow = 2HKO, red = neither. Always on white/pastel bg.  */
@@ -71,10 +81,96 @@
   --badge-immune-bg:       #374151;  --badge-immune-bg-light:       #f3f4f6;
   --badge-immune-text:     #d1d5db;  --badge-immune-text-light:     #374151;
 
+  /* ── UI accent colors ───────────────────────────────────────────────────── */
+  /* Mirrored in @theme above for Tailwind class use (bg-accent etc.).        */
+  /* Type-identical in dark/light — add .light overrides if you want to vary. */
+  --accent:          #2563eb;  --accent-light:          #8cadf4;  /* active tab, boost stage */
+  --accent-format:   #ff0000;  --accent-format-light:   #cfabee;  /* active format selector */
+  --accent-meta:     #4338ca;  --accent-meta-light:     #9790e7;  /* meta mode toggle */
+
+  /* ── Pokémon type colors (mode-independent) ──────────────────────────────── */
+  --type-normal:   #9CA3AF;  --type-fire:     #F97316;  --type-water:    #60A5FA;
+  --type-grass:    #4ADE80;  --type-electric: #FBBF24;  --type-ice:      #67E8F9;
+  --type-fighting: #EF4444;  --type-poison:   #A855F7;  --type-ground:   #D97706;
+  --type-flying:   #818CF8;  --type-psychic:  #EC4899;  --type-bug:      #84CC16;
+  --type-rock:     #A8A29E;  --type-ghost:    #6B21A8;  --type-dragon:   #7C3AED;
+  --type-dark:     #374151;  --type-steel:    #94A3B8;  --type-fairy:    #F9A8D4;
+
   /* ── Matchup matrix cells ────────────────────────────────────────────────── */
   --matrix-empty-bg:   #111111;  --matrix-empty-bg-light:   #f3f4f6;  /* no-move cell */
   --matrix-immune-bg:  #1a1a1a;  --matrix-immune-bg-light:  #f9fafb;  /* immune cell */
   --matrix-header-bg:  var(--surface-card);  /* label rows/cols — inherits surface-card */
+
+  /* ── Attacker side accent (blue) ─────────────────────────────────────────── */
+  --side-atk-label:       #60a5fa;              --side-atk-label-light:       #2563eb;
+  --side-atk-name:        #bfdbfe;              --side-atk-name-light:        #1e40af;
+  --side-atk-speed:       #93c5fd;              --side-atk-speed-light:       #1d4ed8;
+  --side-atk-row-bg:      rgba(30,58,138,0.20); --side-atk-row-bg-light:      rgba(59,130,246,0.08);
+  --side-atk-glow:        rgba(59,130,246,0.7); --side-atk-glow-light:        rgba(59,130,246,0.5);
+  --side-atk-chip:        #3b82f6;              --side-atk-chip-light:        #2563eb;
+  --side-atk-chip-multi:  #60a5fa;              --side-atk-chip-multi-light:  #3b82f6;
+  --side-atk-sel-bg:      rgba(30,58,138,0.50); --side-atk-sel-bg-light:      rgba(59,130,246,0.12);
+  --side-atk-sel-text:    #bfdbfe;              --side-atk-sel-text-light:    #1e40af;
+  --side-atk-sel-border:  rgba(29,78,216,0.40); --side-atk-sel-border-light:  rgba(37,99,235,0.40);
+
+  /* ── Defender side accent (orange) ───────────────────────────────────────── */
+  --side-def-label:       #fb923c;              --side-def-label-light:       #ea580c;
+  --side-def-name:        #fed7aa;              --side-def-name-light:        #9a3412;
+  --side-def-speed:       #fdba74;              --side-def-speed-light:       #ea580c;
+  --side-def-row-bg:      rgba(67,20,7,0.20);   --side-def-row-bg-light:      rgba(234,88,12,0.08);
+  --side-def-glow:        rgba(251,146,60,0.7); --side-def-glow-light:        rgba(251,146,60,0.5);
+  --side-def-chip:        #f97316;              --side-def-chip-light:        #ea580c;
+  --side-def-sel-bg:      rgba(124,45,18,0.50); --side-def-sel-bg-light:      rgba(234,88,12,0.12);
+  --side-def-sel-text:    #fed7aa;              --side-def-sel-text-light:    #9a3412;
+  --side-def-sel-border:  rgba(154,52,18,0.40); --side-def-sel-border-light:  rgba(194,65,12,0.40);
+
+  /* ── Move category badge colors ──────────────────────────────────────────── */
+  --cat-physical:  #f97316;   /* orange — physical moves */
+  --cat-special:   #818cf8;   /* indigo — special moves */
+  --cat-status:    #6b7280;   /* gray — status moves */
+
+  /* ── Type / category badge fallback ──────────────────────────────────────── */
+  --type-fallback: #888888;
+
+  /* ── TypeChartTab column highlight tints ─────────────────────────────────── */
+  --tint-weak-header:   rgba(180,30,30,0.18);   /* header bg when all rows are weak to this type */
+  --tint-weak-body:     rgba(200,30,30,0.10);   /* body cell bg */
+  --tint-resist-header: rgba(21,128,61,0.18);   /* header bg when all rows resist */
+  --tint-resist-body:   rgba(21,128,61,0.10);   /* body cell bg */
+
+  /* ── SpeedTab condition toggle active colors ──────────────────────────────── */
+  --cond-tailwind-bg:   #0369a1;  --cond-tailwind-text:   #bae6fd;   /* sky */
+  --cond-scarf-bg:      #a16207;  --cond-scarf-text:      #fef08a;   /* yellow */
+  --cond-paralyzed-bg:  #6b21a8;  --cond-paralyzed-text:  #e9d5ff;   /* purple */
+
+  /* ── Stat editor nature/boost indicators ─────────────────────────────────── */
+  --stat-plus:   #4ade80;  --stat-plus-light:   #15803d;   /* nature-boosted stat */
+  --stat-minus:  #f87171;  --stat-minus-light:  #b91c1c;   /* nature-reduced stat / over-limit */
+  --stat-boost:  #60a5fa;  --stat-boost-light:  #2563eb;   /* in-battle stage boost value */
+
+  /* ── Meta tab colors ──────────────────────────────────────────────────────── */
+  --meta-usage-text:  #60a5fa;  --meta-usage-text-light:  #2563eb;   /* usage percentage */
+  --meta-item-text:   #fbbf24;  --meta-item-text-light:   #b45309;   /* top held item */
+  --meta-bar-fill:    #6366f1;  --meta-bar-fill-light:    #4338ca;   /* move usage bar */
+  --meta-added-bg:    #166534;  --meta-added-bg-light:    #bbf7d0;   /* "✓ Added" button bg */
+  --meta-added-text:  #86efac;  --meta-added-text-light:  #052e16;   /* "✓ Added" button text */
+
+  /* ── Weather field active button colors ──────────────────────────────────── */
+  --weather-none-bg:  #4b5563;   /* gray-600 */
+  --weather-sun-bg:   #ea580c;   /* orange-600 */
+  --weather-rain-bg:  #2563eb;   /* blue-600 */
+  --weather-sand-bg:  #a16207;   /* yellow-700 */
+  --weather-snow-bg:  #0e7490;   /* cyan-700 */
+
+  /* ── Move power/type change indicator ────────────────────────────────────── */
+  --move-changed:  #facc15;  --move-changed-light:  #ca8a04;  /* ability-modified power or type */
+
+  /* ── Weather-boosted stat indicators (in defender stat display) ───────────── */
+  --weather-boost-def:  #22d3ee;  --weather-boost-def-light:  #0891b2;  /* snow + ice: Defense boosted */
+  --weather-boost-spd:  #facc15;  --weather-boost-spd-light:  #ca8a04;  /* sand + rock: Sp.Def boosted */
+
+  /* ── Item boost label color (shown next to move when item amplifies it) ────── */
+  --item-boost-text:  #fb923c;  --item-boost-text-light:  #c2410c;
 }
 
 /* ── Light theme ─────────────────────────────────────────────────────────── */
@@ -90,7 +186,6 @@
   --color-gray-300: var(--color-gray-300-light);
   --color-gray-200: var(--color-gray-200-light);
   --color-gray-100: var(--color-gray-100-light);
-  --color-white:    #111827;  /* map white → near-black so text-white reads on light inputs */
 
   --surface-card:    var(--surface-card-light);
   --surface-inset:   var(--surface-inset-light);
@@ -105,6 +200,7 @@
 
   --bar-empty:         var(--bar-empty-light);
   --bar-empty-pastel:  var(--bar-empty-pastel-light);
+  --bar-empty-dark:    var(--bar-empty-dark-light);
 
   --badge-4x-bg:         var(--badge-4x-bg-light);
   --badge-4x-text:       var(--badge-4x-text-light);
@@ -119,6 +215,43 @@
 
   --matrix-empty-bg:   var(--matrix-empty-bg-light);
   --matrix-immune-bg:  var(--matrix-immune-bg-light);
+
+  --side-atk-label:       var(--side-atk-label-light);
+  --side-atk-name:        var(--side-atk-name-light);
+  --side-atk-speed:       var(--side-atk-speed-light);
+  --side-atk-row-bg:      var(--side-atk-row-bg-light);
+  --side-atk-glow:        var(--side-atk-glow-light);
+  --side-atk-chip:        var(--side-atk-chip-light);
+  --side-atk-chip-multi:  var(--side-atk-chip-multi-light);
+  --side-atk-sel-bg:      var(--side-atk-sel-bg-light);
+  --side-atk-sel-text:    var(--side-atk-sel-text-light);
+  --side-atk-sel-border:  var(--side-atk-sel-border-light);
+
+  --side-def-label:       var(--side-def-label-light);
+  --side-def-name:        var(--side-def-name-light);
+  --side-def-speed:       var(--side-def-speed-light);
+  --side-def-row-bg:      var(--side-def-row-bg-light);
+  --side-def-glow:        var(--side-def-glow-light);
+  --side-def-chip:        var(--side-def-chip-light);
+  --side-def-sel-bg:      var(--side-def-sel-bg-light);
+  --side-def-sel-text:    var(--side-def-sel-text-light);
+  --side-def-sel-border:  var(--side-def-sel-border-light);
+
+  --stat-plus:   var(--stat-plus-light);
+  --stat-minus:  var(--stat-minus-light);
+  --stat-boost:  var(--stat-boost-light);
+
+  --meta-usage-text:  var(--meta-usage-text-light);
+  --meta-item-text:   var(--meta-item-text-light);
+  --meta-bar-fill:    var(--meta-bar-fill-light);
+  --meta-added-bg:    var(--meta-added-bg-light);
+  --meta-added-text:  var(--meta-added-text-light);
+
+  --move-changed:  var(--move-changed-light);
+
+  --weather-boost-def:  var(--weather-boost-def-light);
+  --weather-boost-spd:  var(--weather-boost-spd-light);
+  --item-boost-text:    var(--item-boost-text-light);
 }
 
 @layer base {

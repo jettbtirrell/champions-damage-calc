@@ -75,13 +75,13 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
 
       {/* Column headers */}
       <div className="flex border-b border-gray-700 bg-gray-900">
-        <div className="text-right pr-2 shrink-0 text-xs text-blue-400 py-1.5 border-r border-gray-700"
-          style={{ width: 140 }}>
+        <div className="text-right pr-2 shrink-0 text-xs py-1.5 border-r border-gray-700"
+          style={{ width: 140, color: 'var(--side-atk-label)' }}>
           Attackers
         </div>
         {hasDefenders && (
-          <div className="text-right pr-2 shrink-0 text-xs text-orange-400 py-1.5 border-r border-gray-700"
-            style={{ width: 140 }}>
+          <div className="text-right pr-2 shrink-0 text-xs py-1.5 border-r border-gray-700"
+            style={{ width: 140, color: 'var(--side-def-label)' }}>
             Defenders
           </div>
         )}
@@ -106,7 +106,8 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
           return (
             <div
               key={spe}
-              className={`flex items-center border-b border-gray-800/40 ${isAtkRow ? 'bg-blue-950/20' : isDefRow ? 'bg-orange-950/20' : ''}`}
+              className="flex items-center border-b border-gray-800/40"
+              style={{ background: isAtkRow ? 'var(--side-atk-row-bg)' : isDefRow ? 'var(--side-def-row-bg)' : undefined }}
             >
               {/* Attackers column */}
               <div
@@ -116,17 +117,17 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
                 {atkList.map(a => (
                   <div key={a.attacker.id} className="flex items-center gap-1">
                     {a.scarfed && (
-                      <span className="text-yellow-400 font-bold shrink-0" style={{ fontSize: 9 }}>Scarf</span>
+                      <span className="font-bold shrink-0" style={{ fontSize: 9, color: 'var(--cond-scarf-text)' }}>Scarf</span>
                     )}
-                    <span className="text-xs text-blue-200 truncate text-right leading-tight"
-                      style={{ maxWidth: 70 }}>
+                    <span className="text-xs truncate text-right leading-tight"
+                      style={{ maxWidth: 70, color: 'var(--side-atk-name)' }}>
                       {toDisplayName(a.attacker.pokemon.name)}
                     </span>
                     <img
                       src={a.attacker.pokemon.artwork || a.attacker.pokemon.sprite}
                       onError={e => { if (a.attacker.pokemon.sprite) e.target.src = a.attacker.pokemon.sprite; }}
                       alt=""
-                      style={{ width: ART, height: ART, objectFit: 'contain', filter: 'drop-shadow(0 0 4px rgba(59,130,246,0.7))' }}
+                      style={{ width: ART, height: ART, objectFit: 'contain', filter: 'drop-shadow(0 0 4px var(--side-atk-glow))' }}
                     />
                   </div>
                 ))}
@@ -141,17 +142,17 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
                   {defList.map(d => (
                     <div key={d.defender.id} className="flex items-center gap-1">
                       {d.scarfed && (
-                        <span className="text-yellow-400 font-bold shrink-0" style={{ fontSize: 9 }}>Scarf</span>
+                        <span className="font-bold shrink-0" style={{ fontSize: 9, color: 'var(--cond-scarf-text)' }}>Scarf</span>
                       )}
-                      <span className="text-xs text-orange-200 truncate text-right leading-tight"
-                        style={{ maxWidth: 70 }}>
+                      <span className="text-xs truncate text-right leading-tight"
+                        style={{ maxWidth: 70, color: 'var(--side-def-name)' }}>
                         {toDisplayName(d.defender.pokemon.name)}
                       </span>
                       <img
                         src={d.defender.pokemon.artwork || d.defender.pokemon.sprite}
                         onError={e => { if (d.defender.pokemon.sprite) e.target.src = d.defender.pokemon.sprite; }}
                         alt=""
-                        style={{ width: ART, height: ART, objectFit: 'contain', filter: 'drop-shadow(0 0 4px rgba(251,146,60,0.7))' }}
+                        style={{ width: ART, height: ART, objectFit: 'contain', filter: 'drop-shadow(0 0 4px var(--side-def-glow))' }}
                       />
                     </div>
                   ))}
@@ -161,7 +162,8 @@ function SpeedNumberLine({ sections, defenders, pokemonData, comparisonMode, ene
               {/* Speed value */}
               <div className="flex items-center justify-center shrink-0 border-r border-gray-700 self-stretch"
                 style={{ width: 44 }}>
-                <span className={`text-xs font-mono ${isAtkRow ? 'text-blue-300 font-bold' : isDefRow ? 'text-orange-300 font-bold' : 'text-gray-600'}`}>
+                <span className={`text-xs font-mono ${(isAtkRow || isDefRow) ? 'font-bold' : 'text-gray-600'}`}
+                  style={isAtkRow ? { color: 'var(--side-atk-speed)' } : isDefRow ? { color: 'var(--side-def-speed)' } : undefined}>
                   {spe}
                 </span>
               </div>
@@ -240,7 +242,7 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
           ].map(({ key, label }) => (
             <button key={key} onClick={() => setComparisonMode(key)}
               className={`text-xs px-2.5 py-1 rounded transition-colors ${
-                comparisonMode === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                comparisonMode === key ? 'bg-accent text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
               }`}>
               {label}
             </button>
@@ -250,12 +252,13 @@ export default function SpeedTab({ attackers, defenders, pokemonData }) {
         <div className="flex items-center gap-1.5">
           <span className="text-xs text-gray-500">Format Pokémon Conditions / Items:</span>
           {[
-            { key: 'tailwind',  label: 'Tailwind',  on: 'bg-sky-700 text-sky-200' },
-            { key: 'scarf',     label: 'Scarf',     on: 'bg-yellow-700 text-yellow-200' },
-            { key: 'paralyzed', label: 'Paralyzed', on: 'bg-purple-800 text-purple-200' },
-          ].map(({ key, label, on }) => (
+            { key: 'tailwind',  label: 'Tailwind',  bg: 'var(--cond-tailwind-bg)',  text: 'var(--cond-tailwind-text)'  },
+            { key: 'scarf',     label: 'Scarf',     bg: 'var(--cond-scarf-bg)',     text: 'var(--cond-scarf-text)'     },
+            { key: 'paralyzed', label: 'Paralyzed', bg: 'var(--cond-paralyzed-bg)', text: 'var(--cond-paralyzed-text)' },
+          ].map(({ key, label, bg, text }) => (
             <button key={key} onClick={() => toggleMod(key)}
-              className={`text-xs px-2.5 py-1 rounded transition-colors ${enemyMods[key] ? on : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+              className={`text-xs px-2.5 py-1 rounded transition-colors ${enemyMods[key] ? '' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}
+              style={enemyMods[key] ? { background: bg, color: text } : undefined}>
               {label}
             </button>
           ))}

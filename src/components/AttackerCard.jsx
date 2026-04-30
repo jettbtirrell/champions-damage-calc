@@ -37,7 +37,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
             <div className="flex gap-1 mt-1">
               {pokemon.types.map(t => (
                 <span key={t} className="text-xs px-1.5 py-0.5 rounded font-medium text-white"
-                  style={{ backgroundColor: TYPE_COLORS[t] || '#888', fontSize: 10 }}>
+                  style={{ backgroundColor: TYPE_COLORS[t] || 'var(--type-fallback)', fontSize: 10 }}>
                   {t}
                 </span>
               ))}
@@ -58,7 +58,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
             <select
               value={nature}
               onChange={e => update({ nature: e.target.value })}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
             >
               {Object.keys(NATURES).map(n => (
                 <option key={n} value={n}>{natureLabel(n)}</option>
@@ -92,7 +92,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
                         onClick={() => update({ boosts: { ...boosts, [key]: stage } })}
                         className={`w-7 py-0.5 text-xs rounded transition-colors ${
                           (boosts[key] || 0) === stage
-                            ? 'bg-blue-600 text-white font-medium'
+                            ? 'bg-accent text-white font-medium'
                             : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
                         }`}
                       >
@@ -117,15 +117,16 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
                 <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-0.5">
                   <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
                   <span className="text-xs px-1 py-0.5 rounded text-white"
-                    style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
+                    style={{ backgroundColor: TYPE_COLORS[eff.type] || 'var(--type-fallback)', fontSize: 9 }}>
                     {typeChanged && <span className="opacity-60 line-through mr-0.5">{move.type}</span>}
                     {eff.type}
                   </span>
                   <span className="text-xs px-1 py-0.5 rounded text-white"
-                    style={{ backgroundColor: CAT_COLORS[move.category] || '#888', fontSize: 9 }}>
+                    style={{ backgroundColor: CAT_COLORS[move.category] || 'var(--type-fallback)', fontSize: 9 }}>
                     {move.category}
                   </span>
-                  <span className={`text-xs w-8 text-right ${powerChanged ? 'text-yellow-400' : 'text-gray-500'}`}>
+                  <span className="text-xs w-8 text-right text-gray-500"
+                    style={powerChanged ? { color: 'var(--move-changed)' } : undefined}>
                     {eff.power || '—'}{powerChanged && <span className="opacity-50 line-through ml-1 text-gray-500">{move.power}</span>}
                   </span>
                   <button
@@ -150,7 +151,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
               <select
                 value={attacker.item || ''}
                 onChange={e => update({ item: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {ITEM_GROUPS.map(group => (
@@ -167,7 +168,7 @@ export default function AttackerCard({ attacker, onChange, onRemove, pokemonData
               <select
                 value={attacker.ability || ''}
                 onChange={e => update({ ability: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {(() => {

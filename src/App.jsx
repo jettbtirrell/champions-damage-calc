@@ -21,12 +21,12 @@ const META_TOP_40 = new Set(Object.keys(metaData).slice(0, 40));
 
 const WEATHER_OPTIONS = ['none', 'sun', 'rain', 'sand', 'snow'];
 const WEATHER_LABELS  = { none: '—', sun: 'Sun', rain: 'Rain', sand: 'Sand', snow: 'Snow' };
-const WEATHER_ACTIVE  = {
-  none: 'bg-gray-600 text-white',
-  sun:  'bg-orange-600 text-white',
-  rain: 'bg-blue-600 text-white',
-  sand: 'bg-yellow-700 text-white',
-  snow: 'bg-cyan-700 text-white',
+const WEATHER_ACTIVE_STYLE = {
+  none: { background: 'var(--weather-none-bg)', color: '#fff' },
+  sun:  { background: 'var(--weather-sun-bg)',  color: '#fff' },
+  rain: { background: 'var(--weather-rain-bg)', color: '#fff' },
+  sand: { background: 'var(--weather-sand-bg)', color: '#fff' },
+  snow: { background: 'var(--weather-snow-bg)', color: '#fff' },
 };
 
 const ALL_TABS = ['setup', 'damage', 'matrix', 'types', 'coverage', 'speed', 'roles', 'tests', 'meta'];
@@ -188,11 +188,11 @@ export default function App() {
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-white">Pokémin-max</span>
+          <span className="text-lg font-bold text-gray-100">Pokémin-max</span>
           <div className="flex gap-1">
             {[['setup', 'Setup'], ['damage', 'Damage'], ['matrix', 'Matrix'], ['types', 'Def Coverage'], ['coverage', 'Off Coverage'], ['speed', 'Speed'], ['roles', 'Roles'], ['tests', 'Test Cases'], ['meta', 'Meta']].map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
-                className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                className={`text-xs px-3 py-1 rounded transition-colors ${tab === key ? 'bg-accent text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
                 {label}
               </button>
             ))}
@@ -205,7 +205,7 @@ export default function App() {
             {FORMAT_OPTIONS.map(f => (
               <button key={f} onClick={() => setFormat(f)}
                 className={`px-2 py-0.5 rounded text-xs font-medium transition-colors ${
-                  format === f ? 'bg-purple-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                  format === f ? 'bg-accent-format text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
                 }`}>
                 {FORMATS[f].label}
               </button>
@@ -217,7 +217,7 @@ export default function App() {
           <button
             onClick={() => setMetaMode(m => !m)}
             className={`text-xs px-2.5 py-1 rounded transition-colors ${
-              metaMode ? 'bg-indigo-700 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+              metaMode ? 'bg-accent-meta text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
             }`}
             title="Limit Speed and Coverage to top 40 meta Pokémon (+ their megas)">
             Meta Mode
@@ -228,8 +228,10 @@ export default function App() {
           onMouseEnter={() => { clearTimeout(weatherTimerRef.current); setWeatherOpen(true); }}
           onMouseLeave={() => { weatherTimerRef.current = setTimeout(() => setWeatherOpen(false), 500); }}>
           <button className={`flex items-center justify-center w-8 h-8 rounded transition-colors ${
-            weather !== 'none' ? WEATHER_ACTIVE[weather] : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
-          }`} title={`Weather: ${WEATHER_LABELS[weather]}`}>
+            weather === 'none' ? 'bg-gray-700 text-gray-400 hover:bg-gray-600' : ''
+          }`}
+          style={weather !== 'none' ? WEATHER_ACTIVE_STYLE[weather] : undefined}
+          title={`Weather: ${WEATHER_LABELS[weather]}`}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M13 10.5a2.5 2.5 0 0 0-2.5-2.5 2.5 2.5 0 0 0-.18.01A3.5 3.5 0 1 0 3.5 11H13a2 2 0 0 0 0-4 2 2 0 0 0-.09.01A2.5 2.5 0 0 0 13 10.5z" />
             </svg>
@@ -240,8 +242,9 @@ export default function App() {
               {WEATHER_OPTIONS.map(w => (
                 <button key={w} onClick={() => setWeather(w)}
                   className={`w-full text-left px-3 py-1.5 text-xs font-medium transition-colors ${
-                    weather === w ? WEATHER_ACTIVE[w] : 'text-gray-300 hover:bg-gray-700'
-                  }`}>
+                    weather !== w ? 'text-gray-300 hover:bg-gray-700' : ''
+                  }`}
+                  style={weather === w ? WEATHER_ACTIVE_STYLE[w] : undefined}>
                   {WEATHER_LABELS[w] === '—' ? 'None' : WEATHER_LABELS[w]}
                 </button>
               ))}
@@ -291,11 +294,16 @@ export default function App() {
                   }
                   title={toDisplayName(a.pokemon.name)}
                   className={`flex items-center justify-center px-1.5 pt-1 pb-0.5 shrink-0 border-b-2 transition-colors ${
-                    singleSelected ? 'border-blue-500 bg-gray-800'
-                    : multiIncluded ? 'border-blue-400 bg-gray-800/70'
+                    singleSelected ? 'bg-gray-800'
+                    : multiIncluded ? 'bg-gray-800/70'
                     : multiExcluded ? 'border-transparent opacity-30'
                     : 'border-transparent opacity-60'
-                  } ${selectionActive || coverageMultiSelect ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
+                  } ${selectionActive || coverageMultiSelect ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`}
+                  style={{
+                    minWidth: 52,
+                    borderBottomColor: singleSelected ? 'var(--side-atk-chip)'
+                      : multiIncluded ? 'var(--side-atk-chip-multi)' : undefined,
+                  }}>
                   <img src={a.pokemon.artwork || a.pokemon.sprite}
                     onError={e => { if (a.pokemon.sprite) e.target.src = a.pokemon.sprite; }}
                     alt="" className="w-10 h-10 object-contain" />
@@ -305,10 +313,9 @@ export default function App() {
               {selectionActive && attackers.length < 6 && (
                 <button onClick={() => { setAtkShowAdd(true); setTimeout(() => atkInputRef.current?.focus(), 0); }}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
-                    !selectedAtk
-                      ? 'border-blue-500 bg-gray-800 text-blue-400'
-                      : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
-                  }`} style={{ minWidth: 52, height: 50 }}>
+                    !selectedAtk ? 'bg-gray-800' : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
+                  }`}
+                  style={!selectedAtk ? { minWidth: 52, height: 50, borderBottomColor: 'var(--side-atk-chip)', color: 'var(--side-atk-label)' } : { minWidth: 52, height: 50 }}>
                   +
                 </button>
               )}
@@ -317,7 +324,7 @@ export default function App() {
 
           {/* Swap button — full-height column */}
           <button onClick={swapSides}
-            className="flex items-center justify-center border-x border-gray-800 px-2 shrink-0 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors text-sm"
+            className="flex items-center justify-center border-x border-gray-800 px-2 shrink-0 text-gray-400 hover:text-gray-100 hover:bg-gray-700 transition-colors text-sm"
             title="Swap attackers and defenders">⇄</button>
 
           {/* Defenders side */}
@@ -336,10 +343,12 @@ export default function App() {
                   onClick={selectionActive ? () => { setSelectedDefId(d.id); setDefShowAdd(false); } : undefined}
                   title={toDisplayName(d.pokemon.name)}
                   className={`flex items-center justify-center px-1.5 pt-1 pb-0.5 shrink-0 border-b-2 transition-colors ${
-                    selectionActive && selectedDef?.id === d.id
-                      ? 'border-orange-500 bg-gray-800'
-                      : 'border-transparent opacity-60'
-                  } ${selectionActive ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`} style={{ minWidth: 52 }}>
+                    selectionActive && selectedDef?.id === d.id ? 'bg-gray-800' : 'border-transparent opacity-60'
+                  } ${selectionActive ? 'hover:bg-gray-800/50 hover:opacity-100' : ''}`}
+                  style={{
+                    minWidth: 52,
+                    borderBottomColor: selectionActive && selectedDef?.id === d.id ? 'var(--side-def-chip)' : undefined,
+                  }}>
                   <img src={d.pokemon.artwork || d.pokemon.sprite}
                     onError={e => { if (d.pokemon.sprite) e.target.src = d.pokemon.sprite; }}
                     alt="" className="w-10 h-10 object-contain" />
@@ -348,10 +357,9 @@ export default function App() {
               {selectionActive && defenders.length < 6 && (
                 <button onClick={() => { setDefShowAdd(true); setTimeout(() => defInputRef.current?.focus(), 0); }}
                   className={`flex items-center justify-center shrink-0 border-b-2 transition-colors text-xl font-light ${
-                    !selectedDef
-                      ? 'border-orange-500 bg-gray-800 text-orange-400'
-                      : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
-                  }`} style={{ minWidth: 52, height: 50 }}>
+                    !selectedDef ? 'bg-gray-800' : 'border-transparent text-gray-600 hover:bg-gray-800/50 hover:text-gray-400'
+                  }`}
+                  style={!selectedDef ? { minWidth: 52, height: 50, borderBottomColor: 'var(--side-def-chip)', color: 'var(--side-def-label)' } : { minWidth: 52, height: 50 }}>
                   +
                 </button>
               )}

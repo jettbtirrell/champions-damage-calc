@@ -7,6 +7,8 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
   const computed = calcAllStats(pokemon, statPoints, nature);
   const anyBoosted = STAT_KEYS.some(s => (boosts[s] || 0) > 0);
   const valWidth = anyBoosted ? '5.5rem' : '2.25rem';
+  const plusStyle  = { color: 'var(--stat-plus)'  };
+  const minusStyle = { color: 'var(--stat-minus)' };
 
   function set(stat, rawVal) {
     const val = Math.min(MAX_PER_STAT, Math.max(0, parseInt(rawVal, 10) || 0));
@@ -20,13 +22,13 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
       {STAT_KEYS.map(stat => {
         const isPlus = natureDef.plus === stat;
         const isMinus = natureDef.minus === stat;
-        const labelColor = isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-400';
+        const natStyle = isPlus ? plusStyle : isMinus ? minusStyle : {};
         const boost = boosts[stat] || 0;
         const boostedVal = boost > 0 ? applyBoost(computed[stat], boost) : null;
 
         return (
           <div key={stat} className="flex items-center gap-1.5">
-            <span className={`text-xs font-medium w-8 shrink-0 ${labelColor}`}>
+            <span className="text-xs font-medium w-8 shrink-0 text-gray-400" style={natStyle}>
               {STAT_LABELS[stat]}
               {isPlus && <span className="ml-0.5">+</span>}
               {isMinus && <span className="ml-0.5">–</span>}
@@ -45,19 +47,20 @@ export default function StatEditor({ pokemon, statPoints, nature, onChange, boos
               max={MAX_PER_STAT}
               value={statPoints[stat] || 0}
               onChange={e => set(stat, e.target.value)}
-              className="w-10 bg-gray-700 border border-gray-600 rounded text-center text-xs text-white py-0.5 focus:outline-none focus:border-blue-500"
+              className="w-10 bg-gray-700 border border-gray-600 rounded text-center text-xs text-gray-100 py-0.5 focus:outline-none focus:border-blue-500"
             />
-            <span className={`text-xs shrink-0 font-mono text-right ${isPlus ? 'text-green-400' : isMinus ? 'text-red-400' : 'text-gray-300'}`}
-              style={{ minWidth: valWidth }}>
+            <span className="text-xs shrink-0 font-mono text-right text-gray-300"
+              style={{ minWidth: valWidth, ...(isPlus ? plusStyle : isMinus ? minusStyle : {}) }}>
               {computed[stat]}
               {boostedVal && (
-                <span className="text-blue-400 ml-1">({boostedVal})</span>
+                <span className="ml-1" style={{ color: 'var(--stat-boost)' }}>({boostedVal})</span>
               )}
             </span>
           </div>
         );
       })}
-      <div className={`text-xs text-right ${used > TOTAL_STAT_POINTS ? 'text-red-400' : 'text-gray-500'}`}>
+      <div className="text-xs text-right text-gray-500"
+        style={used > TOTAL_STAT_POINTS ? { color: 'var(--stat-minus)' } : undefined}>
         {used} / {TOTAL_STAT_POINTS} pts
       </div>
     </div>

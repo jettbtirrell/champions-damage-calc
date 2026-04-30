@@ -26,9 +26,13 @@ export function getTypeEffectiveness(moveType, defenderTypes) {
 }
 
 export const TYPE_COLORS = {
-  normal: '#9CA3AF', fire: '#F97316', water: '#60A5FA', grass: '#4ADE80',
-  electric: '#FBBF24', ice: '#67E8F9', fighting: '#EF4444', poison: '#A855F7',
-  ground: '#D97706', flying: '#818CF8', psychic: '#EC4899', bug: '#84CC16',
-  rock: '#A8A29E', ghost: '#6B21A8', dragon: '#7C3AED', dark: '#374151',
-  steel: '#94A3B8', fairy: '#F9A8D4',
+  normal:   'var(--type-normal)',   fire:     'var(--type-fire)',
+  water:    'var(--type-water)',    grass:    'var(--type-grass)',
+  electric: 'var(--type-electric)', ice:     'var(--type-ice)',
+  fighting: 'var(--type-fighting)', poison:  'var(--type-poison)',
+  ground:   'var(--type-ground)',   flying:  'var(--type-flying)',
+  psychic:  'var(--type-psychic)',  bug:     'var(--type-bug)',
+  rock:     'var(--type-rock)',     ghost:   'var(--type-ghost)',
+  dragon:   'var(--type-dragon)',   dark:    'var(--type-dark)',
+  steel:    'var(--type-steel)',    fairy:   'var(--type-fairy)',
 };

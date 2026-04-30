@@ -122,7 +122,7 @@ export default function ImportExportModal({ team, onApply, onClose, pokemonData,
           <div className="flex gap-2">
             <input
               autoFocus
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-1.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
               placeholder="Team name…"
               value={saveName}
               onChange={e => setSaveName(e.target.value)}

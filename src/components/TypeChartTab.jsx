@@ -76,7 +76,7 @@ function TypeGrid({ team, label }) {
                 return (
                   <th key={t} className="py-2 px-0.5 font-medium text-center" style={{
                     width: 36,
-                    backgroundColor: tint === 'red' ? 'rgba(180,30,30,0.18)' : tint === 'green' ? 'rgba(21,128,61,0.18)' : undefined,
+                    backgroundColor: tint === 'red' ? 'var(--tint-weak-header)' : tint === 'green' ? 'var(--tint-resist-header)' : undefined,
                   }}>
                     <div
                       className="rounded px-1 py-0.5 mx-auto text-white font-medium"
@@ -119,7 +119,7 @@ function TypeGrid({ team, label }) {
                   const tint = colTints[type];
                   return (
                     <td key={type} className="p-0.5 text-center" style={{
-                      backgroundColor: tint === 'red' ? 'rgba(200,30,30,0.10)' : tint === 'green' ? 'rgba(21,128,61,0.10)' : undefined,
+                      backgroundColor: tint === 'red' ? 'var(--tint-weak-body)' : tint === 'green' ? 'var(--tint-resist-body)' : undefined,
                     }}>
                       {style.label ? (
                         <div

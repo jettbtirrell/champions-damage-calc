@@ -96,7 +96,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             <div className="flex gap-1 mt-1">
               {pokemon.types.map(t => (
                 <span key={t} className="text-xs px-1.5 py-0.5 rounded font-medium text-white"
-                  style={{ backgroundColor: TYPE_COLORS[t] || '#888', fontSize: 10 }}>
+                  style={{ backgroundColor: TYPE_COLORS[t] || 'var(--type-fallback)', fontSize: 10 }}>
                   {t}
                 </span>
               ))}
@@ -116,7 +116,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
             <select
               value={nature}
               onChange={e => update({ nature: e.target.value })}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
             >
               {Object.keys(NATURES).map(n => (
                 <option key={n} value={n}>{natureLabel(n)}</option>
@@ -149,7 +149,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                         onClick={() => update({ boosts: { ...defBoosts, [key]: stage } })}
                         className={`w-7 py-0.5 text-xs rounded transition-colors ${
                           (defBoosts[key] || 0) === stage
-                            ? 'bg-blue-600 text-white font-medium'
+                            ? 'bg-accent text-white font-medium'
                             : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
                         }`}
                       >
@@ -175,15 +175,16 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                     <div key={move.id} className="flex items-center gap-1.5 bg-gray-800 rounded px-2 py-0.5">
                       <span className="flex-1 text-xs text-gray-200">{toDisplayName(move.name)}</span>
                       <span className="text-xs px-1 py-0.5 rounded text-white"
-                        style={{ backgroundColor: TYPE_COLORS[eff.type] || '#888', fontSize: 9 }}>
+                        style={{ backgroundColor: TYPE_COLORS[eff.type] || 'var(--type-fallback)', fontSize: 9 }}>
                         {typeChanged && <span className="opacity-60 line-through mr-0.5">{move.type}</span>}
                         {eff.type}
                       </span>
                       <span className="text-xs px-1 py-0.5 rounded text-white"
-                        style={{ backgroundColor: CAT_COLORS[move.category] || '#888', fontSize: 9 }}>
+                        style={{ backgroundColor: CAT_COLORS[move.category] || 'var(--type-fallback)', fontSize: 9 }}>
                         {move.category}
                       </span>
-                      <span className={`text-xs w-8 text-right ${powerChanged ? 'text-yellow-400' : 'text-gray-500'}`}>
+                      <span className="text-xs w-8 text-right text-gray-500"
+                        style={powerChanged ? { color: 'var(--move-changed)' } : undefined}>
                         {eff.power || '—'}{powerChanged && <span className="opacity-50 line-through ml-1 text-gray-500">{move.power}</span>}
                       </span>
                       <button
@@ -209,7 +210,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               <select
                 value={defender.item || ''}
                 onChange={e => update({ item: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {ITEM_GROUPS.map(group => (
@@ -226,7 +227,7 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
               <select
                 value={defender.ability || ''}
                 onChange={e => update({ ability: e.target.value || null })}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-600 rounded px-2 py-0.5 text-xs text-gray-100 focus:outline-none focus:border-blue-500"
               >
                 <option value="">None</option>
                 {(() => {
@@ -249,12 +250,12 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
 
           {showDamage && (
             <div className="flex items-center gap-3 text-xs text-gray-300 bg-gray-800 rounded px-2 py-1.5 flex-wrap">
-              <span><span className="text-gray-500">HP:</span> <span className="font-mono font-semibold text-white">{defStats.hp}</span></span>
+              <span><span className="text-gray-500">HP:</span> <span className="font-mono font-semibold text-gray-100">{defStats.hp}</span></span>
               {weatherDef.def !== defStats.def && (
-                <span><span className="text-gray-500">Def:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.def}</span><span className="font-mono font-semibold text-cyan-400">{weatherDef.def}</span></span>
+                <span><span className="text-gray-500">Def:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.def}</span><span className="font-mono font-semibold" style={{ color: 'var(--weather-boost-def)' }}>{weatherDef.def}</span></span>
               )}
               {weatherDef.spd !== defStats.spd && (
-                <span><span className="text-gray-500">SpD:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.spd}</span><span className="font-mono font-semibold text-yellow-400">{weatherDef.spd}</span></span>
+                <span><span className="text-gray-500">SpD:</span> <span className="font-mono text-gray-400 line-through mr-1">{defStats.spd}</span><span className="font-mono font-semibold" style={{ color: 'var(--weather-boost-spd)' }}>{weatherDef.spd}</span></span>
               )}
             </div>
           )}
@@ -283,19 +284,19 @@ export default function DefenderCard({ defender, onChange, onRemove, attackers, 
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-gray-400">{toDisplayName(move.name)}</span>
                           <span className="text-xs px-1 rounded text-white"
-                            style={{ backgroundColor: TYPE_COLORS[effMove.type] || '#888', fontSize: 9 }}>
+                            style={{ backgroundColor: TYPE_COLORS[effMove.type] || 'var(--type-fallback)', fontSize: 9 }}>
                             {effMove.type !== move.type && (
                               <span className="opacity-50 line-through mr-0.5">{move.type}</span>
                             )}
                             {effMove.type}
                           </span>
                           {effMove.power !== move.power && (
-                            <span className="text-yellow-400 text-xs">{effMove.power} BP</span>
+                            <span className="text-xs" style={{ color: 'var(--move-changed)' }}>{effMove.power} BP</span>
                           )}
                           {(() => {
                             const itemDef = attacker.item ? ITEMS[attacker.item] : null;
                             return itemDef?.effect === 'type-boost' && itemDef.type === effMove.type
-                              ? <span className="text-xs text-amber-400 opacity-80">{itemDef.label}</span>
+                              ? <span className="text-xs opacity-80" style={{ color: 'var(--item-boost-text)' }}>{itemDef.label}</span>
                               : null;
                           })()}
                         </div>
